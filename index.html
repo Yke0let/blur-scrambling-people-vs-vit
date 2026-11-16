@@ -4,950 +4,692 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OP-VISION // 01 — Psychophysics Instrument (People vs. ViTs)</title>
+    <title>Visual Perception Study — Human vs. Vision Models</title>
     <!-- Tailwind CSS, Chart.js, PapaParse -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-    <!-- Google Fonts: Instrument Serif, Space Grotesk, JetBrains Mono -->
+    <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
         rel="stylesheet">
     <style>
-        :root {
-            --bg-carbon: #070708;
-            --bg-surface: #111113;
-            --bg-elevated: #18181B;
-            --text-ivory: #F3EFE6;
-            --text-stone: #8E8B82;
-            --accent-orange: #FF4D00;
-            --accent-chartreuse: #CCFF00;
-            --grid-line: rgba(243, 239, 230, 0.12);
-            --grid-line-strong: rgba(243, 239, 230, 0.24);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-carbon);
-            color: var(--text-ivory);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            transition: background-color 0.2s ease;
         }
 
-        .font-serif-editorial {
-            font-family: 'Instrument Serif', Georgia, serif;
+        body.lab-arena-bg {
+            background-color: #F1F5F9;
         }
 
         .mono {
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Swiss Architectural Grid & Technical Borders */
-        .swiss-border {
-            border: 1px solid var(--grid-line);
+        .academic-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
         }
 
-        .swiss-border-t {
-            border-top: 1px solid var(--grid-line);
-        }
-
-        .swiss-border-b {
-            border-bottom: 1px solid var(--grid-line);
-        }
-
-        .swiss-border-l {
-            border-left: 1px solid var(--grid-line);
-        }
-
-        .swiss-border-r {
-            border-right: 1px solid var(--grid-line);
-        }
-
-        .surface-panel {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--grid-line);
-            position: relative;
-        }
-
-        .carbon-panel {
-            background-color: var(--bg-carbon);
-            border: 1px solid var(--grid-line);
-            position: relative;
-        }
-
-        /* Subtle Dot Matrix Background (Nothing OS inspired) */
-        .dot-matrix-bg {
-            background-image: radial-gradient(rgba(243, 239, 230, 0.11) 1px, transparent 1px);
-            background-size: 16px 16px;
-        }
-
-        /* Crosshair Corner Markers (+) */
-        .crosshair-box {
-            position: relative;
-        }
-
-        .crosshair-box::before,
-        .crosshair-box::after {
-            content: "+";
-            position: absolute;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            line-height: 1;
-            color: var(--text-stone);
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .crosshair-box::before {
-            top: 6px;
-            left: 8px;
-        }
-
-        .crosshair-box::after {
-            top: 6px;
-            right: 8px;
-        }
-
-        /* Hardware Key / Tactile Button Styling (Teenage Engineering inspired) */
-        .hw-btn {
-            background-color: var(--bg-elevated);
-            border: 1px solid rgba(243, 239, 230, 0.18);
-            box-shadow: 0 3px 0 #000000, inset 0 1px 0 rgba(255, 255, 255, 0.06);
-            transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.12s ease, background-color 0.12s ease;
-        }
-
-        .hw-btn:hover:not(:disabled) {
-            border-color: var(--text-ivory);
-            background-color: #202024;
-        }
-
-        .hw-btn:active:not(:disabled),
-        .hw-btn.key-pressed {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #000000, inset 0 1px 0 rgba(255, 255, 255, 0.04);
-            border-color: var(--accent-orange);
-            background-color: #251610;
-        }
-
-        .hw-btn-orange {
-            background-color: var(--accent-orange);
-            color: #070708;
-            border: 1px solid #FF7338;
-            box-shadow: 0 4px 0 #7A2400, inset 0 1px 0 rgba(255, 255, 255, 0.28);
-            transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.12s ease;
-        }
-
-        .hw-btn-orange:hover:not(:disabled) {
-            background-color: #FF5E1A;
-        }
-
-        .hw-btn-orange:active:not(:disabled) {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #7A2400;
-        }
-
-        .hw-btn-chartreuse {
-            background-color: var(--accent-chartreuse);
-            color: #070708;
-            border: 1px solid #DEFF55;
-            box-shadow: 0 3px 0 #5C7300, inset 0 1px 0 rgba(255, 255, 255, 0.35);
-            transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.12s ease;
-        }
-
-        .hw-btn-chartreuse:hover:not(:disabled) {
-            background-color: #D6FF33;
-        }
-
-        .hw-btn-chartreuse:active:not(:disabled) {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #5C7300;
-        }
-
-        /* Participant Slot Pill */
-        .slot-pill {
-            background-color: #0C0C0E;
-            border: 1px solid var(--grid-line);
-            color: var(--text-stone);
+        .response-btn {
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
             transition: all 0.12s ease;
+            box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
         }
 
-        .slot-pill:hover {
-            border-color: rgba(243, 239, 230, 0.4);
-            color: var(--text-ivory);
+        .response-btn:hover:not(:disabled) {
+            border-color: #2563EB;
+            background-color: #F8FAFC;
+            box-shadow: 0 2px 6px -1px rgba(37, 99, 235, 0.12);
         }
 
-        .slot-pill.active {
-            background-color: var(--accent-orange);
-            color: #070708;
-            border-color: var(--accent-orange);
-            font-weight: 700;
-            box-shadow: 0 0 0 1px #070708, 0 0 12px rgba(255, 77, 0, 0.35);
+        .response-btn:active:not(:disabled),
+        .response-btn.key-flash {
+            border-color: #1D4ED8;
+            background-color: #EFF6FF;
+            transform: translateY(1px);
         }
 
-        .slot-pill.has-save::after {
-            content: "";
-            display: inline-block;
-            width: 5px;
-            height: 5px;
-            border-radius: 999px;
-            background-color: var(--accent-chartreuse);
-            margin-left: 4px;
-            vertical-align: middle;
+        @keyframes subtle-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.08); opacity: 0.55; }
         }
 
-        /* Damage Inspector Condition Pill */
-        .sim-tab {
-            background-color: #0C0C0E;
-            border: 1px solid var(--grid-line);
-            color: var(--text-stone);
-            transition: all 0.12s ease;
-        }
-
-        .sim-tab:hover {
-            color: var(--text-ivory);
-            border-color: rgba(243, 239, 230, 0.35);
-        }
-
-        .sim-tab.active {
-            background-color: var(--text-ivory);
-            color: var(--bg-carbon);
-            border-color: var(--text-ivory);
-            font-weight: 600;
-        }
-
-        /* Optical Reticle Animation */
-        @keyframes reticle-spin {
-            0% {
-                transform: rotate(0deg) scale(0.92);
-                opacity: 0.75;
-            }
-
-            50% {
-                transform: rotate(90deg) scale(1.04);
-                opacity: 1;
-            }
-
-            100% {
-                transform: rotate(180deg) scale(0.92);
-                opacity: 0.75;
-            }
-        }
-
-        .reticle-anim {
-            animation: reticle-spin 1.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes shake-error {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            20%,
-            60% {
-                transform: translateX(-6px);
-            }
-
-            40%,
-            80% {
-                transform: translateX(6px);
-            }
-        }
-
-        .input-error-shake {
-            animation: shake-error 0.35s ease-in-out;
-            border-color: var(--accent-orange) !important;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-carbon);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #2C2C30;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-orange);
+        .fixation-cross {
+            animation: subtle-pulse 1.2s infinite ease-in-out;
         }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col justify-between selection:bg-[#FF4D00] selection:text-[#070708]">
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
 
-    <!-- ==================== TOP ARCHITECTURAL INSTRUMENT HEADER ==================== -->
-    <header class="w-full swiss-border-b bg-[#070708]/95 sticky top-0 z-40">
-        <div class="max-w-[1440px] mx-auto grid grid-cols-2 md:grid-cols-12 items-center">
-            <!-- Brand / Instrument ID -->
-            <div class="col-span-1 md:col-span-4 px-4 py-3 flex items-center gap-3 swiss-border-r">
-                <span class="inline-block w-2.5 h-2.5 bg-[#FF4D00]"></span>
-                <div class="leading-none">
-                    <div class="mono text-xs font-bold tracking-widest text-[#F3EFE6]">OP-VISION // LAB-01</div>
-                    <div class="mono text-[10px] text-[#8E8B82] mt-0.5">BLUR &amp; SCRAMBLING PSYCHOPHYSICS</div>
+    <!-- ==================== MINIMAL ACADEMIC TOP HEADER & 5-STEP STEPPER ==================== -->
+    <header class="w-full bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <!-- Study Title -->
+            <div class="flex items-center gap-2.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0"></div>
+                <span class="font-semibold text-slate-900 text-sm sm:text-base tracking-tight">
+                    Visual Perception Study <span class="text-slate-400 font-normal">— Human vs. Vision Models</span>
+                </span>
+            </div>
+
+            <!-- 5-Step Progress Stepper -->
+            <nav aria-label="Study progress" class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-0.5 text-xs">
+                <div id="stepper-1" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap">
+                    <span class="mono text-[11px]">1.</span><span>Identification</span>
                 </div>
-            </div>
-
-            <!-- Live Telemetry Strip -->
-            <div class="hidden md:flex md:col-span-5 px-4 py-3 items-center justify-between swiss-border-r mono text-[11px] text-[#8E8B82]">
-                <div>STIMULI: <span class="text-[#F3EFE6]">224×224PX</span></div>
-                <div>VIT PATCH: <span class="text-[#CCFF00]">14PX (+7PX)</span></div>
-                <div id="header-observer-pill">OBSERVER: <span id="header-observer-label" class="text-[#F3EFE6]">UNREGISTERED</span></div>
-            </div>
-
-            <!-- Controls: Audio Synthesizer Mute/Unmute & Researcher Console -->
-            <div class="col-span-1 md:col-span-3 px-4 py-2.5 flex items-center justify-end gap-2">
-                <button id="btn-audio-toggle" onclick="toggleAudioEngine()"
-                    class="mono text-[11px] px-2.5 py-1.5 bg-[#111113] hover:bg-[#18181B] swiss-border flex items-center gap-2 text-[#F3EFE6] transition"
-                    title="Toggle Web Audio API Micro-Sound Synthesizer">
-                    <span id="audio-led" class="w-2 h-2 rounded-full bg-[#CCFF00]"></span>
-                    <span id="audio-label">SFX: ON</span>
-                </button>
-                <button onclick="toggleAdminModal()"
-                    class="mono text-[11px] px-3 py-1.5 bg-[#111113] hover:bg-[#18181B] swiss-border text-[#F3EFE6] hover:border-[#FF4D00] transition">
-                    [ MODE CHERCHEUR ]
-                </button>
-            </div>
+                <span class="text-slate-300">→</span>
+                <div id="stepper-2" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-500 border border-transparent whitespace-nowrap">
+                    <span class="mono text-[11px]">2.</span><span>Instructions</span>
+                </div>
+                <span class="text-slate-300">→</span>
+                <div id="stepper-3" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-500 border border-transparent whitespace-nowrap">
+                    <span class="mono text-[11px]">3.</span><span>Practice</span>
+                </div>
+                <span class="text-slate-300">→</span>
+                <div id="stepper-4" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-500 border border-transparent whitespace-nowrap">
+                    <span class="mono text-[11px]">4.</span><span>Experiment (70 trials)</span>
+                </div>
+                <span class="text-slate-300">→</span>
+                <div id="stepper-5" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-500 border border-transparent whitespace-nowrap">
+                    <span class="mono text-[11px]">5.</span><span>Results</span>
+                </div>
+            </nav>
         </div>
     </header>
 
-    <!-- ==================== MAIN INSTRUMENT VIEWPORT ==================== -->
-    <main class="flex-1 w-full max-w-[1440px] mx-auto flex flex-col justify-center">
+    <!-- ==================== MAIN STUDY CONTAINER ==================== -->
+    <main class="flex-1 w-full flex items-center justify-center px-4 py-8 sm:py-10">
 
         <!-- =========================================================================
-             VIEW 01: EDITORIAL LANDING & LIVE INTERACTIVE SIMULATOR (SPLIT-SCREEN)
+             STEP 1: WELCOME, IDENTIFICATION & CONSENT (#step-welcome)
              ========================================================================= -->
-        <section id="view-welcome" class="w-full grid grid-cols-1 lg:grid-cols-12 swiss-border-l swiss-border-r flex-1">
+        <section id="step-welcome" class="w-full max-w-xl academic-card p-6 sm:p-8 space-y-6">
+            <div class="space-y-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                    Academic Psychophysics Study
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                    Welcome to the Visual Perception Study
+                </h1>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Thank you for participating in our research investigating how human vision compares to modern
+                    computer vision models (CLIP &amp; DINOv2) when recognizing degraded drawings.
+                </p>
+            </div>
 
-            <!-- LEFT COLUMN (7 COLS): EDITORIAL CONTEXT & OBSERVER REGISTRATION -->
-            <div class="lg:col-span-7 p-6 md:p-10 lg:p-12 swiss-border-b lg:swiss-border-b-0 lg:swiss-border-r flex flex-col justify-between space-y-8 dot-matrix-bg">
-                
-                <!-- Top Technical Spec Header -->
-                <div class="space-y-4">
-                    <div class="flex flex-wrap items-center gap-2 mono text-[11px]">
-                        <span class="px-2 py-0.5 bg-[#FF4D00] text-[#070708] font-bold tracking-wider">PROTOCOL 10-AFC</span>
-                        <span class="px-2 py-0.5 bg-[#111113] swiss-border text-[#CCFF00]">2000MS EXPOSURE + 400MS MASK</span>
-                        <span class="px-2 py-0.5 bg-[#111113] swiss-border text-[#8E8B82]">QUICK, DRAW! CC-BY-4.0</span>
+            <!-- 3 Simple Bullet Points -->
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2.5 text-xs sm:text-sm text-slate-700">
+                <div class="flex items-start gap-2.5">
+                    <span class="text-blue-600 font-semibold">•</span>
+                    <div><strong class="text-slate-900">Duration:</strong> Approximately 8–10 minutes (70 short trials).</div>
+                </div>
+                <div class="flex items-start gap-2.5">
+                    <span class="text-blue-600 font-semibold">•</span>
+                    <div><strong class="text-slate-900">Task:</strong> Observe a brief line drawing for 2.0 seconds and select which of 10 everyday categories it belongs to.</div>
+                </div>
+                <div class="flex items-start gap-2.5">
+                    <span class="text-blue-600 font-semibold">•</span>
+                    <div><strong class="text-slate-900">Confidentiality:</strong> Data is used strictly for academic research and analysis.</div>
+                </div>
+            </div>
+
+            <!-- Saved Progress Resume Banner (Shown automatically if localStorage has data for selected ID) -->
+            <div id="resume-banner" class="hidden rounded-lg p-4 bg-blue-50/80 border border-blue-200 space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="space-y-0.5">
+                        <div id="resume-title" class="text-xs font-semibold text-blue-900 uppercase tracking-wide">
+                            Saved Session Found
+                        </div>
+                        <p id="resume-subtitle" class="text-xs text-slate-700 leading-relaxed"></p>
                     </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button id="btn-resume-session" type="button" onclick="resumeSavedExperiment()"
+                        class="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition">
+                        Resume Experiment →
+                    </button>
+                    <button id="btn-view-saved-results" type="button" onclick="restoreCompletedSession()"
+                        class="hidden px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition">
+                        View Completed Results →
+                    </button>
+                    <button type="button" onclick="resetCurrentParticipantProgress()"
+                        class="px-3 py-2 rounded-lg bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 text-xs font-medium transition">
+                        Start Over
+                    </button>
+                </div>
+            </div>
 
-                    <h1 class="font-serif-editorial text-5xl sm:text-6xl lg:text-[68px] leading-[0.95] tracking-tight text-[#F3EFE6]">
-                        Human Cortex <span class="italic text-[#FF4D00]">vs.</span><br />
-                        Vision Transformers.
-                    </h1>
-
-                    <p class="text-[#8E8B82] text-sm md:text-base max-w-2xl leading-relaxed">
-                        Which kinds of visual degradation break biological vision and artificial Vision Transformers
-                        (<strong class="text-[#F3EFE6] font-medium">CLIP ViT-L/14</strong> &amp;
-                        <strong class="text-[#F3EFE6] font-medium">DINOv2 ViT-B/14</strong>) together—and which break
-                        only one? You will classify <strong class="text-[#F3EFE6] font-medium">70 line drawings</strong> across 10 everyday categories under
-                        Gaussian blur and 7px-offset tile scrambling.
-                    </p>
+            <!-- Identification Form -->
+            <div class="space-y-4">
+                <!-- 1. Full Name -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <label for="observer-name-input" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                            Full Name (Nom &amp; Prénom) <span class="text-rose-600">*</span>
+                        </label>
+                        <span id="name-validation-msg" class="hidden text-xs font-medium text-rose-600">
+                            Please enter your full name to continue.
+                        </span>
+                    </div>
+                    <input type="text" id="observer-name-input" placeholder="e.g., Marie Curie" autocomplete="name"
+                        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15 transition" />
                 </div>
 
-                <!-- OBSERVER REGISTRATION INSTRUMENT CARD -->
-                <div class="surface-panel crosshair-box p-5 md:p-7 space-y-6">
-                    <div class="flex items-center justify-between swiss-border-b pb-3">
-                        <div class="mono text-xs font-bold tracking-widest uppercase text-[#F3EFE6]">
-                            01 // OBSERVER REGISTRATION &amp; SLOT ASSIGNMENT
-                        </div>
-                        <div id="source-status" class="mono text-[11px] text-[#CCFF00]">AUTO-DETECTING CSV...</div>
+                <!-- 2. Assigned Participant ID (P01 to P12) -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <label for="participant-select" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                            Assigned Participant ID
+                        </label>
+                        <span id="source-status" class="mono text-[11px] text-emerald-600">Loading stimuli schedule...</span>
                     </div>
+                    <select id="participant-select"
+                        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15 transition">
+                        <option value="P01">Participant P01</option>
+                        <option value="P02">Participant P02</option>
+                        <option value="P03">Participant P03</option>
+                        <option value="P04">Participant P04</option>
+                        <option value="P05">Participant P05</option>
+                        <option value="P06">Participant P06</option>
+                        <option value="P07">Participant P07</option>
+                        <option value="P08">Participant P08</option>
+                        <option value="P09">Participant P09</option>
+                        <option value="P10">Participant P10</option>
+                        <option value="P11">Participant P11</option>
+                        <option value="P12">Participant P12</option>
+                    </select>
+                </div>
 
-                    <!-- 1. REQUIRED OBSERVER NAME INPUT -->
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <label for="observer-name-input" class="mono text-xs text-[#F3EFE6] font-semibold tracking-wider">
-                                OBSERVER FULL NAME / PRÉNOM &amp; NOM <span class="text-[#FF4D00]">* REQUIRED</span>
-                            </label>
-                            <span id="name-validation-msg" class="hidden mono text-[11px] text-[#FF4D00]">
-                                [!] ENTER YOUR NAME TO UNLOCK CHAMBER
-                            </span>
-                        </div>
-                        <input type="text" id="observer-name-input" placeholder="e.g., Marie Curie / Jean Dupont"
-                            autocomplete="name"
-                            class="w-full bg-[#070708] swiss-border px-4 py-3.5 text-[#F3EFE6] placeholder-[#8E8B82]/50 mono text-sm focus:outline-none focus:border-[#FF4D00] transition" />
-                    </div>
+                <!-- 3. Informed Consent Checkbox -->
+                <label for="consent-checkbox"
+                    class="flex items-start gap-3 p-3.5 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer select-none hover:border-slate-300 transition">
+                    <input type="checkbox" id="consent-checkbox"
+                        class="mt-0.5 w-4 h-4 accent-blue-600 rounded border-slate-300 shrink-0" />
+                    <span class="text-xs text-slate-600 leading-relaxed">
+                        <strong class="text-slate-900">Informed Consent:</strong> I understand that my participation is
+                        voluntary, that only my category responses and reaction times will be recorded for academic
+                        research, and that I may pause or stop the experiment at any time.
+                    </span>
+                </label>
+                <p id="consent-validation-msg" class="hidden text-xs font-medium text-rose-600">
+                    Please check the Informed Consent box before continuing.
+                </p>
+            </div>
 
-                    <!-- 2. PARTICIPANT SLOT (P01 - P12) TACTILE MATRIX -->
-                    <div class="space-y-2.5">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <label class="mono text-xs text-[#F3EFE6] font-semibold tracking-wider">
-                                ASSIGNED LATIN-SQUARE SLOT (P01–P12)
-                            </label>
-                            <div class="flex items-center gap-2">
-                                <span id="url-slot-badge" class="hidden mono text-[10px] px-2 py-0.5 bg-[#CCFF00]/15 text-[#CCFF00] swiss-border">
-                                    LINK LOCKED
-                                </span>
-                                <button type="button" onclick="copySlotInviteLink()"
-                                    class="mono text-[10px] text-[#8E8B82] hover:text-[#CCFF00] underline">
-                                    Copy direct link (?p=<span id="copy-link-pid">P01</span>)
-                                </button>
-                            </div>
-                        </div>
+            <!-- Single Clear Primary Action Button -->
+            <button id="btn-continue-instructions" type="button" onclick="goToInstructionsStep()"
+                class="w-full py-3 px-5 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm shadow-sm transition">
+                Continue to Instructions →
+            </button>
 
-                        <!-- Hidden native select for compatibility + 12 tactile slot buttons -->
-                        <select id="participant-select" class="hidden">
-                            <option value="P01">P01</option>
-                            <option value="P02">P02</option>
-                            <option value="P03">P03</option>
-                            <option value="P04">P04</option>
-                            <option value="P05">P05</option>
-                            <option value="P06">P06</option>
-                            <option value="P07">P07</option>
-                            <option value="P08">P08</option>
-                            <option value="P09">P09</option>
-                            <option value="P10">P10</option>
-                            <option value="P11">P11</option>
-                            <option value="P12">P12</option>
-                        </select>
-                        <div id="slot-buttons-grid" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- SAVED SESSION / RESUME BANNER -->
-                    <div id="resume-banner"
-                        class="hidden p-4 bg-[#070708] border border-[#CCFF00] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div class="space-y-1">
-                            <div id="resume-title" class="mono text-xs font-bold text-[#CCFF00]">SAVED TELEMETRY FOUND</div>
-                            <div id="resume-subtitle" class="mono text-[11px] text-[#8E8B82]"></div>
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <button id="btn-view-saved-results" type="button" onclick="restoreCompletedSession()"
-                                class="hidden mono text-[11px] px-3 py-1.5 hw-btn-chartreuse font-bold">
-                                VIEW DOSSIER
-                            </button>
-                            <button type="button" onclick="resetCurrentParticipantProgress()"
-                                class="mono text-[11px] px-3 py-1.5 hw-btn text-[#8E8B82] hover:text-[#FF4D00]">
-                                RESET SLOT
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 3. INFORMED CONSENT TACTILE SWITCH -->
-                    <div class="pt-1">
-                        <label for="consent-checkbox"
-                            class="flex items-start gap-3.5 p-3.5 bg-[#070708] swiss-border cursor-pointer select-none hover:border-[#F3EFE6]/40 transition">
-                            <input type="checkbox" id="consent-checkbox"
-                                class="mt-0.5 w-4 h-4 accent-[#FF4D00] bg-[#111113] border-[#8E8B82] rounded-none shrink-0" />
-                            <span class="text-xs text-[#8E8B82] leading-relaxed">
-                                <strong class="text-[#F3EFE6] mono uppercase">Informed Consent // Ethics Protocol:</strong>
-                                Participation is voluntary (~10 min). Only category responses and millisecond reaction
-                                times are logged under your assigned slot ID and name. You may pause or exit at any time.
-                            </span>
+            <!-- Discreet Offline Fallback (Plan B) -->
+            <details class="text-xs text-slate-500 pt-1">
+                <summary class="cursor-pointer hover:text-slate-700 select-none">
+                    Running offline without a web server? Load local files
+                </summary>
+                <div class="mt-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                    <span>Select <code class="mono text-slate-700">human_trials.csv</code> and <code class="mono text-slate-700">stimuli_human/</code>:</span>
+                    <div class="flex gap-2">
+                        <label class="cursor-pointer px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium">
+                            + CSV
+                            <input type="file" id="local-csv-input" accept=".csv" class="hidden" />
+                        </label>
+                        <label class="cursor-pointer px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium">
+                            + PNG Folder
+                            <input type="file" id="local-folder-input" webkitdirectory directory multiple class="hidden" />
                         </label>
                     </div>
-
-                    <!-- PRELOAD TELEMETRY BAR -->
-                    <div id="preload-container" class="hidden space-y-1.5 p-3 bg-[#070708] swiss-border">
-                        <div class="flex justify-between mono text-[11px] text-[#CCFF00]">
-                            <span id="preload-label">BUFFERING 70 STIMULI INTO RAM...</span>
-                            <span id="preload-pct">0%</span>
-                        </div>
-                        <div class="w-full h-2 bg-[#111113] overflow-hidden">
-                            <div id="preload-bar" class="h-full bg-[#FF4D00] w-0 transition-all duration-100"></div>
-                        </div>
-                    </div>
-
-                    <!-- 4. PRIMARY ACTION KEYS -->
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
-                        <button id="btn-practice" type="button" onclick="startPractice()"
-                            class="sm:col-span-4 py-4 px-4 hw-btn mono text-xs font-bold tracking-wider text-[#F3EFE6] uppercase flex items-center justify-center gap-2">
-                            <span>[ RUN 2 WARM-UP TRIALS ]</span>
-                        </button>
-                        <button id="btn-start" type="button" onclick="startExperiment()"
-                            class="sm:col-span-8 py-4 px-5 hw-btn-orange mono text-xs md:text-sm font-bold tracking-wider uppercase flex items-center justify-center gap-2">
-                            <span id="btn-start-text">[ ENTER EXPERIMENT CHAMBER (70 TRIALS) → ]</span>
-                        </button>
-                    </div>
-
-                    <!-- Offline Fallback Drawer -->
-                    <details class="text-xs text-[#8E8B82] pt-1">
-                        <summary class="mono text-[11px] cursor-pointer hover:text-[#F3EFE6] select-none">
-                            + OFFLINE / LOCAL FILE FALLBACK (PLAN B)
-                        </summary>
-                        <div class="mt-3 p-3 bg-[#070708] swiss-border flex flex-wrap items-center justify-between gap-2">
-                            <span class="mono text-[11px]">Running via <code class="text-[#F3EFE6]">file://</code> without server? Load manually:</span>
-                            <div class="flex gap-2">
-                                <label class="cursor-pointer mono text-[11px] px-3 py-1 hw-btn text-[#F3EFE6]">
-                                    + LOAD CSV
-                                    <input type="file" id="local-csv-input" accept=".csv" class="hidden" />
-                                </label>
-                                <label class="cursor-pointer mono text-[11px] px-3 py-1 hw-btn text-[#F3EFE6]">
-                                    + LOAD PNG FOLDER
-                                    <input type="file" id="local-folder-input" webkitdirectory directory multiple class="hidden" />
-                                </label>
-                            </div>
-                        </div>
-                    </details>
                 </div>
-
-                <!-- 10 TARGET CATEGORIES REFERENCE STRIP -->
-                <div class="space-y-2.5">
-                    <div class="flex items-center justify-between mono text-[11px] text-[#8E8B82]">
-                        <span>THE 10 FORCED-CHOICE TARGET CATEGORIES (KEYS [1]–[9], [0])</span>
-                        <span>CHANCE LEVEL = 10.0%</span>
-                    </div>
-                    <div id="welcome-categories" class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- RIGHT COLUMN (5 COLS): LIVE INTERACTIVE DAMAGE INSPECTOR -->
-            <div class="lg:col-span-5 p-6 md:p-10 flex flex-col justify-between bg-[#0B0B0D] space-y-6">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between swiss-border-b pb-3">
-                        <div>
-                            <div class="mono text-xs font-bold tracking-widest text-[#CCFF00]">
-                                02 // INTERACTIVE DAMAGE INSPECTOR
-                            </div>
-                            <div class="mono text-[11px] text-[#8E8B82]">
-                                LIVE STIMULUS DEGRADATION &amp; VIT PATCH SIMULATOR
-                            </div>
-                        </div>
-                        <span class="mono text-[11px] px-2 py-0.5 bg-[#111113] swiss-border text-[#F3EFE6]">224×224 PX</span>
-                    </div>
-
-                    <!-- Category Selector for Simulator -->
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="mono text-[11px] text-[#8E8B82]">SPECIMEN:</span>
-                        <div id="sim-specimen-tabs" class="flex flex-wrap gap-1">
-                            <button type="button" onclick="setSimSpecimen('airplane')" data-spec="airplane" class="sim-spec-btn sim-tab active mono text-[11px] px-2.5 py-1">AIRPLANE</button>
-                            <button type="button" onclick="setSimSpecimen('bicycle')" data-spec="bicycle" class="sim-spec-btn sim-tab mono text-[11px] px-2.5 py-1">BICYCLE</button>
-                            <button type="button" onclick="setSimSpecimen('cat')" data-spec="cat" class="sim-spec-btn sim-tab mono text-[11px] px-2.5 py-1">CAT</button>
-                            <button type="button" onclick="setSimSpecimen('clock')" data-spec="clock" class="sim-spec-btn sim-tab mono text-[11px] px-2.5 py-1">CLOCK</button>
-                            <button type="button" onclick="setSimSpecimen('house')" data-spec="house" class="sim-spec-btn sim-tab mono text-[11px] px-2.5 py-1">HOUSE</button>
-                        </div>
-                    </div>
-
-                    <!-- Interactive Canvas Viewport -->
-                    <div class="carbon-panel crosshair-box p-5 flex flex-col items-center justify-center space-y-4">
-                        <div class="w-full flex items-center justify-between mono text-[10px] text-[#8E8B82]">
-                            <span id="sim-coord-label">GRID: 16×16 PATCHES (14PX)</span>
-                            <span id="sim-cond-readout" class="text-[#FF4D00] font-bold">COND: INTACT</span>
-                        </div>
-
-                        <div class="relative p-2 bg-[#111113] swiss-border">
-                            <canvas id="simulator-canvas" width="224" height="224"
-                                class="w-[240px] h-[240px] sm:w-[268px] sm:h-[268px] block bg-white cursor-crosshair"
-                                title="Click to permute tiles when in Shuffle mode"></canvas>
-                        </div>
-
-                        <!-- Patch Grid Overlay Switches -->
-                        <div class="w-full flex flex-wrap items-center justify-between gap-2 pt-1">
-                            <button id="btn-sim-vit-grid" type="button" onclick="toggleSimVitGrid()"
-                                class="mono text-[11px] px-3 py-1.5 hw-btn text-[#CCFF00] border-[#CCFF00]/50 flex items-center gap-2">
-                                <span id="sim-vit-led" class="w-2 h-2 bg-[#CCFF00]"></span>
-                                <span>14PX VIT PATCH GRID</span>
-                            </button>
-                            <button id="btn-sim-offset-grid" type="button" onclick="toggleSimOffsetGrid()"
-                                class="mono text-[11px] px-3 py-1.5 hw-btn text-[#FF4D00] flex items-center gap-2">
-                                <span id="sim-offset-led" class="w-2 h-2 bg-[#8E8B82]"></span>
-                                <span>+7PX SHUFFLE SEAMS</span>
-                            </button>
-                            <button id="btn-sim-reroll" type="button" onclick="rerollSimulatorShuffle()"
-                                class="mono text-[11px] px-2.5 py-1.5 hw-btn text-[#F3EFE6]" title="Generate new random derangement">
-                                ↻ PERMUTE
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 7 Condition Selector Matrix -->
-                    <div class="space-y-2">
-                        <div class="mono text-[11px] text-[#8E8B82] uppercase">Select Degradation Condition:</div>
-                        <div class="grid grid-cols-4 gap-1.5">
-                            <button type="button" onclick="setSimCondition('intact')" data-cond="intact"
-                                class="sim-cond-btn sim-tab active col-span-4 py-2 mono text-xs">
-                                00 // INTACT BASELINE (σ=0, 1×1)
-                            </button>
-                            <button type="button" onclick="setSimCondition('blur_low')" data-cond="blur_low"
-                                class="sim-cond-btn sim-tab col-span-1 py-2 mono text-[11px]">
-                                BLUR σ=2
-                            </button>
-                            <button type="button" onclick="setSimCondition('blur_medium')" data-cond="blur_medium"
-                                class="sim-cond-btn sim-tab col-span-1 py-2 mono text-[11px]">
-                                BLUR σ=5
-                            </button>
-                            <button type="button" onclick="setSimCondition('blur_high')" data-cond="blur_high"
-                                class="sim-cond-btn sim-tab col-span-2 py-2 mono text-[11px]">
-                                BLUR HIGH (σ=10)
-                            </button>
-                            <button type="button" onclick="setSimCondition('shuffle_low')" data-cond="shuffle_low"
-                                class="sim-cond-btn sim-tab col-span-1 py-2 mono text-[11px]">
-                                4 TILES (2×2)
-                            </button>
-                            <button type="button" onclick="setSimCondition('shuffle_medium')" data-cond="shuffle_medium"
-                                class="sim-cond-btn sim-tab col-span-1 py-2 mono text-[11px]">
-                                16 TILES (4×4)
-                            </button>
-                            <button type="button" onclick="setSimCondition('shuffle_high')" data-cond="shuffle_high"
-                                class="sim-cond-btn sim-tab col-span-2 py-2 mono text-[11px]">
-                                64 TILES (8×8)
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Live Model Benchmark Readout Card for Selected Condition -->
-                <div class="surface-panel p-4 space-y-3">
-                    <div class="flex items-center justify-between mono text-[11px]">
-                        <span class="text-[#8E8B82]">MODEL ACCURACY ON THIS CONDITION (N=1000)</span>
-                        <span id="sim-condition-tag" class="text-[#CCFF00] font-bold">INTACT</span>
-                    </div>
-                    <div class="space-y-2">
-                        <div>
-                            <div class="flex justify-between mono text-xs mb-1">
-                                <span class="text-[#F3EFE6]">CLIP ViT-L/14 (Linear Probe)</span>
-                                <span id="sim-clip-acc" class="text-[#F3EFE6] font-bold">97.7%</span>
-                            </div>
-                            <div class="w-full h-2 bg-[#070708] overflow-hidden">
-                                <div id="sim-clip-bar" class="h-full bg-[#F3EFE6] transition-all duration-300" style="width: 97.7%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mono text-xs mb-1">
-                                <span class="text-[#CCFF00]">DINOv2 ViT-B/14 (Linear Probe)</span>
-                                <span id="sim-dino-acc" class="text-[#CCFF00] font-bold">97.5%</span>
-                            </div>
-                            <div class="w-full h-2 bg-[#070708] overflow-hidden">
-                                <div id="sim-dino-bar" class="h-full bg-[#CCFF00] transition-all duration-300" style="width: 97.5%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <p id="sim-scientific-note" class="text-xs text-[#8E8B82] leading-snug pt-1">
-                        Tile cuts are shifted by <strong class="text-[#F3EFE6]">+7px</strong> (half a 14px ViT patch) so
-                        every shuffle boundary slices directly through ViT tokens.
-                    </p>
-                </div>
-            </div>
+            </details>
         </section>
 
         <!-- =========================================================================
-             VIEW 02: HIGH-PRECISION OPTICAL CHAMBER (THE TRIAL ARENA)
+             STEP 2: VISUAL INSTRUCTIONS & CATEGORY FAMILIARIZATION (#step-instructions)
              ========================================================================= -->
-        <section id="view-trial" class="hidden w-full swiss-border-l swiss-border-r flex-1 flex flex-col justify-between p-4 md:p-8 dot-matrix-bg">
-
-            <!-- TOP CHAMBER HUD BAR -->
-            <div class="w-full surface-panel p-3.5 space-y-3">
-                <div class="flex flex-wrap items-center justify-between gap-3 mono text-xs">
-                    <div class="flex flex-wrap items-center gap-3">
-                        <span id="practice-banner" class="hidden px-2.5 py-0.5 bg-[#CCFF00] text-[#070708] font-bold">
-                            WARM-UP MODE // UNSCORED
-                        </span>
-                        <span class="text-[#8E8B82]">OBSERVER: <strong id="hud-observer-name" class="text-[#F3EFE6]">--</strong></span>
-                        <span class="text-[#8E8B82]">|</span>
-                        <span id="trial-counter-text" class="text-[#FF4D00] font-bold">TRIAL 01 / 70</span>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-4">
-                        <span class="hidden sm:inline text-[#8E8B82]">EXPOSURE: <strong class="text-[#F3EFE6]">2000.0 MS</strong></span>
-                        <span class="hidden md:inline text-[#8E8B82]">MASK: <strong class="text-[#F3EFE6]">400.0 MS</strong></span>
-                        <span id="trial-phase-text" class="px-2 py-0.5 bg-[#070708] swiss-border text-[#CCFF00]">PHASE 01 // FIXATION</span>
-                        <button type="button" onclick="quitToWelcome()"
-                            class="px-2.5 py-1 hw-btn text-[11px] text-[#8E8B82] hover:text-[#FF4D00]">
-                            [ PAUSE / EXIT ]
-                        </button>
-                    </div>
-                </div>
-                <!-- Progress Track -->
-                <div class="w-full h-1.5 bg-[#070708] overflow-hidden">
-                    <div id="trial-progress-bar" class="h-full bg-[#FF4D00] w-0 transition-all duration-200"></div>
-                </div>
+        <section id="step-instructions" class="hidden w-full max-w-2xl academic-card p-6 sm:p-8 space-y-6">
+            <div class="space-y-1.5">
+                <span class="text-xs font-semibold uppercase tracking-wider text-blue-600">Step 2 of 5 • Study Instructions</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900">How Each Trial Works</h2>
+                <p class="text-sm text-slate-600">
+                    Each trial follows an automatic timed sequence. Please keep your eyes focused on the center of the frame.
+                </p>
             </div>
 
-            <!-- PRACTICE FEEDBACK OVERLAY BAR -->
-            <div id="practice-feedback-card"
-                class="hidden my-4 max-w-xl mx-auto w-full surface-panel border-[#CCFF00] p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div id="practice-feedback-text" class="mono text-xs text-[#F3EFE6] leading-relaxed"></div>
-                <button id="practice-next-btn" type="button" onclick="advancePractice()"
-                    class="px-4 py-2.5 hw-btn-chartreuse mono text-xs font-bold shrink-0">
-                    NEXT WARM-UP →
-                </button>
-            </div>
-
-            <!-- CENTER OPTICAL VIEWFINDER -->
-            <div class="my-6 flex flex-col items-center justify-center">
-                <div class="relative w-[304px] h-[304px] flex items-center justify-center carbon-panel crosshair-box">
-
-                    <!-- Digital Millisecond Stopwatch Readout -->
-                    <div class="absolute top-2.5 left-1/2 -translate-x-1/2 mono text-[11px] tracking-widest text-[#8E8B82] flex items-center gap-2">
-                        <span>TIMER:</span>
-                        <span id="optical-ms-counter" class="text-[#F3EFE6] font-bold">0000 MS</span>
+            <!-- 4 Visual Step Cards in a Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="mono text-xs font-semibold text-blue-600">1. Fixation</span>
+                        <span class="mono text-[11px] text-slate-500">0.6s</span>
                     </div>
+                    <div class="h-14 rounded bg-white border border-slate-200 flex items-center justify-center">
+                        <span class="text-slate-700 font-semibold text-lg">+</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-snug">Look at the center cross to focus your gaze.</p>
+                </div>
 
-                    <!-- Perimeter Progress SVG Track -->
-                    <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 304 304">
-                        <circle cx="152" cy="152" r="126" stroke="rgba(243,239,230,0.09)" stroke-width="3" fill="none" />
-                        <circle id="timer-ring" cx="152" cy="152" r="126" stroke="#FF4D00" stroke-width="3.5" fill="none"
-                            stroke-dasharray="791.68" stroke-dashoffset="0" stroke-linecap="butt" />
-                    </svg>
+                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="mono text-xs font-semibold text-blue-600">2. Drawing</span>
+                        <span class="mono text-[11px] text-slate-500">2.0s</span>
+                    </div>
+                    <div class="h-14 rounded bg-white border border-slate-200 flex items-center justify-center">
+                        <svg class="w-7 h-7 text-slate-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-snug">Observe the drawing (intact, blurred, or shuffled tiles).</p>
+                </div>
 
-                    <!-- Exact 224x224 Stimulus Aperture -->
-                    <div class="relative w-[224px] h-[224px] swiss-border bg-[#070708] flex items-center justify-center overflow-hidden">
-
-                        <!-- Phase 1: Animated Optical Reticle (600ms) -->
-                        <div id="fixation-layer" class="flex items-center justify-center w-full h-full bg-[#070708]">
-                            <div class="relative w-12 h-12 reticle-anim flex items-center justify-center">
-                                <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] bg-[#F3EFE6]"></div>
-                                <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1.5px] bg-[#F3EFE6]"></div>
-                                <div class="w-5 h-5 border border-[#FF4D00]"></div>
-                                <div class="w-1.5 h-1.5 bg-[#CCFF00]"></div>
-                            </div>
-                        </div>
-
-                        <!-- Phase 2: 224x224 Native Stimulus Image (Exact 2000ms) -->
-                        <img id="stimulus-img" src="" alt="Psychophysics Stimulus"
-                            class="hidden w-[224px] h-[224px] object-contain bg-white select-none pointer-events-none"
-                            style="image-rendering: pixelated;" />
-
-                        <!-- Phase 3: 60fps Procedural Backward Mask Canvas (400ms) -->
-                        <canvas id="mask-canvas" width="224" height="224" class="hidden w-[224px] h-[224px]"></canvas>
-
-                        <!-- Phase 4: Response Gate Prompt -->
-                        <div id="prompt-layer"
-                            class="hidden flex flex-col items-center justify-center w-full h-full bg-[#070708] text-center p-4 space-y-1.5">
-                            <span class="mono text-[10px] px-2 py-0.5 bg-[#FF4D00] text-[#070708] font-bold uppercase">EXPOSURE COMPLETE</span>
-                            <span class="mono text-xs text-[#F3EFE6] font-semibold pt-1">IDENTIFY SPECIMEN BELOW</span>
-                            <span class="mono text-[10px] text-[#8E8B82]">PRESS KEY [1–9, 0] OR CLICK DECK</span>
+                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="mono text-xs font-semibold text-blue-600">3. Visual Mask</span>
+                        <span class="mono text-[11px] text-slate-500">0.4s</span>
+                    </div>
+                    <div class="h-14 rounded bg-white border border-slate-200 flex items-center justify-center">
+                        <div class="w-10 h-8 rounded bg-slate-200 grid grid-cols-4 gap-0.5 p-0.5">
+                            <div class="bg-slate-800"></div><div class="bg-white"></div><div class="bg-slate-800"></div><div class="bg-white"></div>
+                            <div class="bg-white"></div><div class="bg-slate-800"></div><div class="bg-white"></div><div class="bg-slate-800"></div>
                         </div>
                     </div>
+                    <p class="text-xs text-slate-600 leading-snug">A brief pattern clears retinal afterimages.</p>
+                </div>
 
-                    <!-- Bottom Aperture Spec Readout -->
-                    <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 mono text-[10px] text-[#8E8B82] tracking-widest">
-                        APERTURE: 224×224 // 1:1 PIXEL LOCK
+                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="mono text-xs font-semibold text-blue-600">4. Your Answer</span>
+                        <span class="mono text-[11px] text-slate-500">Untimed</span>
                     </div>
+                    <div class="h-14 rounded bg-white border border-slate-200 flex items-center justify-center">
+                        <span class="px-2 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200 mono text-[11px] font-medium">Click / [1–0]</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-snug">Select the matching category as accurately as possible.</p>
                 </div>
             </div>
 
-            <!-- TACTILE 10-AFC HARDWARE RESPONSE DECK -->
-            <div class="w-full max-w-5xl mx-auto space-y-2">
-                <div class="flex justify-between mono text-[10px] text-[#8E8B82] px-1">
-                    <span>10-AFC TACTILE RESPONSE DECK</span>
-                    <span>KEYBOARD SHORTCUTS: [1]–[9], [0]</span>
+            <!-- The 10 Possible Categories (5x2 Grid) -->
+            <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                        The 10 Possible Categories (Please review before starting)
+                    </h3>
+                    <span class="text-xs text-slate-500">English (Français)</span>
                 </div>
-                <div id="response-grid"
-                    class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 w-full opacity-25 pointer-events-none transition-opacity duration-100">
+                <div id="welcome-categories" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
                     <!-- Populated by JS -->
                 </div>
             </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                <button type="button" onclick="showStep(1)"
+                    class="px-4 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm transition">
+                    ← Back
+                </button>
+                <button type="button" onclick="startPracticeStep()"
+                    class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition">
+                    Start Practice (2 trials) →
+                </button>
+            </div>
         </section>
 
         <!-- =========================================================================
-             VIEW 03: PERSONALIZED PERCEPTUAL DOSSIER (END-OF-EXPERIMENT REVEAL)
+             STEP 3: GUIDED PRACTICE PHASE (#step-practice)
              ========================================================================= -->
-        <section id="view-results" class="hidden w-full swiss-border-l swiss-border-r p-6 md:p-10 space-y-8">
-
-            <!-- DOSSIER HEADER & ARCHETYPE BADGE -->
-            <div class="surface-panel crosshair-box p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div class="space-y-2">
-                    <div class="flex flex-wrap items-center gap-2 mono text-xs">
-                        <span class="px-2.5 py-0.5 bg-[#CCFF00] text-[#070708] font-bold">EXPERIMENT COMPLETE // 70 TRIALS LOGGED</span>
-                        <span id="dossier-archetype-badge" class="px-2.5 py-0.5 bg-[#FF4D00] text-[#070708] font-bold uppercase">
-                            GLOBAL GESTALT SPECIALIST
+        <section id="step-practice" class="hidden w-full max-w-2xl space-y-5">
+            <!-- Practice Arena Card (Shown during the 2 practice trials) -->
+            <div id="practice-arena-container" class="academic-card p-6 sm:p-8 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                            Practice Warm-Up
+                        </span>
+                        <span id="practice-counter-text" class="mono text-xs font-medium text-slate-600">
+                            Practice Trial 1 of 2
                         </span>
                     </div>
-                    <h2 id="dossier-header-title" class="font-serif-editorial text-4xl md:text-5xl text-[#F3EFE6] tracking-tight">
-                        PERCEPTUAL REPORT // OBSERVER: --
-                    </h2>
-                    <p id="dossier-archetype-desc" class="text-sm text-[#8E8B82] max-w-3xl">
-                        Live psychophysical comparison of your visual cortex against frozen CLIP ViT-L/14 and DINOv2 ViT-B/14 linear probes.
+                    <span id="practice-phase-label" class="mono text-xs text-slate-500">Focus on center</span>
+                </div>
+
+                <!-- 224x224 Stimulus Viewport for Practice -->
+                <div class="flex flex-col items-center justify-center py-2 space-y-3">
+                    <div class="relative p-3 rounded-xl bg-slate-100 border border-slate-200 flex flex-col items-center space-y-2.5">
+                        <div class="relative w-[224px] h-[224px] bg-white border border-slate-300 rounded-lg overflow-hidden flex items-center justify-center shadow-inner">
+                            <!-- Fixation -->
+                            <div id="prac-fixation-layer" class="flex items-center justify-center w-full h-full bg-white">
+                                <div class="relative w-7 h-7 fixation-cross">
+                                    <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-slate-800"></div>
+                                    <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-slate-800"></div>
+                                </div>
+                            </div>
+                            <!-- Stimulus -->
+                            <img id="prac-stimulus-img" src="" alt="Practice Stimulus"
+                                class="hidden w-[224px] h-[224px] object-contain bg-white select-none pointer-events-none"
+                                style="image-rendering: pixelated;" />
+                            <!-- Mask -->
+                            <canvas id="prac-mask-canvas" width="224" height="224" class="hidden w-[224px] h-[224px]"></canvas>
+                            <!-- Prompt -->
+                            <div id="prac-prompt-layer" class="hidden flex flex-col items-center justify-center w-full h-full bg-slate-50 text-center p-4">
+                                <span class="text-xs font-semibold text-slate-800">Select the matching category below</span>
+                                <span class="mono text-[11px] text-slate-500 mt-1">Click a card or press keys [1–9, 0]</span>
+                            </div>
+                        </div>
+
+                        <!-- Subtle 2.0s Exposure Timer Bar -->
+                        <div class="w-[224px] h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                            <div id="prac-timer-bar" class="h-full bg-blue-600 w-0"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Immediate Practice Feedback Banner -->
+                <div id="practice-feedback-card" class="hidden p-4 rounded-lg bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div id="practice-feedback-text" class="text-sm text-slate-800"></div>
+                    <button id="practice-next-btn" type="button" onclick="advancePractice()"
+                        class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shrink-0 transition">
+                        Next Practice Trial →
+                    </button>
+                </div>
+
+                <!-- 10-Category Response Grid for Practice -->
+                <div id="prac-response-grid" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 opacity-40 pointer-events-none transition-opacity duration-150">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Practice Complete Confirmation Card (Shown after 2nd practice trial) -->
+            <div id="practice-complete-card" class="hidden academic-card p-6 sm:p-8 text-center space-y-6">
+                <div class="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto text-xl font-bold">
+                    ✓
+                </div>
+                <div class="space-y-2 max-w-md mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-900">Practice Complete!</h2>
+                    <p id="practice-summary-line" class="text-sm text-slate-600 leading-relaxed">
+                        The 70 real trials will now begin (preloaded in memory for exact timing).
                     </p>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-                    <button type="button" onclick="returnToWelcomeFromResults()"
-                        class="px-4 py-3 hw-btn mono text-xs text-[#8E8B82] hover:text-[#F3EFE6]">
-                        ← CHANGE OBSERVER
+                <!-- Preload Progress Bar (Shown while preloading the 70 PNGs) -->
+                <div id="preload-container" class="hidden max-w-md mx-auto space-y-2 p-4 rounded-lg bg-slate-50 border border-slate-200">
+                    <div class="flex justify-between text-xs font-medium text-slate-700">
+                        <span id="preload-label">Preloading 70 drawings into memory...</span>
+                        <span id="preload-pct" class="mono">0%</span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                        <div id="preload-bar" class="h-full bg-blue-600 w-0 transition-all duration-150"></div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                    <button type="button" onclick="startPracticeStep()"
+                        class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm transition">
+                        Repeat Practice (2 trials)
                     </button>
-                    <button type="button" onclick="downloadParticipantCSV()"
-                        class="px-5 py-3 hw-btn-orange mono text-xs font-bold uppercase">
-                        ⬇ DOWNLOAD CSV LOG
+                    <button id="btn-start-main" type="button" onclick="startExperiment()"
+                        class="w-full sm:w-auto px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition">
+                        Begin Main Experiment (70 Trials) →
                     </button>
                 </div>
             </div>
+        </section>
 
-            <!-- FOOLPROOF REMOTE DATA TRANSMISSION PANEL (CSV + BASE64 + WHATSAPP) -->
-            <div class="surface-panel p-6 border-[#FF4D00] space-y-4">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 swiss-border-b pb-3">
-                    <div>
-                        <div class="mono text-xs font-bold text-[#FF4D00] uppercase tracking-wider">
-                            REMOTE TELEMETRY DISPATCH // SEND YOUR RESULTS TO THE RESEARCH TEAM
+        <!-- =========================================================================
+             STEP 4: DISTRACTION-FREE EXPERIMENT ARENA (#step-arena)
+             ========================================================================= -->
+        <section id="step-arena" class="hidden w-full max-w-2xl academic-card p-6 sm:p-8 space-y-6">
+            <!-- Subtle Top Bar -->
+            <div class="space-y-2.5">
+                <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                        <span id="trial-counter-text" class="mono font-semibold text-slate-900">Trial 1 of 70</span>
+                        <span class="text-slate-300">•</span>
+                        <span id="arena-observer-tag" class="text-slate-500"></span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="trial-phase-text" class="mono text-slate-500">Fixation</span>
+                        <button type="button" onclick="quitToWelcome()"
+                            class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-medium transition">
+                            Pause / Quit
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="trial-progress-bar" class="h-full bg-blue-600 w-0 transition-all duration-200"></div>
+                </div>
+            </div>
+
+            <!-- Centered 224x224 Stimulus Frame -->
+            <div class="flex flex-col items-center justify-center py-2">
+                <div class="p-3.5 rounded-xl bg-slate-100 border border-slate-200 flex flex-col items-center space-y-2.5">
+                    <div class="relative w-[224px] h-[224px] bg-white border border-slate-300 rounded-lg overflow-hidden flex items-center justify-center shadow-inner">
+                        <!-- Phase 1: Fixation Cross (600ms) -->
+                        <div id="fixation-layer" class="flex items-center justify-center w-full h-full bg-white">
+                            <div class="relative w-7 h-7 fixation-cross">
+                                <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-slate-800"></div>
+                                <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-slate-800"></div>
+                            </div>
                         </div>
-                        <p class="text-xs text-[#8E8B82] mt-0.5">
-                            Your CSV file (<code id="dossier-csv-filename" class="text-[#F3EFE6] mono">responses_P01.csv</code>)
-                            has been downloaded. As an instant backup, copy your Result Code or send it in 1 click via WhatsApp:
+
+                        <!-- Phase 2: 224x224 Stimulus Image (2000ms) -->
+                        <img id="stimulus-img" src="" alt="Stimulus"
+                            class="hidden w-[224px] h-[224px] object-contain bg-white select-none pointer-events-none"
+                            style="image-rendering: pixelated;" />
+
+                        <!-- Phase 3: Procedural Backward Mask (400ms) -->
+                        <canvas id="mask-canvas" width="224" height="224" class="hidden w-[224px] h-[224px]"></canvas>
+
+                        <!-- Phase 4: Answer Prompt -->
+                        <div id="prompt-layer" class="hidden flex flex-col items-center justify-center w-full h-full bg-slate-50 text-center p-4">
+                            <span class="text-xs font-semibold text-slate-800">Select the matching category</span>
+                            <span class="mono text-[11px] text-slate-500 mt-1">Click below or press [1–9, 0]</span>
+                        </div>
+                    </div>
+
+                    <!-- Smooth Linear 2.0s Exposure Timer Indicator -->
+                    <div class="w-[224px] h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                        <div id="arena-timer-bar" class="h-full bg-blue-600 w-0"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5x2 Response Button Grid -->
+            <div id="response-grid"
+                class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 opacity-40 pointer-events-none transition-opacity duration-150">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- =========================================================================
+             STEP 5: STUDY DEBRIEFING, RESULTS & EASY DATA SUBMISSION (#step-results)
+             ========================================================================= -->
+        <section id="step-results" class="hidden w-full max-w-4xl space-y-6">
+
+            <!-- Warm Thank-You & Prominent Data Submission Card -->
+            <div class="academic-card p-6 sm:p-8 space-y-6 border-t-4 border-t-emerald-600">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+                    <div class="space-y-1">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            ✓ Session Complete (70 / 70 Trials)
+                        </span>
+                        <h2 id="results-thank-you-title" class="text-2xl font-bold text-slate-900">
+                            Thank you! Your session is complete.
+                        </h2>
+                        <p class="text-sm text-slate-600">
+                            Your response file (<code id="dossier-csv-filename" class="mono text-slate-800 font-medium">responses_P01.csv</code>) has been downloaded automatically.
                         </p>
                     </div>
-                    <span id="copy-code-feedback" class="mono text-xs text-[#CCFF00] font-bold hidden">
-                        ✓ RESULT CODE COPIED TO CLIPBOARD!
-                    </span>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
-                    <input id="result-code-input" type="text" readonly
-                        class="lg:col-span-6 bg-[#070708] swiss-border px-3.5 py-2.5 mono text-[11px] text-[#8E8B82] focus:outline-none select-all"
-                        value="" />
-                    <button type="button" onclick="copyResultCode()"
-                        class="lg:col-span-3 py-3 px-4 hw-btn-chartreuse mono text-xs font-bold uppercase flex items-center justify-center gap-2">
-                        <span>📋 1-CLICK COPY RESULT CODE</span>
-                    </button>
-                    <button type="button" onclick="sendViaWhatsApp()"
-                        class="lg:col-span-3 py-3 px-4 hw-btn-orange mono text-xs font-bold uppercase flex items-center justify-center gap-2">
-                        <span>💬 SEND VIA WHATSAPP →</span>
+                    <button type="button" onclick="downloadParticipantCSV()"
+                        class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition shrink-0">
+                        ⬇ Download My Results CSV
                     </button>
                 </div>
-            </div>
 
-            <!-- 4 KPI TELEMETRY CARDS -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="surface-panel p-5">
-                    <span class="mono text-[11px] text-[#8E8B82]">01 // OVERALL ACCURACY (70 TRIALS)</span>
-                    <div id="stat-overall" class="mono text-3xl font-bold text-[#F3EFE6] mt-2">--%</div>
-                    <div class="mono text-[11px] text-[#8E8B82] mt-1">CLIP: 61.1% • DINOv2: 62.6%</div>
-                </div>
-                <div class="surface-panel p-5">
-                    <span class="mono text-[11px] text-[#8E8B82]">02 // SHUFFLE ROBUSTNESS (MEAN)</span>
-                    <div id="stat-shuffle" class="mono text-3xl font-bold text-[#FF4D00] mt-2">--%</div>
-                    <div class="mono text-[11px] text-[#8E8B82] mt-1">CLIP: 34.3% • DINOv2: 36.1%</div>
-                </div>
-                <div class="surface-panel p-5">
-                    <span class="mono text-[11px] text-[#8E8B82]">03 // GAUSSIAN BLUR ROBUSTNESS</span>
-                    <div id="stat-blur" class="mono text-3xl font-bold text-[#CCFF00] mt-2">--%</div>
-                    <div class="mono text-[11px] text-[#8E8B82] mt-1">CLIP: 75.7% • DINOv2: 77.4%</div>
-                </div>
-                <div class="surface-panel p-5">
-                    <span class="mono text-[11px] text-[#8E8B82]">04 // MEDIAN REACTION TIME</span>
-                    <div id="stat-rt" class="mono text-3xl font-bold text-[#F3EFE6] mt-2">-- ms</div>
-                    <div class="mono text-[11px] text-[#8E8B82] mt-1">POST-MASK DECISION LATENCY</div>
-                </div>
-            </div>
+                <!-- Remote Tester 1-Click Result Code Submission Box -->
+                <div class="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                        <div>
+                            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-800">
+                                Send Your Results to the Research Team
+                            </h3>
+                            <p class="text-xs text-slate-600 mt-0.5">
+                                Please send us the downloaded CSV file, or click <strong>Copy Result Code</strong> below and paste it in a message (WhatsApp / Email):
+                            </p>
+                        </div>
+                        <span id="copy-code-feedback" class="hidden text-xs font-semibold text-emerald-600">
+                            ✓ Result Code copied to clipboard!
+                        </span>
+                    </div>
 
-            <!-- SIDE-BY-SIDE HIGH-CONTRAST CHARTS (BLUR VS. SHUFFLE) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="surface-panel p-5 space-y-3">
-                    <div class="flex items-center justify-between swiss-border-b pb-2">
-                        <h3 class="mono text-xs font-bold text-[#F3EFE6] uppercase">PANEL A // GAUSSIAN BLUR (LOW PASS)</h3>
-                        <span class="mono text-[11px] text-[#8E8B82]">σ ∈ {0, 2, 5, 10} PX</span>
+                    <div class="flex flex-col sm:flex-row items-stretch gap-2.5">
+                        <input id="result-code-input" type="text" readonly
+                            class="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 mono text-xs text-slate-600 focus:outline-none select-all"
+                            value="" />
+                        <button type="button" onclick="copyResultCode()"
+                            class="px-4 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition shrink-0">
+                            📋 Copy Result Code
+                        </button>
+                        <button type="button" onclick="sendViaWhatsApp()"
+                            class="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition shrink-0">
+                            💬 Send via WhatsApp
+                        </button>
                     </div>
-                    <canvas id="chart-blur" height="230"></canvas>
-                </div>
-                <div class="surface-panel p-5 space-y-3">
-                    <div class="flex items-center justify-between swiss-border-b pb-2">
-                        <h3 class="mono text-xs font-bold text-[#F3EFE6] uppercase">PANEL B // OFFSET TILE SHUFFLE (+7PX GRID)</h3>
-                        <span class="mono text-[11px] text-[#8E8B82]">1, 4, 16, 64 TILES</span>
-                    </div>
-                    <canvas id="chart-shuffle" height="230"></canvas>
                 </div>
             </div>
 
-            <!-- CATEGORY-BY-CATEGORY & CONDITION BREAKDOWN -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div class="lg:col-span-7 surface-panel p-5 space-y-3">
-                    <div class="flex items-center justify-between swiss-border-b pb-2">
-                        <h3 class="mono text-xs font-bold text-[#F3EFE6] uppercase">CATEGORY-BY-CATEGORY ACCURACY (10-AFC)</h3>
-                        <span class="mono text-[11px] text-[#8E8B82]">7 TRIALS / CATEGORY</span>
+            <!-- Scientific Debriefing & KPIs -->
+            <div class="academic-card p-6 sm:p-8 space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Your Performance vs. Vision Models</h3>
+                        <p class="text-xs sm:text-sm text-slate-600">
+                            Comparison of your 10-choice recognition accuracy against frozen <strong>CLIP ViT-L/14</strong> and <strong>DINOv2 ViT-B/14</strong> classifiers.
+                        </p>
                     </div>
-                    <div id="category-breakdown-grid" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-1">
-                        <!-- Populated by JS -->
+                    <button type="button" onclick="returnToWelcomeFromResults()"
+                        class="text-xs font-medium text-slate-500 hover:text-slate-800 underline self-start sm:self-auto">
+                        ← Return to Welcome Screen
+                    </button>
+                </div>
+
+                <!-- 4 Summary KPI Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+                    <div class="p-4 rounded-lg bg-slate-50 border border-slate-200">
+                        <span class="text-xs font-medium text-slate-500">Overall Accuracy</span>
+                        <div id="stat-overall" class="mono text-2xl font-bold text-slate-900 mt-1">--%</div>
+                        <span class="text-[11px] text-slate-500">Across all 70 trials</span>
+                    </div>
+                    <div class="p-4 rounded-lg bg-slate-50 border border-slate-200">
+                        <span class="text-xs font-medium text-slate-500">Blur Accuracy</span>
+                        <div id="stat-blur" class="mono text-2xl font-bold text-blue-600 mt-1">--%</div>
+                        <span class="text-[11px] text-slate-500">Mean across σ = 2, 5, 10</span>
+                    </div>
+                    <div class="p-4 rounded-lg bg-slate-50 border border-slate-200">
+                        <span class="text-xs font-medium text-slate-500">Shuffle Accuracy</span>
+                        <div id="stat-shuffle" class="mono text-2xl font-bold text-emerald-600 mt-1">--%</div>
+                        <span class="text-[11px] text-slate-500">Mean across 4, 16, 64 tiles</span>
+                    </div>
+                    <div class="p-4 rounded-lg bg-slate-50 border border-slate-200">
+                        <span class="text-xs font-medium text-slate-500">Median Reaction Time</span>
+                        <div id="stat-rt" class="mono text-2xl font-bold text-slate-900 mt-1">-- ms</div>
+                        <span class="text-[11px] text-slate-500">Decision latency</span>
                     </div>
                 </div>
 
-                <div class="lg:col-span-5 surface-panel p-5 space-y-3">
-                    <div class="flex items-center justify-between swiss-border-b pb-2">
-                        <h3 class="mono text-xs font-bold text-[#F3EFE6] uppercase">CONDITION TELEMETRY MATRIX</h3>
-                        <span class="mono text-[11px] text-[#8E8B82]">10 TRIALS / COND</span>
+                <!-- Publication-Style Two-Panel Chart (Blur vs. Tile Shuffle) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 text-center">
+                            Panel A — Gaussian Blur
+                        </h4>
+                        <canvas id="chart-blur" height="220"></canvas>
                     </div>
-                    <div id="condition-breakdown-table" class="mono text-xs space-y-1.5">
-                        <!-- Populated by JS -->
+                    <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 text-center">
+                            Panel B — Offset Tile Shuffle
+                        </h4>
+                        <canvas id="chart-shuffle" height="220"></canvas>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- ==================== VIEW 04: RESEARCHER CONSOLE MODAL (MODE CHERCHEUR) ==================== -->
+    <!-- ==================== RESEARCHER / ADMIN MODAL ==================== -->
     <div id="admin-modal"
-        class="hidden fixed inset-0 bg-[#070708]/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-        <div class="max-w-3xl w-full surface-panel crosshair-box p-6 md:p-8 space-y-6 my-8 border-[#F3EFE6]/30">
-            <div class="flex items-center justify-between swiss-border-b pb-4">
+        class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="max-w-2xl w-full academic-card p-6 sm:p-8 space-y-5 my-8">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
-                    <div class="mono text-xs font-bold text-[#FF4D00] uppercase">RESEARCHER CONSOLE // MODE CHERCHEUR</div>
-                    <h3 class="font-serif-editorial text-3xl text-[#F3EFE6]">Multi-Source Human Data Aggregator</h3>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-blue-600">Researcher Utility</span>
+                    <h3 class="text-lg font-bold text-slate-900">Aggregate Participant Results (`human_results.csv`)</h3>
                 </div>
                 <button type="button" onclick="toggleAdminModal()"
-                    class="mono text-xs px-3 py-1.5 hw-btn text-[#F3EFE6]">✕ CLOSE</button>
+                    class="px-2.5 py-1 rounded-md border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-medium">
+                    ✕ Close
+                </button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Source A: CSV Files -->
-                <div class="p-4 bg-[#070708] swiss-border space-y-2.5">
-                    <div class="mono text-xs font-bold text-[#F3EFE6]">SOURCE A // UPLOAD PARTICIPANT CSV FILES</div>
-                    <p class="text-xs text-[#8E8B82]">
-                        Select one or more <code class="text-[#F3EFE6]">responses_PXX_*.csv</code> files collected from testers.
-                    </p>
+                <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+                    <label class="block text-xs font-semibold text-slate-800">Option A: Upload Participant CSVs</label>
+                    <p class="text-xs text-slate-600">Select one or more <code class="mono">responses_PXX_*.csv</code> files.</p>
                     <input type="file" id="admin-files" accept=".csv" multiple
-                        class="w-full mono text-xs text-[#8E8B82] file:mr-3 file:py-2 file:px-3 file:border-0 file:bg-[#FF4D00] file:text-[#070708] file:font-bold file:mono hover:file:bg-[#FF5E1A] cursor-pointer" />
+                        class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-blue-600 file:text-white file:font-medium hover:file:bg-blue-700 cursor-pointer" />
                 </div>
 
-                <!-- Source B: Base64 Result Codes pasted from WhatsApp/Discord -->
-                <div class="p-4 bg-[#070708] swiss-border space-y-2.5">
-                    <div class="mono text-xs font-bold text-[#CCFF00]">SOURCE B // PASTE WHATSAPP RESULT CODES (VL1:...)</div>
-                    <p class="text-xs text-[#8E8B82]">
-                        Paste any number of WhatsApp messages or <code class="text-[#CCFF00]">VL1:...</code> tokens below:
-                    </p>
+                <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+                    <label class="block text-xs font-semibold text-slate-800">Option B: Paste Result Codes (`VL1:...`)</label>
+                    <p class="text-xs text-slate-600">Paste one or more Result Codes sent by participants:</p>
                     <textarea id="admin-b64-input" rows="3"
-                        placeholder="Paste VL1:... result codes or full WhatsApp messages here..."
-                        class="w-full bg-[#111113] swiss-border p-2.5 mono text-[11px] text-[#F3EFE6] placeholder-[#8E8B82]/50 focus:outline-none focus:border-[#CCFF00]"></textarea>
+                        placeholder="Paste VL1:... result codes here..."
+                        class="w-full rounded-md border border-slate-300 bg-white p-2 mono text-[11px] text-slate-800 focus:border-blue-600 focus:outline-none"></textarea>
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-2.5">
                 <button type="button" onclick="aggregateHumanCSVs()"
-                    class="flex-1 py-3.5 px-4 hw-btn-chartreuse mono text-xs font-bold uppercase">
-                    [ COMPUTE 2000-BOOTSTRAP 95% CI &amp; DOWNLOAD human_results.csv ]
+                    class="flex-1 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition">
+                    Compute 2000-Bootstrap 95% CI &amp; Download human_results.csv
                 </button>
                 <button type="button" onclick="downloadMergedRawCSV()"
-                    class="py-3.5 px-4 hw-btn mono text-xs font-bold text-[#F3EFE6] uppercase">
-                    [ ⬇ COMBINED RAW TRIALS CSV ]
+                    class="py-2.5 px-4 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs transition">
+                    ⬇ Download Combined Raw CSV
                 </button>
             </div>
 
-            <!-- Roster & Output Preview -->
-            <div class="space-y-2">
-                <div id="admin-roster" class="mono text-xs text-[#8E8B82]">No participant data loaded yet.</div>
+            <div class="space-y-1.5">
+                <div id="admin-roster" class="text-xs text-slate-600">No participant files loaded yet.</div>
                 <pre id="admin-output"
-                    class="p-4 bg-[#070708] swiss-border mono text-xs text-[#CCFF00] overflow-x-auto max-h-56"></pre>
+                    class="p-3 rounded-lg bg-slate-900 text-slate-100 mono text-xs overflow-x-auto max-h-48"></pre>
             </div>
         </div>
     </div>
 
-    <!-- ==================== ARCHITECTURAL FOOTER ==================== -->
-    <footer class="w-full swiss-border-t bg-[#070708] py-3 px-6">
-        <div class="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 mono text-[11px] text-[#8E8B82]">
-            <div>TEAM: AZEMFACK-HIMELE • HOUEHA • MAMAM • TCHANGANI</div>
-            <div>QUICK, DRAW! (CC BY 4.0) // CLIP ViT-L/14 &amp; DINOv2 ViT-B/14 BENCHMARK</div>
+    <!-- ==================== MINIMAL ACADEMIC FOOTER ==================== -->
+    <footer class="w-full border-t border-slate-200 bg-white py-3.5 px-6">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+            <div>Visual Perception Project • Quick, Draw! Dataset (CC BY 4.0)</div>
+            <button type="button" onclick="toggleAdminModal()" class="text-slate-400 hover:text-slate-700 transition">
+                Chercheur / Admin
+            </button>
         </div>
     </footer>
 
-    <!-- ==================== INSTRUMENT APPLICATION SCRIPT ==================== -->
+    <!-- ==================== STUDY APPLICATION SCRIPT ==================== -->
     <script>
-        // =========================================================================
-        // 1. SCIENTIFIC INVARIANTS, CATEGORIES & BENCHMARKS
-        // =========================================================================
+        // 1. SCIENTIFIC INVARIANTS, 10 CATEGORIES & MODEL BENCHMARKS
         const CATEGORIES = [
             { id: "airplane", key: "1", label: "Airplane", fr: "Avion", svg: `<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>` },
             { id: "bicycle", key: "2", label: "Bicycle", fr: "Vélo", svg: `<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>` },
@@ -967,22 +709,12 @@
             "shuffle_low", "shuffle_medium", "shuffle_high"
         ];
 
-        const COND_LABELS = {
-            intact: "INTACT (BASELINE)",
-            blur_low: "BLUR LOW (σ=2)",
-            blur_medium: "BLUR MEDIUM (σ=5)",
-            blur_high: "BLUR HIGH (σ=10)",
-            shuffle_low: "SHUFFLE 2×2 (4 TILES)",
-            shuffle_medium: "SHUFFLE 4×4 (16 TILES)",
-            shuffle_high: "SHUFFLE 8×8 (64 TILES)"
-        };
-
         const MODEL_BENCHMARKS = {
             "CLIP ViT-L/14": { intact: 97.7, blur_low: 91.9, blur_medium: 84.5, blur_high: 50.8, shuffle_low: 63.5, shuffle_medium: 23.8, shuffle_high: 15.5 },
             "DINOv2 ViT-B/14": { intact: 97.5, blur_low: 97.5, blur_medium: 76.5, blur_high: 58.2, shuffle_low: 76.8, shuffle_medium: 21.2, shuffle_high: 10.4 }
         };
 
-        // Fixed Psychophysical Timing Constants (DO NOT MODIFY)
+        // Fixed Protocol Timing Constants
         const TIME_FIXATION_MS = 600;
         const TIME_EXPOSURE_MS = 2000;
         const TIME_MASK_MS = 400;
@@ -993,6 +725,7 @@
         const STORAGE_OBSERVER_NAME = "blur_scrambling_observer_name_v1";
 
         // Runtime State
+        let currentStep = 1;
         let allTrialsCSV = [];
         let csvSourceMode = "detecting";
         let localFilesMap = {};
@@ -1010,7 +743,7 @@
         let practiceIdx = 0;
         let practiceCorrectCount = 0;
 
-        // Timer Handles
+        // Active Timers
         let fixationTimerId = null;
         let exposureRafId = null;
         let maskTimerId = null;
@@ -1020,157 +753,23 @@
         let chartBlurInstance = null;
         let chartShuffleInstance = null;
 
-        // Researcher Console cached merged rows
+        // Researcher Modal Cached Rows
         let lastAdminMergedRows = [];
 
-        // =========================================================================
-        // 2. WEB AUDIO API MICRO-SOUND SYNTHESIZER
-        // =========================================================================
-        let audioCtx = null;
-        let soundEnabled = true;
-
-        function ensureAudioCtx() {
-            if (!soundEnabled) return null;
-            if (!audioCtx) {
-                const AC = window.AudioContext || window.webkitAudioContext;
-                if (AC) audioCtx = new AC();
-            }
-            if (audioCtx && audioCtx.state === "suspended") {
-                audioCtx.resume().catch(() => {});
-            }
-            return audioCtx;
-        }
-
-        function toggleAudioEngine() {
-            soundEnabled = !soundEnabled;
-            const led = document.getElementById("audio-led");
-            const label = document.getElementById("audio-label");
-            if (soundEnabled) {
-                led.className = "w-2 h-2 rounded-full bg-[#CCFF00]";
-                label.textContent = "SFX: ON";
-                playClickSound(1100);
-            } else {
-                led.className = "w-2 h-2 rounded-full bg-[#8E8B82]";
-                label.textContent = "SFX: MUTE";
-            }
-        }
-
-        // Soft 880Hz sine ping on fixation lock
-        function playFixationPing() {
-            const ctx = ensureAudioCtx();
-            if (!ctx) return;
-            try {
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(880, now);
-                gain.gain.setValueAtTime(0.0001, now);
-                gain.gain.exponentialRampToValueAtTime(0.045, now + 0.012);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.12);
-            } catch (_) {}
-        }
-
-        // Brief filtered white-noise burst synced with the 400ms backward mask
-        function playMaskNoiseBurst() {
-            const ctx = ensureAudioCtx();
-            if (!ctx) return;
-            try {
-                const duration = 0.38;
-                const bufferSize = Math.floor(ctx.sampleRate * duration);
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * 0.25;
-                }
-                const noise = ctx.createBufferSource();
-                noise.buffer = buffer;
-
-                const filter = ctx.createBiquadFilter();
-                filter.type = "bandpass";
-                filter.frequency.value = 1400;
-                filter.Q.value = 1.2;
-
-                const gain = ctx.createGain();
-                const now = ctx.currentTime;
-                gain.gain.setValueAtTime(0.028, now);
-                gain.gain.exponentialRampToValueAtTime(0.004, now + duration);
-
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(ctx.destination);
-                noise.start(now);
-                noise.stop(now + duration);
-            } catch (_) {}
-        }
-
-        // Tactile mechanical click on key / button press
-        function playClickSound(freq = 620) {
-            const ctx = ensureAudioCtx();
-            if (!ctx) return;
-            try {
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = "triangle";
-                osc.frequency.setValueAtTime(freq, now);
-                osc.frequency.exponentialRampToValueAtTime(160, now + 0.028);
-                gain.gain.setValueAtTime(0.06, now);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.032);
-            } catch (_) {}
-        }
-
-        // Completion triad chord
-        function playCompletionChord() {
-            const ctx = ensureAudioCtx();
-            if (!ctx) return;
-            try {
-                const freqs = [523.25, 659.25, 783.99, 1046.5];
-                freqs.forEach((f, i) => {
-                    const now = ctx.currentTime + i * 0.055;
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = "sine";
-                    osc.frequency.setValueAtTime(f, now);
-                    gain.gain.setValueAtTime(0.0001, now);
-                    gain.gain.exponentialRampToValueAtTime(0.04, now + 0.02);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.start(now);
-                    osc.stop(now + 0.46);
-                });
-            } catch (_) {}
-        }
-
-        // =========================================================================
-        // 3. INITIALIZATION, URL QUERY PARAMS (?p=P04) & SLOT UI
-        // =========================================================================
+        // 2. INITIALIZATION & STEPPER NAVIGATION
         window.addEventListener("DOMContentLoaded", () => {
             renderCategoryGrids();
-            renderParticipantSlotMatrix();
-            initInteractiveSimulator();
 
             const pidSelect = document.getElementById("participant-select");
             const nameInput = document.getElementById("observer-name-input");
 
-            // Check URL query parameter ?p=P04 or ?participant=P04
+            // Support ?p=P04 URL query parameter
             const params = new URLSearchParams(window.location.search);
             const urlP = (params.get("p") || params.get("participant") || "").toUpperCase().trim();
             const validPids = Array.from(pidSelect.options).map(o => o.value);
 
             if (validPids.includes(urlP)) {
                 pidSelect.value = urlP;
-                document.getElementById("url-slot-badge").classList.remove("hidden");
-                document.getElementById("url-slot-badge").textContent = `URL SLOT: ${urlP}`;
             } else {
                 try {
                     const lastPid = localStorage.getItem(STORAGE_LAST_PID);
@@ -1180,35 +779,35 @@
                 } catch (_) {}
             }
 
-            // Restore Observer Name from saved slot or global storage
             syncObserverNameFromStorage();
 
             nameInput.addEventListener("input", () => {
-                const val = nameInput.value.trim();
                 document.getElementById("name-validation-msg").classList.add("hidden");
-                nameInput.classList.remove("input-error-shake");
+                nameInput.classList.remove("border-rose-500");
+                const val = nameInput.value.trim();
                 try {
                     if (val) localStorage.setItem(STORAGE_OBSERVER_NAME, val);
                 } catch (_) {}
-                updateHeaderObserverTag();
+            });
+
+            document.getElementById("consent-checkbox").addEventListener("change", (e) => {
+                if (e.target.checked) {
+                    document.getElementById("consent-validation-msg").classList.add("hidden");
+                }
             });
 
             pidSelect.addEventListener("change", () => {
                 try {
                     localStorage.setItem(STORAGE_LAST_PID, pidSelect.value);
                 } catch (_) {}
-                syncSlotButtonsActiveState();
                 syncObserverNameFromStorage();
                 refreshResumeBanner();
-                updateHeaderObserverTag();
             });
 
-            syncSlotButtonsActiveState();
             refreshResumeBanner();
-            updateHeaderObserverTag();
             tryAutoFetchCSV();
 
-            // Offline CSV input
+            // Offline CSV fallback
             document.getElementById("local-csv-input").addEventListener("change", (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1223,7 +822,7 @@
                 });
             });
 
-            // Offline PNG folder input
+            // Offline PNG folder fallback
             document.getElementById("local-folder-input").addEventListener("change", (e) => {
                 for (const f of e.target.files) {
                     if (f.name.toLowerCase().endsWith(".png")) {
@@ -1233,547 +832,91 @@
                 updateSourceStatus();
             });
 
-            // Hardware Keyboard Shortcuts [1]-[9], [0] during AWAITING RESPONSE
+            // Keyboard shortcuts [1]–[9], [0] during active response phase
             window.addEventListener("keydown", (e) => {
                 if (!canRespond) return;
                 const found = CATEGORIES.find(c => c.key === e.key);
                 if (found) {
                     e.preventDefault();
-                    flashResponseKey(found.id);
+                    flashResponseButton(found.id);
                     submitResponse(found.id);
                 }
             });
         });
 
-        function renderParticipantSlotMatrix() {
-            const container = document.getElementById("slot-buttons-grid");
-            container.innerHTML = "";
-            for (let i = 1; i <= 12; i++) {
-                const pid = `P${String(i).padStart(2, "0")}`;
-                const btn = document.createElement("button");
-                btn.type = "button";
-                btn.dataset.pid = pid;
-                btn.className = "slot-pill mono text-xs py-2.5 px-1 text-center";
-                btn.textContent = pid;
-                btn.onclick = () => {
-                    playClickSound(740);
-                    const sel = document.getElementById("participant-select");
-                    sel.value = pid;
-                    sel.dispatchEvent(new Event("change"));
-                };
-                container.appendChild(btn);
-            }
-        }
-
-        function syncSlotButtonsActiveState() {
-            const currentPid = document.getElementById("participant-select").value;
-            document.getElementById("copy-link-pid").textContent = currentPid;
-            document.querySelectorAll("#slot-buttons-grid .slot-pill").forEach(btn => {
-                const pid = btn.dataset.pid;
-                const saved = getSavedProgress(pid);
-                btn.classList.toggle("active", pid === currentPid);
-                btn.classList.toggle("has-save", Boolean(saved && saved.recordedResponses && saved.recordedResponses.length > 0));
+        function showStep(stepNumber) {
+            currentStep = stepNumber;
+            const stepIds = {
+                1: "step-welcome",
+                2: "step-instructions",
+                3: "step-practice",
+                4: "step-arena",
+                5: "step-results"
+            };
+            Object.entries(stepIds).forEach(([num, id]) => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle("hidden", Number(num) !== stepNumber);
             });
-        }
 
-        function syncObserverNameFromStorage() {
-            const pid = document.getElementById("participant-select").value;
-            const nameInput = document.getElementById("observer-name-input");
-            const saved = getSavedProgress(pid);
-            if (saved && saved.participantName) {
-                nameInput.value = saved.participantName;
-                return;
+            // Neutral mid-light laboratory surround (#F1F5F9) during active stimulus presentation
+            document.body.classList.toggle("lab-arena-bg", stepNumber === 3 || stepNumber === 4);
+
+            // Update 5-Step Progress Stepper in Header
+            for (let i = 1; i <= 5; i++) {
+                const pill = document.getElementById(`stepper-${i}`);
+                if (!pill) continue;
+                if (i === stepNumber) {
+                    pill.className = "step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap";
+                } else if (i < stepNumber) {
+                    pill.className = "step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap";
+                } else {
+                    pill.className = "step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-400 border border-transparent whitespace-nowrap";
+                }
             }
-            if (!nameInput.value.trim()) {
-                try {
-                    const globalName = localStorage.getItem(STORAGE_OBSERVER_NAME);
-                    if (globalName) nameInput.value = globalName;
-                } catch (_) {}
-            }
-        }
-
-        function updateHeaderObserverTag() {
-            const pid = document.getElementById("participant-select").value;
-            const name = document.getElementById("observer-name-input").value.trim();
-            const label = document.getElementById("header-observer-label");
-            label.textContent = name ? `${name.toUpperCase()} (${pid})` : `SLOT ${pid}`;
-        }
-
-        function copySlotInviteLink() {
-            const pid = document.getElementById("participant-select").value;
-            const url = new URL(window.location.href);
-            url.searchParams.set("p", pid);
-            navigator.clipboard.writeText(url.toString()).then(() => {
-                playClickSound(880);
-                const el = document.getElementById("url-slot-badge");
-                el.classList.remove("hidden");
-                el.textContent = `COPIED ?p=${pid}`;
-            }).catch(() => {});
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
         function renderCategoryGrids() {
             const welcomeGrid = document.getElementById("welcome-categories");
-            const responseGrid = document.getElementById("response-grid");
+            const pracGrid = document.getElementById("prac-response-grid");
+            const arenaGrid = document.getElementById("response-grid");
             welcomeGrid.innerHTML = "";
-            responseGrid.innerHTML = "";
+            pracGrid.innerHTML = "";
+            arenaGrid.innerHTML = "";
 
             CATEGORIES.forEach(c => {
                 welcomeGrid.innerHTML += `
-                    <div class="flex items-center gap-2.5 p-2.5 bg-[#111113] swiss-border">
-                        <svg class="w-4 h-4 text-[#FF4D00] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
-                        <div class="leading-none">
-                            <div class="text-xs font-bold text-[#F3EFE6]">${c.label}</div>
-                            <div class="mono text-[10px] text-[#8E8B82] mt-0.5">${c.fr} [${c.key}]</div>
+                    <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                        <svg class="w-5 h-5 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
+                        <div class="leading-tight">
+                            <div class="text-xs font-semibold text-slate-900">${c.label}</div>
+                            <div class="text-[11px] text-slate-500">(${c.fr})</div>
                         </div>
                     </div>`;
 
-                responseGrid.innerHTML += `
-                    <button id="resp-key-${c.id}" type="button" onclick="submitResponse('${c.id}')"
-                        class="hw-btn relative flex flex-col items-center justify-center p-3.5 text-center group select-none">
-                        <span class="absolute top-2 right-2 mono text-[10px] px-1.5 py-0.5 bg-[#070708] swiss-border text-[#8E8B82] group-hover:text-[#CCFF00]">[${c.key}]</span>
-                        <svg class="w-6 h-6 text-[#F3EFE6] group-hover:text-[#FF4D00] mb-1.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
-                        <span class="text-xs font-bold text-[#F3EFE6] uppercase tracking-wide">${c.label}</span>
-                        <span class="mono text-[10px] text-[#8E8B82]">${c.fr}</span>
+                const buttonCard = (prefix) => `
+                    <button id="${prefix}-key-${c.id}" type="button" onclick="submitResponse('${c.id}')"
+                        class="response-btn relative flex flex-col items-center justify-center p-3 text-center select-none">
+                        <span class="absolute top-1.5 right-1.5 mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">[${c.key}]</span>
+                        <svg class="w-6 h-6 text-slate-700 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
+                        <span class="text-xs font-semibold text-slate-900">${c.label}</span>
+                        <span class="text-[11px] text-slate-500">${c.fr}</span>
                     </button>`;
+
+                pracGrid.innerHTML += buttonCard("prac");
+                arenaGrid.innerHTML += buttonCard("arena");
             });
         }
 
-        function flashResponseKey(catId) {
-            const btn = document.getElementById(`resp-key-${catId}`);
+        function flashResponseButton(catId) {
+            const prefix = isPracticeMode ? "prac" : "arena";
+            const btn = document.getElementById(`${prefix}-key-${catId}`);
             if (!btn) return;
-            btn.classList.add("key-pressed");
-            setTimeout(() => btn.classList.remove("key-pressed"), 140);
+            btn.classList.add("key-flash");
+            setTimeout(() => btn.classList.remove("key-flash"), 140);
         }
 
-        // =========================================================================
-        // 4. LIVE INTERACTIVE DAMAGE INSPECTOR (224x224 HTML5 CANVAS SIMULATOR)
-        // =========================================================================
-        let simState = {
-            specimen: "airplane",
-            condition: "intact",
-            showVitGrid: true,
-            showOffsetGrid: false,
-            seed: 42
-        };
-
-        function initInteractiveSimulator() {
-            const canvas = document.getElementById("simulator-canvas");
-            canvas.addEventListener("click", () => {
-                if (simState.condition.startsWith("shuffle")) {
-                    rerollSimulatorShuffle();
-                } else {
-                    toggleSimVitGrid();
-                }
-            });
-            renderSimulatorCanvas();
-        }
-
-        function setSimSpecimen(spec) {
-            playClickSound(700);
-            simState.specimen = spec;
-            document.querySelectorAll(".sim-spec-btn").forEach(b => {
-                b.classList.toggle("active", b.dataset.spec === spec);
-            });
-            renderSimulatorCanvas();
-        }
-
-        function setSimCondition(cond) {
-            playClickSound(640);
-            simState.condition = cond;
-            if (cond.startsWith("shuffle")) {
-                simState.showOffsetGrid = true;
-            }
-            syncSimOverlayButtons();
-            document.querySelectorAll(".sim-cond-btn").forEach(b => {
-                b.classList.toggle("active", b.dataset.cond === cond);
-            });
-            renderSimulatorCanvas();
-        }
-
-        function toggleSimVitGrid() {
-            playClickSound(820);
-            simState.showVitGrid = !simState.showVitGrid;
-            syncSimOverlayButtons();
-            renderSimulatorCanvas();
-        }
-
-        function toggleSimOffsetGrid() {
-            playClickSound(820);
-            simState.showOffsetGrid = !simState.showOffsetGrid;
-            syncSimOverlayButtons();
-            renderSimulatorCanvas();
-        }
-
-        function rerollSimulatorShuffle() {
-            playClickSound(920);
-            simState.seed = (simState.seed * 1664525 + 1013904223) >>> 0;
-            if (!simState.condition.startsWith("shuffle")) {
-                setSimCondition("shuffle_medium");
-                return;
-            }
-            renderSimulatorCanvas();
-        }
-
-        function syncSimOverlayButtons() {
-            const vitLed = document.getElementById("sim-vit-led");
-            const offLed = document.getElementById("sim-offset-led");
-            vitLed.className = simState.showVitGrid ? "w-2 h-2 bg-[#CCFF00]" : "w-2 h-2 bg-[#8E8B82]";
-            offLed.className = simState.showOffsetGrid ? "w-2 h-2 bg-[#FF4D00]" : "w-2 h-2 bg-[#8E8B82]";
-        }
-
-        // Draw crisp 224x224 Quick, Draw!-style specimen (20px margin, 4px black stroke on white)
-        function drawSpecimenBase(specimen) {
-            const c = document.createElement("canvas");
-            c.width = 224;
-            c.height = 224;
-            const ctx = c.getContext("2d");
-            ctx.fillStyle = "#FFFFFF";
-            ctx.fillRect(0, 0, 224, 224);
-            ctx.strokeStyle = "#000000";
-            ctx.lineWidth = 4;
-            ctx.lineCap = "round";
-            ctx.lineJoin = "round";
-
-            if (specimen === "airplane") {
-                ctx.beginPath();
-                ctx.moveTo(32, 122);
-                ctx.lineTo(192, 92);
-                ctx.stroke();
-                // Fuselage & wings
-                ctx.beginPath();
-                ctx.moveTo(42, 118);
-                ctx.quadraticCurveTo(115, 78, 194, 88);
-                ctx.quadraticCurveTo(185, 112, 42, 128);
-                ctx.closePath();
-                ctx.stroke();
-                // Main swept wing
-                ctx.beginPath();
-                ctx.moveTo(96, 106);
-                ctx.lineTo(74, 42);
-                ctx.lineTo(106, 46);
-                ctx.lineTo(138, 102);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(104, 118);
-                ctx.lineTo(84, 182);
-                ctx.lineTo(114, 178);
-                ctx.lineTo(142, 114);
-                ctx.stroke();
-                // Tail fin
-                ctx.beginPath();
-                ctx.moveTo(42, 118);
-                ctx.lineTo(28, 82);
-                ctx.lineTo(54, 92);
-                ctx.stroke();
-            } else if (specimen === "bicycle") {
-                // Two wheels
-                ctx.beginPath();
-                ctx.arc(62, 148, 34, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(164, 148, 34, 0, Math.PI * 2);
-                ctx.stroke();
-                // Diamond frame
-                ctx.beginPath();
-                ctx.moveTo(62, 148);
-                ctx.lineTo(96, 96);
-                ctx.lineTo(150, 96);
-                ctx.lineTo(112, 148);
-                ctx.closePath();
-                ctx.stroke();
-                // Seat & handlebars
-                ctx.beginPath();
-                ctx.moveTo(112, 148);
-                ctx.lineTo(90, 82);
-                ctx.moveTo(80, 82);
-                ctx.lineTo(102, 82);
-                ctx.moveTo(164, 148);
-                ctx.lineTo(146, 76);
-                ctx.lineTo(132, 72);
-                ctx.stroke();
-            } else if (specimen === "cat") {
-                // Head with pointed ears
-                ctx.beginPath();
-                ctx.moveTo(62, 92);
-                ctx.lineTo(54, 40);
-                ctx.lineTo(92, 68);
-                ctx.quadraticCurveTo(112, 62, 132, 68);
-                ctx.lineTo(170, 40);
-                ctx.lineTo(162, 92);
-                ctx.quadraticCurveTo(178, 138, 148, 168);
-                ctx.quadraticCurveTo(112, 190, 76, 168);
-                ctx.quadraticCurveTo(46, 138, 62, 92);
-                ctx.stroke();
-                // Eyes & nose
-                ctx.beginPath();
-                ctx.arc(90, 114, 7, 0, Math.PI * 2);
-                ctx.arc(134, 114, 7, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(106, 134);
-                ctx.lineTo(118, 134);
-                ctx.lineTo(112, 142);
-                ctx.closePath();
-                ctx.stroke();
-                // Whiskers
-                ctx.beginPath();
-                ctx.moveTo(34, 128); ctx.lineTo(74, 134);
-                ctx.moveTo(34, 144); ctx.lineTo(74, 142);
-                ctx.moveTo(190, 128); ctx.lineTo(150, 134);
-                ctx.moveTo(190, 144); ctx.lineTo(150, 142);
-                ctx.stroke();
-            } else if (specimen === "clock") {
-                ctx.beginPath();
-                ctx.arc(112, 112, 78, 0, Math.PI * 2);
-                ctx.stroke();
-                for (let a = 0; a < 12; a++) {
-                    const ang = (a * Math.PI) / 6;
-                    const rIn = a % 3 === 0 ? 62 : 68;
-                    ctx.beginPath();
-                    ctx.moveTo(112 + Math.cos(ang) * rIn, 112 + Math.sin(ang) * rIn);
-                    ctx.lineTo(112 + Math.cos(ang) * 76, 112 + Math.sin(ang) * 76);
-                    ctx.stroke();
-                }
-                ctx.beginPath();
-                ctx.moveTo(112, 112);
-                ctx.lineTo(112, 60);
-                ctx.moveTo(112, 112);
-                ctx.lineTo(152, 128);
-                ctx.stroke();
-            } else {
-                // House
-                ctx.beginPath();
-                ctx.moveTo(36, 106);
-                ctx.lineTo(112, 36);
-                ctx.lineTo(188, 106);
-                ctx.closePath();
-                ctx.stroke();
-                ctx.strokeRect(52, 106, 120, 82);
-                ctx.strokeRect(98, 136, 28, 52);
-                ctx.strokeRect(64, 122, 24, 24);
-                ctx.strokeRect(136, 122, 24, 24);
-            }
-            return c;
-        }
-
-        // Apply authentic separable Gaussian blur on 224x224 ImageData (mode='constant', cval=255)
-        function applyGaussianBlurCanvas(srcCanvas, sigma) {
-            const w = 224, h = 224;
-            const srcCtx = srcCanvas.getContext("2d");
-            const srcData = srcCtx.getImageData(0, 0, w, h).data;
-
-            const radius = Math.ceil(sigma * 3);
-            const kernel = [];
-            let kSum = 0;
-            for (let x = -radius; x <= radius; x++) {
-                const g = Math.exp(-(x * x) / (2 * sigma * sigma));
-                kernel.push(g);
-                kSum += g;
-            }
-            for (let i = 0; i < kernel.length; i++) kernel[i] /= kSum;
-
-            const tmp = new Float32Array(w * h);
-            const out = new Uint8ClampedArray(w * h * 4);
-
-            // Horizontal pass
-            for (let y = 0; y < h; y++) {
-                for (let x = 0; x < w; x++) {
-                    let acc = 0;
-                    for (let k = -radius; k <= radius; k++) {
-                        const nx = x + k;
-                        const val = (nx < 0 || nx >= w) ? 255 : srcData[(y * w + nx) * 4];
-                        acc += val * kernel[k + radius];
-                    }
-                    tmp[y * w + x] = acc;
-                }
-            }
-
-            // Vertical pass
-            for (let y = 0; y < h; y++) {
-                for (let x = 0; x < w; x++) {
-                    let acc = 0;
-                    for (let k = -radius; k <= radius; k++) {
-                        const ny = y + k;
-                        const val = (ny < 0 || ny >= h) ? 255 : tmp[ny * w + x];
-                        acc += val * kernel[k + radius];
-                    }
-                    const v = Math.min(255, Math.max(0, Math.round(acc)));
-                    const idx = (y * w + x) * 4;
-                    out[idx] = v;
-                    out[idx + 1] = v;
-                    out[idx + 2] = v;
-                    out[idx + 3] = 255;
-                }
-            }
-
-            const dstCanvas = document.createElement("canvas");
-            dstCanvas.width = w;
-            dstCanvas.height = h;
-            dstCanvas.getContext("2d").putImageData(new ImageData(out, w, h), 0, 0);
-            return dstCanvas;
-        }
-
-        // Apply exact +7px offset derangement tile shuffle
-        function applyOffsetShuffleCanvas(srcCanvas, grid, seed) {
-            const w = 224, h = 224, offset = 7;
-            const n = grid * grid;
-            const tileSize = w / grid;
-
-            const srcData = srcCanvas.getContext("2d").getImageData(0, 0, w, h).data;
-            const rolled = new Uint8ClampedArray(w * h * 4);
-
-            // Roll by (+7, +7)
-            for (let y = 0; y < h; y++) {
-                for (let x = 0; x < w; x++) {
-                    const sy = (y - offset + h) % h;
-                    const sx = (x - offset + w) % w;
-                    const sIdx = (sy * w + sx) * 4;
-                    const dIdx = (y * w + x) * 4;
-                    rolled[dIdx] = srcData[sIdx];
-                    rolled[dIdx + 1] = srcData[sIdx + 1];
-                    rolled[dIdx + 2] = srcData[sIdx + 2];
-                    rolled[dIdx + 3] = 255;
-                }
-            }
-
-            // Deterministic PRNG for derangement
-            let s = (seed >>> 0) || 12345;
-            const rand = () => {
-                s = (s * 1664525 + 1013904223) >>> 0;
-                return s / 4294967296;
-            };
-
-            const perm = Array.from({ length: n }, (_, i) => i);
-            let tries = 0;
-            while (tries < 50) {
-                for (let i = n - 1; i > 0; i--) {
-                    const j = Math.floor(rand() * (i + 1));
-                    const tmp = perm[i];
-                    perm[i] = perm[j];
-                    perm[j] = tmp;
-                }
-                if (!perm.some((v, idx) => v === idx)) break;
-                tries++;
-            }
-
-            const permuted = new Uint8ClampedArray(w * h * 4);
-            for (let dstTile = 0; dstTile < n; dstTile++) {
-                const srcTile = perm[dstTile];
-                const sr = Math.floor(srcTile / grid), sc = srcTile % grid;
-                const dr = Math.floor(dstTile / grid), dc = dstTile % grid;
-
-                for (let ty = 0; ty < tileSize; ty++) {
-                    for (let tx = 0; tx < tileSize; tx++) {
-                        const sy = sr * tileSize + ty;
-                        const sx = sc * tileSize + tx;
-                        const dy = dr * tileSize + ty;
-                        const dx = dc * tileSize + tx;
-                        const sIdx = (sy * w + sx) * 4;
-                        const dIdx = (dy * w + dx) * 4;
-                        permuted[dIdx] = rolled[sIdx];
-                        permuted[dIdx + 1] = rolled[sIdx + 1];
-                        permuted[dIdx + 2] = rolled[sIdx + 2];
-                        permuted[dIdx + 3] = 255;
-                    }
-                }
-            }
-
-            // Roll back by (-7, -7)
-            const out = new Uint8ClampedArray(w * h * 4);
-            for (let y = 0; y < h; y++) {
-                for (let x = 0; x < w; x++) {
-                    const sy = (y + offset) % h;
-                    const sx = (x + offset) % w;
-                    const sIdx = (sy * w + sx) * 4;
-                    const dIdx = (y * w + x) * 4;
-                    out[dIdx] = permuted[sIdx];
-                    out[dIdx + 1] = permuted[sIdx + 1];
-                    out[dIdx + 2] = permuted[sIdx + 2];
-                    out[dIdx + 3] = 255;
-                }
-            }
-
-            const dstCanvas = document.createElement("canvas");
-            dstCanvas.width = w;
-            dstCanvas.height = h;
-            dstCanvas.getContext("2d").putImageData(new ImageData(out, w, h), 0, 0);
-            return dstCanvas;
-        }
-
-        function renderSimulatorCanvas() {
-            const canvas = document.getElementById("simulator-canvas");
-            if (!canvas) return;
-            const ctx = canvas.getContext("2d");
-
-            const base = drawSpecimenBase(simState.specimen);
-            let processed = base;
-
-            const cond = simState.condition;
-            if (cond === "blur_low") processed = applyGaussianBlurCanvas(base, 2);
-            else if (cond === "blur_medium") processed = applyGaussianBlurCanvas(base, 5);
-            else if (cond === "blur_high") processed = applyGaussianBlurCanvas(base, 10);
-            else if (cond === "shuffle_low") processed = applyOffsetShuffleCanvas(base, 2, simState.seed);
-            else if (cond === "shuffle_medium") processed = applyOffsetShuffleCanvas(base, 4, simState.seed);
-            else if (cond === "shuffle_high") processed = applyOffsetShuffleCanvas(base, 8, simState.seed);
-
-            ctx.clearRect(0, 0, 224, 224);
-            ctx.drawImage(processed, 0, 0);
-
-            // 1. Draw 14px ViT Patch Grid Overlay (16x16 patches)
-            if (simState.showVitGrid) {
-                ctx.save();
-                ctx.strokeStyle = "rgba(130, 175, 0, 0.55)";
-                ctx.lineWidth = 1;
-                for (let p = 14; p < 224; p += 14) {
-                    ctx.beginPath();
-                    ctx.moveTo(p + 0.5, 0);
-                    ctx.lineTo(p + 0.5, 224);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.moveTo(0, p + 0.5);
-                    ctx.lineTo(224, p + 0.5);
-                    ctx.stroke();
-                }
-                ctx.restore();
-            }
-
-            // 2. Draw +7px Offset Shuffle Seam Grid Overlay
-            if (simState.showOffsetGrid) {
-                const gridMap = { shuffle_low: 2, shuffle_medium: 4, shuffle_high: 8 };
-                const g = gridMap[cond] || 4;
-                const step = 224 / g;
-                ctx.save();
-                ctx.strokeStyle = "rgba(255, 77, 0, 0.85)";
-                ctx.lineWidth = 1.5;
-                ctx.setLineDash([4, 3]);
-                for (let k = 0; k < g; k++) {
-                    const pos = ((k * step - 7 + 224) % 224);
-                    ctx.beginPath();
-                    ctx.moveTo(pos, 0);
-                    ctx.lineTo(pos, 224);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.moveTo(0, pos);
-                    ctx.lineTo(224, pos);
-                    ctx.stroke();
-                }
-                ctx.restore();
-            }
-
-            // Update telemetry readouts
-            document.getElementById("sim-cond-readout").textContent = `COND: ${COND_LABELS[cond]}`;
-            document.getElementById("sim-condition-tag").textContent = COND_LABELS[cond];
-            const clipAcc = MODEL_BENCHMARKS["CLIP ViT-L/14"][cond];
-            const dinoAcc = MODEL_BENCHMARKS["DINOv2 ViT-B/14"][cond];
-            document.getElementById("sim-clip-acc").textContent = `${clipAcc.toFixed(1)}%`;
-            document.getElementById("sim-clip-bar").style.width = `${clipAcc}%`;
-            document.getElementById("sim-dino-acc").textContent = `${dinoAcc.toFixed(1)}%`;
-            document.getElementById("sim-dino-bar").style.width = `${dinoAcc}%`;
-        }
-
-        // =========================================================================
-        // 5. CSV AUTO-FETCH & LOCALSTORAGE AUTO-SAVE / RESUME
-        // =========================================================================
+        // 3. CSV LOADING & LOCALSTORAGE AUTO-SAVE / RESUME
         function sanitizeCSVRows(rows) {
             return (rows || [])
                 .map(r => ({
@@ -1791,16 +934,14 @@
             const el = document.getElementById("source-status");
             const pngCount = Object.keys(localFilesMap).length;
             if (csvSourceMode === "hosted") {
-                el.textContent = pngCount > 0 ? `HOSTED CSV + ${pngCount} PNGS READY ✓` : "HOSTED CSV READY (840 TRIALS) ✓";
-                el.className = "mono text-[11px] text-[#CCFF00]";
+                el.textContent = "Stimuli ready ✓";
+                el.className = "mono text-[11px] text-emerald-600";
             } else if (csvSourceMode === "local") {
-                el.textContent = pngCount > 0
-                    ? `LOCAL CSV (${allTrialsCSV.length}) + ${pngCount} PNGS ✓`
-                    : `LOCAL CSV LOADED (${allTrialsCSV.length} ROWS)`;
-                el.className = "mono text-[11px] text-[#CCFF00]";
+                el.textContent = pngCount > 0 ? `Local CSV & ${pngCount} PNGs ready ✓` : `Local CSV loaded (${allTrialsCSV.length} rows)`;
+                el.className = "mono text-[11px] text-emerald-600";
             } else {
-                el.textContent = pngCount > 0 ? `${pngCount} PNGS — LOAD CSV` : "OFFLINE: USE + LOAD CSV BELOW";
-                el.className = "mono text-[11px] text-[#FF4D00]";
+                el.textContent = "Offline mode (load CSV below)";
+                el.className = "mono text-[11px] text-amber-600";
             }
         }
 
@@ -1849,14 +990,28 @@
                 localStorage.setItem(STORAGE_LAST_PID, pid);
                 if (participantName) localStorage.setItem(STORAGE_OBSERVER_NAME, participantName);
             } catch (_) {}
-            syncSlotButtonsActiveState();
         }
 
         function clearParticipantProgress(pid) {
             try {
                 localStorage.removeItem(STORAGE_PREFIX + pid);
             } catch (_) {}
-            syncSlotButtonsActiveState();
+        }
+
+        function syncObserverNameFromStorage() {
+            const pid = document.getElementById("participant-select").value;
+            const nameInput = document.getElementById("observer-name-input");
+            const saved = getSavedProgress(pid);
+            if (saved && saved.participantName) {
+                nameInput.value = saved.participantName;
+                return;
+            }
+            if (!nameInput.value.trim()) {
+                try {
+                    const globalName = localStorage.getItem(STORAGE_OBSERVER_NAME);
+                    if (globalName) nameInput.value = globalName;
+                } catch (_) {}
+            }
         }
 
         function refreshResumeBanner() {
@@ -1865,16 +1020,14 @@
             const banner = document.getElementById("resume-banner");
             const title = document.getElementById("resume-title");
             const subtitle = document.getElementById("resume-subtitle");
+            const resumeBtn = document.getElementById("btn-resume-session");
             const viewBtn = document.getElementById("btn-view-saved-results");
-            const startBtnText = document.getElementById("btn-start-text");
 
             const pidTrials = allTrialsCSV.filter(r => r.participant === pid);
             const expectedTotal = pidTrials.length || 70;
 
             if (!saved || saved.recordedResponses.length === 0) {
                 banner.classList.add("hidden");
-                viewBtn.classList.add("hidden");
-                startBtnText.textContent = `[ ENTER EXPERIMENT CHAMBER (70 TRIALS) → ]`;
                 return;
             }
 
@@ -1883,21 +1036,22 @@
             banner.classList.remove("hidden");
 
             if (saved.completed || saved.currentTrialIdx >= expectedTotal) {
-                title.textContent = `${pid} (${savedName.toUpperCase()}) // COMPLETED (${count}/${expectedTotal} TRIALS)`;
-                subtitle.textContent = `Full 70-trial telemetry saved in browser. View dossier or reset slot to run again.`;
+                title.textContent = `${pid} (${savedName}) — Session Already Completed`;
+                subtitle.textContent = `All ${count} of ${expectedTotal} trials are saved in this browser. You can view your results or start over.`;
+                resumeBtn.classList.add("hidden");
                 viewBtn.classList.remove("hidden");
-                startBtnText.textContent = `[ RESTART ${pid} FROM TRIAL 01 → ]`;
             } else {
-                title.textContent = `SAVED SESSION FOUND // ${pid} (${savedName.toUpperCase()})`;
-                subtitle.textContent = `${count} / ${expectedTotal} trials recorded. Clicking Start resumes seamlessly at Trial ${saved.currentTrialIdx + 1}.`;
+                title.textContent = `Saved Progress Found for ${pid} (${savedName})`;
+                subtitle.textContent = `You completed ${count} of ${expectedTotal} trials. Would you like to resume at Trial ${saved.currentTrialIdx + 1}/${expectedTotal}?`;
+                resumeBtn.textContent = `Resume at Trial ${saved.currentTrialIdx + 1}/${expectedTotal} →`;
+                resumeBtn.classList.remove("hidden");
                 viewBtn.classList.add("hidden");
-                startBtnText.textContent = `[ RESUME ${pid} AT TRIAL ${String(saved.currentTrialIdx + 1).padStart(2, "0")} / ${expectedTotal} → ]`;
             }
         }
 
         function resetCurrentParticipantProgress() {
             const pid = document.getElementById("participant-select").value;
-            if (!confirm(`Clear saved progress for slot ${pid}? This cannot be undone.`)) return;
+            if (!confirm(`Start over and clear saved progress for ${pid}?`)) return;
             clearParticipantProgress(pid);
             refreshResumeBanner();
         }
@@ -1909,96 +1063,164 @@
             recordedResponses = saved.recordedResponses;
             currentTrialIdx = saved.currentTrialIdx;
             activeObserverName = saved.participantName || saved.recordedResponses[0]?.participant_name || document.getElementById("observer-name-input").value.trim() || pid;
-
-            document.getElementById("view-welcome").classList.add("hidden");
-            document.getElementById("view-trial").classList.add("hidden");
-            document.getElementById("view-results").classList.remove("hidden");
+            showStep(5);
             renderResultsDashboard();
         }
 
-        // =========================================================================
-        // 6. WARM-UP PRACTICE MODE & REAL EXPERIMENT CHAMBER
-        // =========================================================================
-        function validateObserverName(requireConsent = false) {
+        // 4. STEP VALIDATION & WIZARD FLOW
+        function validateStep1() {
             const nameInput = document.getElementById("observer-name-input");
-            const val = nameInput.value.trim();
-            if (!val) {
+            const nameVal = nameInput.value.trim();
+            const consentChecked = document.getElementById("consent-checkbox").checked;
+
+            if (!nameVal) {
                 document.getElementById("name-validation-msg").classList.remove("hidden");
-                nameInput.classList.remove("input-error-shake");
-                void nameInput.offsetWidth;
-                nameInput.classList.add("input-error-shake");
+                nameInput.classList.add("border-rose-500");
                 nameInput.focus();
                 return null;
             }
-            if (requireConsent && !document.getElementById("consent-checkbox").checked) {
-                alert("Please check the Informed Consent switch before entering the experiment chamber.");
+            if (!consentChecked) {
+                document.getElementById("consent-validation-msg").classList.remove("hidden");
                 return null;
             }
-            return val;
+            activeObserverName = nameVal;
+            try {
+                localStorage.setItem(STORAGE_OBSERVER_NAME, activeObserverName);
+            } catch (_) {}
+            return activeObserverName;
         }
 
+        function goToInstructionsStep() {
+            if (!validateStep1()) return;
+            showStep(2);
+        }
+
+        async function resumeSavedExperiment() {
+            const nameInput = document.getElementById("observer-name-input");
+            const pid = document.getElementById("participant-select").value;
+            const saved = getSavedProgress(pid);
+            if (saved && saved.participantName && !nameInput.value.trim()) {
+                nameInput.value = saved.participantName;
+            }
+            document.getElementById("consent-checkbox").checked = true;
+            if (!validateStep1()) return;
+            await startExperiment();
+        }
+
+        // 5. STEP 3: GUIDED PRACTICE PHASE (2 WARM-UP TRIALS)
         function generatePracticeStimuli() {
-            const p1 = drawSpecimenBase("clock");
-            const p2Base = drawSpecimenBase("house");
-            const p2Shuf = applyOffsetShuffleCanvas(p2Base, 2, 777);
+            const makeCanvas = () => {
+                const c = document.createElement("canvas");
+                c.width = 224;
+                c.height = 224;
+                const ctx = c.getContext("2d");
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, 224, 224);
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 4;
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+                return { c, ctx };
+            };
+
+            // Practice 1: Intact Clock
+            const p1 = makeCanvas();
+            p1.ctx.beginPath();
+            p1.ctx.arc(112, 112, 78, 0, Math.PI * 2);
+            p1.ctx.stroke();
+            for (let a = 0; a < 4; a++) {
+                const ang = (a * Math.PI) / 2;
+                p1.ctx.beginPath();
+                p1.ctx.moveTo(112 + Math.cos(ang) * 64, 112 + Math.sin(ang) * 64);
+                p1.ctx.lineTo(112 + Math.cos(ang) * 76, 112 + Math.sin(ang) * 76);
+                p1.ctx.stroke();
+            }
+            p1.ctx.beginPath();
+            p1.ctx.moveTo(112, 112);
+            p1.ctx.lineTo(112, 60);
+            p1.ctx.moveTo(112, 112);
+            p1.ctx.lineTo(150, 128);
+            p1.ctx.stroke();
+
+            // Practice 2: 2x2 Shuffled House (+7px offset)
+            const p2raw = makeCanvas();
+            p2raw.ctx.beginPath();
+            p2raw.ctx.moveTo(36, 108);
+            p2raw.ctx.lineTo(112, 38);
+            p2raw.ctx.lineTo(188, 108);
+            p2raw.ctx.closePath();
+            p2raw.ctx.stroke();
+            p2raw.ctx.strokeRect(52, 108, 120, 82);
+            p2raw.ctx.strokeRect(98, 138, 28, 52);
+            p2raw.ctx.strokeRect(64, 124, 24, 24);
+
+            const rolled = makeCanvas();
+            rolled.ctx.drawImage(p2raw.c, 7, 7);
+            const shuffled = makeCanvas();
+            const perm = [2, 3, 0, 1];
+            for (let dst = 0; dst < 4; dst++) {
+                const src = perm[dst];
+                const sx = (src % 2) * 112, sy = Math.floor(src / 2) * 112;
+                const dx = (dst % 2) * 112, dy = Math.floor(dst / 2) * 112;
+                shuffled.ctx.drawImage(rolled.c, sx, sy, 112, 112, dx, dy, 112, 112);
+            }
+            const p2out = makeCanvas();
+            p2out.ctx.drawImage(shuffled.c, -7, -7);
+
             return [
-                { label: "clock", condition: "intact", dataUrl: p1.toDataURL("image/png") },
-                { label: "house", condition: "shuffle_low", dataUrl: p2Shuf.toDataURL("image/png") }
+                { label: "clock", condition: "intact", dataUrl: p1.c.toDataURL("image/png") },
+                { label: "house", condition: "shuffle_low", dataUrl: p2out.c.toDataURL("image/png") }
             ];
         }
 
-        function startPractice() {
-            const name = validateObserverName(false);
-            if (!name) return;
-            activeObserverName = name;
-            playClickSound(800);
-
+        function startPracticeStep() {
             clearTrialTimers();
             isPracticeMode = true;
             practiceTrials = generatePracticeStimuli();
             practiceIdx = 0;
             practiceCorrectCount = 0;
 
-            const pid = document.getElementById("participant-select").value;
-            document.getElementById("hud-observer-name").textContent = `${activeObserverName.toUpperCase()} (${pid})`;
-            document.getElementById("view-welcome").classList.add("hidden");
-            document.getElementById("view-results").classList.add("hidden");
-            document.getElementById("view-trial").classList.remove("hidden");
-            document.getElementById("practice-banner").classList.remove("hidden");
+            document.getElementById("practice-arena-container").classList.remove("hidden");
+            document.getElementById("practice-complete-card").classList.add("hidden");
             document.getElementById("practice-feedback-card").classList.add("hidden");
-
+            showStep(3);
             runTrial(0);
         }
 
         function advancePractice() {
-            playClickSound(780);
             document.getElementById("practice-feedback-card").classList.add("hidden");
             practiceIdx++;
             if (practiceIdx >= practiceTrials.length) {
-                quitToWelcome(true);
+                document.getElementById("practice-arena-container").classList.add("hidden");
+                document.getElementById("practice-complete-card").classList.remove("hidden");
+                document.getElementById("practice-summary-line").textContent =
+                    `You answered ${practiceCorrectCount} of ${practiceTrials.length} practice trials correctly. The 70 real trials will now begin (preloaded in memory for exact timing).`;
             } else {
                 runTrial(practiceIdx);
             }
         }
 
+        // 6. STEP 4: MAIN EXPERIMENT PRELOAD & EXECUTION (70 TRIALS)
         async function startExperiment() {
-            const name = validateObserverName(true);
-            if (!name) return;
-            activeObserverName = name;
-
+            if (!activeObserverName) {
+                const v = validateStep1();
+                if (!v) {
+                    showStep(1);
+                    return;
+                }
+            }
             if (allTrialsCSV.length === 0) {
-                alert("human_trials.csv is not loaded yet! If running offline via file://, open '+ OFFLINE / LOCAL FILE FALLBACK' and load human_trials.csv.");
+                alert("human_trials.csv is not loaded yet. If running offline via file://, please load human_trials.csv on Step 1.");
+                showStep(1);
                 return;
             }
 
             const pid = document.getElementById("participant-select").value;
             participantTrials = allTrialsCSV.filter(r => r.participant === pid);
             if (participantTrials.length === 0) {
-                alert(`No trials found for slot ${pid} in human_trials.csv.`);
+                alert(`No trials found for ${pid} in human_trials.csv.`);
                 return;
             }
-
-            playClickSound(880);
 
             // Check saved localStorage state for resume
             const saved = getSavedProgress(pid);
@@ -2015,21 +1237,21 @@
                     }));
                 }
             } else if (saved && (saved.completed || saved.currentTrialIdx >= participantTrials.length)) {
-                if (!confirm(`Slot ${pid} already has a completed 70-trial session saved. Restart ${pid} from Trial 1 and overwrite saved progress?`)) {
-                    return;
-                }
                 clearParticipantProgress(pid);
             }
 
             const trialsToPreload = participantTrials.slice(resumeIdx);
-            document.getElementById("preload-container").classList.remove("hidden");
+            const preloadBox = document.getElementById("preload-container");
+            const startBtn = document.getElementById("btn-start-main");
+            preloadBox.classList.remove("hidden");
+            if (startBtn) startBtn.disabled = true;
+
             document.getElementById("preload-label").textContent =
                 resumeIdx > 0
-                    ? `PRELOADING ${trialsToPreload.length} REMAINING STIMULI FOR TRIAL ${resumeIdx + 1}...`
-                    : `PRELOADING ${trialsToPreload.length} STIMULI INTO RAM FOR 0MS LATENCY...`;
+                    ? `Preloading ${trialsToPreload.length} remaining drawings to resume at Trial ${resumeIdx + 1}...`
+                    : `Preloading ${trialsToPreload.length} drawings into memory...`;
             document.getElementById("preload-pct").textContent = "0%";
             document.getElementById("preload-bar").style.width = "0%";
-            document.getElementById("btn-start").disabled = true;
 
             let loaded = 0;
             const failedFiles = [];
@@ -2053,23 +1275,20 @@
                 img.src = src;
             })));
 
+            if (startBtn) startBtn.disabled = false;
+            preloadBox.classList.add("hidden");
+
             if (failedFiles.length > 0) {
-                document.getElementById("btn-start").disabled = false;
-                document.getElementById("preload-container").classList.add("hidden");
-                alert(`Could not load ${failedFiles.length} stimulus image(s) (first missing: ${failedFiles[0]}).\n\nIf running offline via file://, open '+ OFFLINE / LOCAL FILE FALLBACK' and select the 'stimuli_human' folder.`);
+                alert(`Could not load ${failedFiles.length} stimulus image(s) (first missing: ${failedFiles[0]}).\n\nIf running offline via file://, please select the 'stimuli_human' folder on Step 1.`);
+                showStep(1);
                 return;
             }
 
             isPracticeMode = false;
-            document.getElementById("practice-banner").classList.add("hidden");
-            document.getElementById("practice-feedback-card").classList.add("hidden");
-            document.getElementById("view-welcome").classList.add("hidden");
-            document.getElementById("view-results").classList.add("hidden");
-            document.getElementById("view-trial").classList.remove("hidden");
-            document.getElementById("hud-observer-name").textContent = `${activeObserverName.toUpperCase()} (${pid})`;
-
             currentTrialIdx = resumeIdx;
             recordedResponses = resumeResponses;
+            document.getElementById("arena-observer-tag").textContent = `${activeObserverName} (${pid})`;
+            showStep(4);
             runTrial(currentTrialIdx);
         }
 
@@ -2080,43 +1299,35 @@
             stopProceduralMask();
         }
 
-        function quitToWelcome(skipConfirm = false) {
-            if (!isPracticeMode && !skipConfirm) {
-                const msg = currentTrialIdx > 0
-                    ? `Pause experiment? Your ${currentTrialIdx} completed trial(s) are auto-saved in this browser so you can resume at Trial ${currentTrialIdx + 1}.`
-                    : "Exit optical chamber and return to registration?";
-                if (!confirm(msg)) return;
-            }
+        function quitToWelcome() {
+            const msg = currentTrialIdx > 0
+                ? `Pause the experiment? Your ${currentTrialIdx} completed trial(s) are saved in this browser so you can resume at Trial ${currentTrialIdx + 1} anytime.`
+                : "Return to the welcome screen?";
+            if (!confirm(msg)) return;
+
             clearTrialTimers();
             canRespond = false;
             isPracticeMode = false;
-            document.getElementById("view-trial").classList.add("hidden");
-            document.getElementById("practice-banner").classList.add("hidden");
-            document.getElementById("practice-feedback-card").classList.add("hidden");
-            document.getElementById("view-welcome").classList.remove("hidden");
-            document.getElementById("preload-container").classList.add("hidden");
-            document.getElementById("btn-start").disabled = false;
             refreshResumeBanner();
+            showStep(1);
         }
 
         function returnToWelcomeFromResults() {
-            document.getElementById("view-results").classList.add("hidden");
-            document.getElementById("view-welcome").classList.remove("hidden");
-            document.getElementById("preload-container").classList.add("hidden");
-            document.getElementById("btn-start").disabled = false;
+            clearTrialTimers();
+            canRespond = false;
+            isPracticeMode = false;
             refreshResumeBanner();
+            showStep(1);
         }
 
-        // =========================================================================
-        // 7. HIGH-PRECISION TRIAL STATE MACHINE (600ms -> 2000ms -> 400ms -> 10-AFC)
-        // =========================================================================
+        // 7. HIGH-PRECISION TRIAL STATE MACHINE (600ms Fixation -> 2000ms Stimulus -> 400ms Mask -> Response)
         function runTrial(idx) {
             clearTrialTimers();
 
             const activeList = isPracticeMode ? practiceTrials : participantTrials;
             if (idx >= activeList.length) {
                 if (isPracticeMode) {
-                    quitToWelcome(true);
+                    advancePractice();
                 } else {
                     finishExperiment();
                 }
@@ -2125,32 +1336,33 @@
 
             const trial = activeList[idx];
             canRespond = false;
-
             const total = activeList.length;
-            document.getElementById("trial-counter-text").textContent = isPracticeMode
-                ? `WARM-UP ${String(idx + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
-                : `TRIAL ${String(idx + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
-            document.getElementById("trial-progress-bar").style.width = `${(idx / total) * 100}%`;
 
-            const fixLayer = document.getElementById("fixation-layer");
-            const stimImg = document.getElementById("stimulus-img");
-            const maskCanvas = document.getElementById("mask-canvas");
-            const promptLayer = document.getElementById("prompt-layer");
-            const respGrid = document.getElementById("response-grid");
-            const timerRing = document.getElementById("timer-ring");
-            const msCounter = document.getElementById("optical-ms-counter");
+            // Select DOM elements for either Practice (Step 3) or Main Arena (Step 4)
+            const fixLayer = document.getElementById(isPracticeMode ? "prac-fixation-layer" : "fixation-layer");
+            const stimImg = document.getElementById(isPracticeMode ? "prac-stimulus-img" : "stimulus-img");
+            const maskCanvas = document.getElementById(isPracticeMode ? "prac-mask-canvas" : "mask-canvas");
+            const promptLayer = document.getElementById(isPracticeMode ? "prac-prompt-layer" : "prompt-layer");
+            const respGrid = document.getElementById(isPracticeMode ? "prac-response-grid" : "response-grid");
+            const timerBar = document.getElementById(isPracticeMode ? "prac-timer-bar" : "arena-timer-bar");
+            const phaseLabel = document.getElementById(isPracticeMode ? "practice-phase-label" : "trial-phase-text");
+
+            if (isPracticeMode) {
+                document.getElementById("practice-counter-text").textContent = `Practice Trial ${idx + 1} of ${total}`;
+                document.getElementById("practice-feedback-card").classList.add("hidden");
+            } else {
+                document.getElementById("trial-counter-text").textContent = `Trial ${idx + 1} of ${total}`;
+                document.getElementById("trial-progress-bar").style.width = `${(idx / total) * 100}%`;
+            }
 
             // Reset layers
             fixLayer.classList.remove("hidden");
             stimImg.classList.add("hidden");
             maskCanvas.classList.add("hidden");
             promptLayer.classList.add("hidden");
-            document.getElementById("practice-feedback-card").classList.add("hidden");
-            respGrid.classList.add("opacity-25", "pointer-events-none");
-            timerRing.style.strokeDashoffset = "0";
-            timerRing.setAttribute("stroke", "#FF4D00");
-            msCounter.textContent = "0000 MS";
-            document.getElementById("trial-phase-text").textContent = "PHASE 01 // FIXATION LOCK";
+            respGrid.classList.add("opacity-40", "pointer-events-none");
+            timerBar.style.width = "0%";
+            phaseLabel.textContent = "Fixation (0.6s)";
 
             if (isPracticeMode) {
                 stimImg.src = trial.dataUrl;
@@ -2159,36 +1371,31 @@
                 stimImg.src = preloadedImages[fname] || localFilesMap[fname] || `./stimuli_human/${fname}`;
             }
 
-            playFixationPing();
-
-            // PHASE 1: FIXATION RETICLE (600 ms)
+            // PHASE 1: FIXATION (600 ms)
             fixationTimerId = setTimeout(() => {
                 fixationTimerId = null;
                 fixLayer.classList.add("hidden");
                 stimImg.classList.remove("hidden");
-                document.getElementById("trial-phase-text").textContent = "PHASE 02 // EXPOSURE (2000MS)";
+                phaseLabel.textContent = "Viewing drawing (2.0s)";
 
                 // PHASE 2: STIMULUS EXPOSURE (Exact 2000 ms via performance.now())
                 const startExp = performance.now();
-                const circumference = 791.68;
 
                 function tickExposure(now) {
                     const elapsed = Math.min(now - startExp, TIME_EXPOSURE_MS);
-                    const frac = elapsed / TIME_EXPOSURE_MS;
-                    timerRing.style.strokeDashoffset = `${frac * circumference}`;
-                    msCounter.textContent = `${String(Math.round(elapsed)).padStart(4, "0")} MS`;
+                    const pct = (elapsed / TIME_EXPOSURE_MS) * 100;
+                    timerBar.style.width = `${pct}%`;
 
                     if (now - startExp < TIME_EXPOSURE_MS) {
                         exposureRafId = requestAnimationFrame(tickExposure);
                     } else {
                         exposureRafId = null;
-                        msCounter.textContent = "2000 MS";
+                        timerBar.style.width = "100%";
+
                         // PHASE 3: PROCEDURAL BACKWARD MASK (400 ms)
                         stimImg.classList.add("hidden");
                         maskCanvas.classList.remove("hidden");
-                        timerRing.setAttribute("stroke", "#CCFF00");
-                        document.getElementById("trial-phase-text").textContent = "PHASE 03 // BACKWARD MASK (400MS)";
-                        playMaskNoiseBurst();
+                        phaseLabel.textContent = "Visual mask (0.4s)";
                         startProceduralMask(maskCanvas);
 
                         maskTimerId = setTimeout(() => {
@@ -2196,10 +1403,11 @@
                             stopProceduralMask();
                             maskCanvas.classList.add("hidden");
                             promptLayer.classList.remove("hidden");
-                            document.getElementById("trial-phase-text").textContent = "PHASE 04 // AWAITING 10-AFC INPUT";
+                            timerBar.style.width = "0%";
+                            phaseLabel.textContent = "Select category";
 
-                            // Unlock 10-AFC Response Deck & start RT clock
-                            respGrid.classList.remove("opacity-25", "pointer-events-none");
+                            // Unlock 10-AFC response buttons & start RT clock
+                            respGrid.classList.remove("opacity-40", "pointer-events-none");
                             responseStartTime = performance.now();
                             canRespond = true;
                         }, TIME_MASK_MS);
@@ -2209,7 +1417,6 @@
             }, TIME_FIXATION_MS);
         }
 
-        // Procedural 60fps Backward Visual Mask (7x7 checker + 35 random 4px orientation strokes)
         function startProceduralMask(canvas) {
             const ctx = canvas.getContext("2d");
             function drawFrame() {
@@ -2243,15 +1450,12 @@
             }
         }
 
-        // =========================================================================
-        // 8. RESPONSE RECORDING, BASE64 TOKEN ENCODING & DOSSIER GENERATION
-        // =========================================================================
+        // 8. RECORD RESPONSE & ADVANCE
         function submitResponse(chosenCategory) {
             if (!canRespond) return;
             canRespond = false;
 
             const rt = Math.round(performance.now() - responseStartTime);
-            playClickSound(680);
 
             if (isPracticeMode) {
                 const pt = practiceTrials[practiceIdx];
@@ -2260,22 +1464,21 @@
                 const chosenCat = CATEGORIES.find(c => c.id === chosenCategory);
                 const correctCat = CATEGORIES.find(c => c.id === pt.label);
 
-                document.getElementById("response-grid").classList.add("opacity-25", "pointer-events-none");
-                document.getElementById("trial-progress-bar").style.width = `${((practiceIdx + 1) / practiceTrials.length) * 100}%`;
+                document.getElementById("prac-response-grid").classList.add("opacity-40", "pointer-events-none");
                 const card = document.getElementById("practice-feedback-card");
                 const txt = document.getElementById("practice-feedback-text");
                 const btn = document.getElementById("practice-next-btn");
 
-                const statusHtml = ok
-                    ? `<span class="text-[#CCFF00] font-bold">✓ HIT (${rt} MS):</span> Specimen was <strong>${correctCat.label.toUpperCase()}</strong>.`
-                    : `<span class="text-[#FF4D00] font-bold">✗ MISS (${rt} MS):</span> You selected ${chosenCat.label.toUpperCase()}; correct was <strong>${correctCat.label.toUpperCase()}</strong>.`;
+                const feedbackMsg = ok
+                    ? `<span class="text-emerald-700 font-semibold">✓ Correct!</span> That was a <strong>${correctCat.label} (${correctCat.fr})</strong>.`
+                    : `<span class="text-amber-700 font-semibold">Not quite:</span> You selected ${chosenCat.label}, and the drawing was a <strong>${correctCat.label} (${correctCat.fr})</strong>.`;
 
                 if (practiceIdx + 1 < practiceTrials.length) {
-                    txt.innerHTML = `${statusHtml} <span class="text-[#8E8B82]">Next warm-up trial demonstrates +7px offset 2×2 tile scrambling.</span>`;
-                    btn.textContent = "NEXT WARM-UP →";
+                    txt.innerHTML = `${feedbackMsg} Ready for the 2nd practice trial (shuffled tiles).`;
+                    btn.textContent = "Start 2nd Practice Trial →";
                 } else {
-                    txt.innerHTML = `${statusHtml} <span class="text-[#CCFF00] font-bold">WARM-UP COMPLETE (${practiceCorrectCount}/${practiceTrials.length}). Ready for the 70-trial chamber!</span>`;
-                    btn.textContent = "RETURN & START 70 TRIALS →";
+                    txt.innerHTML = `${feedbackMsg} You have completed both practice trials.`;
+                    btn.textContent = "Continue →";
                 }
                 card.classList.remove("hidden");
                 return;
@@ -2302,27 +1505,27 @@
             runTrial(currentTrialIdx);
         }
 
+        // 9. STEP 5: RESULTS, CSV EXPORT & BASE64 RESULT CODE
         function sanitizeFilenamePart(str) {
-            return (str || "Observer")
+            return (str || "Participant")
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
                 .replace(/[^a-zA-Z0-9_-]+/g, "_")
                 .replace(/^_+|_+$/g, "")
-                .slice(0, 32) || "Observer";
+                .slice(0, 32) || "Participant";
         }
 
         function getCSVFilename() {
             if (!recordedResponses.length) return "responses_P01.csv";
             const pid = recordedResponses[0].participant || "P01";
-            const name = recordedResponses[0].participant_name || activeObserverName || "Observer";
+            const name = recordedResponses[0].participant_name || activeObserverName || "Participant";
             return `responses_${pid}_${sanitizeFilenamePart(name)}.csv`;
         }
 
-        // Encode 70 trials into a compact Base64 token ("VL1:...") for 1-click WhatsApp / clipboard sharing
         function encodeResultToken(responses) {
             if (!responses || !responses.length) return "";
             const pid = responses[0].participant || "P01";
-            const name = responses[0].participant_name || activeObserverName || "Observer";
+            const name = responses[0].participant_name || activeObserverName || "Participant";
             const catIds = CATEGORIES.map(c => c.id);
 
             const packedRows = responses.map(r => {
@@ -2347,7 +1550,6 @@
             return "VL1:" + btoa(binary);
         }
 
-        // Decode a "VL1:..." Base64 token back into full 10-column trial objects
         function decodeResultToken(tokenStr) {
             const cleaned = tokenStr.trim().replace(/^VL1:/, "");
             const binary = atob(cleaned);
@@ -2359,7 +1561,7 @@
             if (!payload || !payload.d) throw new Error("Invalid VL1 token");
 
             const pid = payload.p || "P01";
-            const name = payload.n || "Observer";
+            const name = payload.n || "Participant";
             const catIds = CATEGORIES.map(c => c.id);
 
             return payload.d.split(";").filter(Boolean).map(chunk => {
@@ -2393,10 +1595,7 @@
                     true
                 );
             }
-            playCompletionChord();
-            document.getElementById("view-trial").classList.add("hidden");
-            document.getElementById("view-results").classList.remove("hidden");
-
+            showStep(5);
             downloadParticipantCSV();
             renderResultsDashboard();
         }
@@ -2434,7 +1633,6 @@
         function copyResultCode() {
             const codeInput = document.getElementById("result-code-input");
             if (!codeInput.value) return;
-            playClickSound(900);
             navigator.clipboard.writeText(codeInput.value).then(() => {
                 const fb = document.getElementById("copy-code-feedback");
                 fb.classList.remove("hidden");
@@ -2447,16 +1645,15 @@
 
         function sendViaWhatsApp() {
             if (!recordedResponses.length) return;
-            playClickSound(950);
             const pid = recordedResponses[0].participant;
             const name = recordedResponses[0].participant_name || activeObserverName || pid;
             const acc = ((recordedResponses.reduce((a, b) => a + Number(b.correct), 0) / recordedResponses.length) * 100).toFixed(1);
             const token = encodeResultToken(recordedResponses);
             const text = [
-                `OP-VISION // PSYCHOPHYSICS RESULT PACKET`,
-                `Observer: ${name} (${pid})`,
-                `Overall Accuracy: ${acc}% (${recordedResponses.length} trials)`,
-                `Result Token (paste in Mode Chercheur):`,
+                `Visual Perception Study — Participant Results`,
+                `Name: ${name} (${pid})`,
+                `Overall Accuracy: ${acc}% (70 trials)`,
+                `Result Code:`,
                 token
             ].join("\n");
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
@@ -2467,8 +1664,8 @@
             const pid = recordedResponses[0].participant || "P01";
             const obsName = recordedResponses[0].participant_name || activeObserverName || pid;
 
-            document.getElementById("dossier-header-title").textContent =
-                `PERCEPTUAL REPORT // OBSERVER: ${obsName.toUpperCase()} (${pid})`;
+            document.getElementById("results-thank-you-title").textContent =
+                `Thank you, ${obsName}! Your session (${pid}) is complete.`;
             document.getElementById("dossier-csv-filename").textContent = getCSVFilename();
             document.getElementById("result-code-input").value = encodeResultToken(recordedResponses);
 
@@ -2489,28 +1686,10 @@
             const medRt = rts[Math.floor(rts.length / 2)] || 0;
 
             document.getElementById("stat-overall").textContent = `${allAcc.toFixed(1)}%`;
-            document.getElementById("stat-shuffle").textContent = `${shufAcc.toFixed(1)}%`;
             document.getElementById("stat-blur").textContent = `${blurAcc.toFixed(1)}%`;
+            document.getElementById("stat-shuffle").textContent = `${shufAcc.toFixed(1)}%`;
             document.getElementById("stat-rt").textContent = `${medRt} ms`;
 
-            // Assign Dynamic Perceptual Archetype Badge
-            const badgeEl = document.getElementById("dossier-archetype-badge");
-            const descEl = document.getElementById("dossier-archetype-desc");
-            if (shufAcc >= blurAcc + 8 || shufAcc >= 55) {
-                badgeEl.textContent = "ARCHETYPE // GLOBAL GESTALT SPECIALIST";
-                descEl.textContent = `Your cortex excelled at reassembling scrambled +7px offset tiles (${shufAcc.toFixed(1)}% shuffle accuracy vs. 34.3% CLIP ViT-L/14), outperforming patch-tokenized Vision Transformers when local contour continuity was fractured.`;
-            } else if (blurAcc >= shufAcc + 12) {
-                badgeEl.textContent = "ARCHETYPE // LOW-FREQUENCY ENVELOPE READER";
-                descEl.textContent = `You strongly leveraged coarse spatial-frequency envelopes under Gaussian blur (${blurAcc.toFixed(1)}% blur accuracy) while relying on intact global configuration when tile scrambling broke contour junctions.`;
-            } else if (medRt < 700 && allAcc >= 60) {
-                badgeEl.textContent = "ARCHETYPE // RAPID CORTICAL RESPONDER";
-                descEl.textContent = `High-speed perceptual readout (${medRt} ms median latency) with balanced resilience across both spatial-frequency loss and offset tile scrambling (${allAcc.toFixed(1)}% overall).`;
-            } else {
-                badgeEl.textContent = "ARCHETYPE // BALANCED VISUAL OBSERVER";
-                descEl.textContent = `Your psychometric profile (${allAcc.toFixed(1)}% overall, ${medRt} ms median latency) tracks both low-pass Gaussian blur (${blurAcc.toFixed(1)}%) and +7px offset tile scrambling (${shufAcc.toFixed(1)}%).`;
-            }
-
-            // Render Side-by-Side High-Contrast Charts
             if (chartBlurInstance) { chartBlurInstance.destroy(); chartBlurInstance = null; }
             if (chartShuffleInstance) { chartShuffleInstance.destroy(); chartShuffleInstance = null; }
 
@@ -2519,18 +1698,18 @@
                 scales: {
                     y: {
                         min: 0, max: 100,
-                        ticks: { color: "#8E8B82", font: { family: "JetBrains Mono", size: 11 } },
-                        grid: { color: "rgba(243,239,230,0.08)" },
-                        title: { display: true, text: "10-AFC Accuracy (%)", color: "#8E8B82", font: { family: "JetBrains Mono", size: 11 } }
+                        ticks: { color: "#475569", font: { family: "Inter", size: 11 } },
+                        grid: { color: "#F1F5F9" },
+                        title: { display: true, text: "10-Choice Accuracy (%)", color: "#475569", font: { family: "Inter", size: 11, weight: "500" } }
                     },
                     x: {
-                        ticks: { color: "#F3EFE6", font: { family: "JetBrains Mono", size: 11 } },
-                        grid: { color: "rgba(243,239,230,0.06)" }
+                        ticks: { color: "#0F172A", font: { family: "Inter", size: 11 } },
+                        grid: { color: "#F8FAFC" }
                     }
                 },
                 plugins: {
                     legend: {
-                        labels: { color: "#F3EFE6", font: { family: "JetBrains Mono", size: 11 }, boxWidth: 14 }
+                        labels: { color: "#0F172A", font: { family: "Inter", size: 11 }, boxWidth: 14 }
                     }
                 }
             };
@@ -2539,11 +1718,11 @@
             chartBlurInstance = new Chart(document.getElementById("chart-blur"), {
                 type: "line",
                 data: {
-                    labels: ["INTACT", "σ = 2", "σ = 5", "σ = 10"],
+                    labels: ["Intact", "σ = 2", "σ = 5", "σ = 10"],
                     datasets: [
-                        { label: `${obsName} (You)`, data: blurConds.map(c => userAcc[c]), borderColor: "#FF4D00", backgroundColor: "#FF4D00", borderWidth: 3, pointRadius: 5, tension: 0.15 },
-                        { label: "CLIP ViT-L/14", data: blurConds.map(c => MODEL_BENCHMARKS["CLIP ViT-L/14"][c]), borderColor: "#F3EFE6", backgroundColor: "#F3EFE6", borderWidth: 2, borderDash: [5, 4], pointRadius: 4, tension: 0.15 },
-                        { label: "DINOv2 ViT-B/14", data: blurConds.map(c => MODEL_BENCHMARKS["DINOv2 ViT-B/14"][c]), borderColor: "#CCFF00", backgroundColor: "#CCFF00", borderWidth: 2, borderDash: [3, 3], pointRadius: 4, tension: 0.15 }
+                        { label: `${obsName} (You)`, data: blurConds.map(c => userAcc[c]), borderColor: "#2563EB", backgroundColor: "#2563EB", borderWidth: 2.5, pointRadius: 4, tension: 0.15 },
+                        { label: "CLIP ViT-L/14", data: blurConds.map(c => MODEL_BENCHMARKS["CLIP ViT-L/14"][c]), borderColor: "#64748B", backgroundColor: "#64748B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3.5, tension: 0.15 },
+                        { label: "DINOv2 ViT-B/14", data: blurConds.map(c => MODEL_BENCHMARKS["DINOv2 ViT-B/14"][c]), borderColor: "#059669", backgroundColor: "#059669", borderWidth: 2, borderDash: [3, 3], pointRadius: 3.5, tension: 0.15 }
                     ]
                 },
                 options: commonOpts
@@ -2553,58 +1732,19 @@
             chartShuffleInstance = new Chart(document.getElementById("chart-shuffle"), {
                 type: "line",
                 data: {
-                    labels: ["INTACT", "4 TILES", "16 TILES", "64 TILES"],
+                    labels: ["Intact", "4 Tiles", "16 Tiles", "64 Tiles"],
                     datasets: [
-                        { label: `${obsName} (You)`, data: shufConds.map(c => userAcc[c]), borderColor: "#FF4D00", backgroundColor: "#FF4D00", borderWidth: 3, pointRadius: 5, tension: 0.15 },
-                        { label: "CLIP ViT-L/14", data: shufConds.map(c => MODEL_BENCHMARKS["CLIP ViT-L/14"][c]), borderColor: "#F3EFE6", backgroundColor: "#F3EFE6", borderWidth: 2, borderDash: [5, 4], pointRadius: 4, tension: 0.15 },
-                        { label: "DINOv2 ViT-B/14", data: shufConds.map(c => MODEL_BENCHMARKS["DINOv2 ViT-B/14"][c]), borderColor: "#CCFF00", backgroundColor: "#CCFF00", borderWidth: 2, borderDash: [3, 3], pointRadius: 4, tension: 0.15 }
+                        { label: `${obsName} (You)`, data: shufConds.map(c => userAcc[c]), borderColor: "#2563EB", backgroundColor: "#2563EB", borderWidth: 2.5, pointRadius: 4, tension: 0.15 },
+                        { label: "CLIP ViT-L/14", data: shufConds.map(c => MODEL_BENCHMARKS["CLIP ViT-L/14"][c]), borderColor: "#64748B", backgroundColor: "#64748B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3.5, tension: 0.15 },
+                        { label: "DINOv2 ViT-B/14", data: shufConds.map(c => MODEL_BENCHMARKS["DINOv2 ViT-B/14"][c]), borderColor: "#059669", backgroundColor: "#059669", borderWidth: 2, borderDash: [3, 3], pointRadius: 3.5, tension: 0.15 }
                     ]
                 },
                 options: commonOpts
             });
-
-            // Render Category-by-Category Breakdown
-            const catGrid = document.getElementById("category-breakdown-grid");
-            catGrid.innerHTML = "";
-            CATEGORIES.forEach(c => {
-                const rows = recordedResponses.filter(r => r.correct_label === c.id);
-                const cAcc = rows.length ? Math.round((rows.reduce((a, b) => a + Number(b.correct), 0) / rows.length) * 100) : 0;
-                catGrid.innerHTML += `
-                    <div class="p-3 bg-[#070708] swiss-border space-y-1.5">
-                        <div class="flex items-center justify-between">
-                            <span class="mono text-xs font-bold text-[#F3EFE6] uppercase">${c.label}</span>
-                            <span class="mono text-xs font-bold ${cAcc >= 70 ? 'text-[#CCFF00]' : 'text-[#FF4D00]'}">${cAcc}%</span>
-                        </div>
-                        <div class="w-full h-1.5 bg-[#111113]">
-                            <div class="h-full ${cAcc >= 70 ? 'bg-[#CCFF00]' : 'bg-[#FF4D00]'}" style="width: ${cAcc}%"></div>
-                        </div>
-                    </div>`;
-            });
-
-            // Render Condition Telemetry Matrix
-            const condTable = document.getElementById("condition-breakdown-table");
-            condTable.innerHTML = "";
-            COND_LIST.forEach(c => {
-                const u = userAcc[c];
-                const clip = MODEL_BENCHMARKS["CLIP ViT-L/14"][c];
-                const dino = MODEL_BENCHMARKS["DINOv2 ViT-B/14"][c];
-                condTable.innerHTML += `
-                    <div class="flex items-center justify-between p-2 bg-[#070708] swiss-border">
-                        <span class="text-[#F3EFE6] font-semibold">${COND_LABELS[c]}</span>
-                        <div class="flex items-center gap-3">
-                            <span class="text-[#FF4D00] font-bold">YOU: ${u.toFixed(0)}%</span>
-                            <span class="text-[#8E8B82]">CLIP: ${clip.toFixed(0)}%</span>
-                            <span class="text-[#CCFF00]">DINO: ${dino.toFixed(0)}%</span>
-                        </div>
-                    </div>`;
-            });
         }
 
-        // =========================================================================
-        // 9. VIEW 04: RESEARCHER CONSOLE (CSV FILES + WHATSAPP BASE64 CODES)
-        // =========================================================================
+        // 10. RESEARCHER MODAL: CSV & VL1:... TOKEN AGGREGATOR
         function toggleAdminModal() {
-            playClickSound(750);
             document.getElementById("admin-modal").classList.toggle("hidden");
         }
 
@@ -2614,42 +1754,35 @@
 
             let allRows = [];
 
-            // 1. Parse uploaded CSV files
             for (const f of files) {
                 const text = await f.text();
                 const parsed = Papa.parse(text, { header: true, skipEmptyLines: true }).data;
                 allRows = allRows.concat(parsed);
             }
 
-            // 2. Extract and decode any VL1:... Base64 result tokens pasted into textarea
             if (b64Text) {
-                const matches = b64Text.match(/VL1:[A-Za-z0-9+/=_=-]+/g) || [];
+                const matches = b64Text.match(/VL1:[A-Za-z0-9+/=_-]+/g) || [];
                 if (matches.length > 0) {
                     for (const token of matches) {
                         try {
-                            const decoded = decodeResultToken(token);
-                            allRows = allRows.concat(decoded);
+                            allRows = allRows.concat(decodeResultToken(token));
                         } catch (err) {
                             console.warn("Could not decode VL1 token:", err);
                         }
                     }
                 } else {
-                    // Fallback: try raw base64 token without prefix
                     try {
-                        const decoded = decodeResultToken(b64Text);
-                        allRows = allRows.concat(decoded);
+                        allRows = allRows.concat(decodeResultToken(b64Text));
                     } catch (_) {}
                 }
             }
 
-            // Normalize & deduplicate by (participant, trial)
             const map = new Map();
             for (const r of allRows) {
                 if (!r || !r.condition || r.correct === undefined || r.correct === "") continue;
                 const pid = (r.participant || "P00").toString().trim();
                 const trial = Number(r.trial || 0);
-                const key = `${pid}__${trial}`;
-                map.set(key, {
+                map.set(`${pid}__${trial}`, {
                     participant: pid,
                     participant_name: (r.participant_name || "").toString().trim(),
                     trial: trial,
@@ -2667,15 +1800,13 @@
         }
 
         async function aggregateHumanCSVs() {
-            playClickSound(860);
             const merged = await collectAdminRows();
             if (!merged.length) {
-                alert("Please upload at least one responses_*.csv file OR paste a VL1:... Result Code.");
+                alert("Please select at least one responses_*.csv file or paste a VL1:... Result Code.");
                 return;
             }
             lastAdminMergedRows = merged;
 
-            // Roster summary
             const byParticipant = {};
             merged.forEach(r => {
                 const label = r.participant_name ? `${r.participant} (${r.participant_name})` : r.participant;
@@ -2683,7 +1814,7 @@
             });
             const rosterStr = Object.entries(byParticipant).map(([k, v]) => `${k}: ${v} trials`).join(" • ");
             document.getElementById("admin-roster").textContent =
-                `MERGED ${merged.length} TRIALS ACROSS ${Object.keys(byParticipant).length} OBSERVER(S): ${rosterStr}`;
+                `Merged ${merged.length} trials across ${Object.keys(byParticipant).length} participant(s): ${rosterStr}`;
 
             const outRows = [];
             for (const c of COND_LIST) {
@@ -2691,7 +1822,6 @@
                 if (!scores.length) continue;
                 const acc = (scores.reduce((a, b) => a + b, 0) / scores.length) * 100;
 
-                // 2000-resample Bootstrap 95% CI
                 const bootMeans = [];
                 for (let b = 0; b < 2000; b++) {
                     let sum = 0;
@@ -2727,10 +1857,9 @@
         }
 
         async function downloadMergedRawCSV() {
-            playClickSound(800);
             const merged = lastAdminMergedRows.length ? lastAdminMergedRows : await collectAdminRows();
             if (!merged.length) {
-                alert("No participant trials loaded yet. Select CSV files or paste VL1:... codes first.");
+                alert("No participant data loaded yet.");
                 return;
             }
             const csv = Papa.unparse(merged);
