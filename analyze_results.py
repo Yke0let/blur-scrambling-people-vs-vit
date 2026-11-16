@@ -12,6 +12,9 @@ This script performs two main tasks:
 from __future__ import annotations
 
 import argparse
+import base64
+import json
+import re
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -20,6 +23,10 @@ import matplotlib.pyplot as plt
 BASE_SEED = 1234
 N_BOOT = 2000
 
+CATEGORIES = [
+    "airplane", "bicycle", "car", "cat", "chair",
+    "clock", "fish", "house", "tree", "umbrella",
+]
 BLUR_SIGMAS = {"low": 2, "medium": 5, "high": 10}
 SHUFFLE_GRIDS = {"low": 2, "medium": 4, "high": 8}
 
@@ -49,21 +56,54 @@ def bootstrap_ci(correct: np.ndarray, n_boot: int = N_BOOT, seed: int = BASE_SEE
     return float(lo), float(hi)
 
 
+def decode_vl1_token(token_str: str) -> pd.DataFrame:
+    """Decode a compact Base64 'VL1:...' result token into a DataFrame of trials."""
+    cleaned = token_str.strip()
+    if cleaned.startswith("VL1:"):
+        cleaned = cleaned[4:]
+    payload = json.loads(base64.b64decode(cleaned).decode("utf-8"))
+    pid = str(payload.get("p", "P01")).strip()
+    pname = str(payload.get("n", "")).strip()
+    rows = []
+    for chunk in str(payload.get("d", "")).split(";"):
+        if not chunk:
+            continue
+        trial, uid, c_idx, lbl_idx, rsp_idx, rt = [int(x) for x in chunk.split(",")]
+        cond = COND_NAMES[c_idx]
+        corr_lbl = CATEGORIES[lbl_idx]
+        resp_lbl = CATEGORIES[rsp_idx]
+        rows.append({
+            "participant": pid,
+            "participant_name": pname,
+            "trial": trial,
+            "uid": uid,
+            "condition": cond,
+            "file": f"s{uid:04d}_{cond}.png",
+            "correct_label": corr_lbl,
+            "response": resp_lbl,
+            "correct": int(resp_lbl == corr_lbl),
+            "rt_ms": rt,
+        })
+    return pd.DataFrame(rows)
+
+
 def aggregate_human_logs(
     logs_dir: Path,
     out_csv: Path,
     n_boot: int = N_BOOT,
     seed: int = BASE_SEED,
 ) -> tuple[pd.DataFrame | None, pd.DataFrame | None]:
-    """Aggregate participant CSVs in `logs_dir` into `human_results.csv`.
+    """Aggregate participant CSVs (and optional VL1:... token files) in `logs_dir` into `human_results.csv`.
 
-    Returns `(human_results_df, raw_human_trials_df)`. If no valid CSVs are found in `logs_dir`,
+    Tolerates optional `participant_name` column in `responses_*.csv`.
+    Returns `(human_results_df, raw_human_trials_df)`. If no valid logs are found in `logs_dir`,
     returns `(None, None)` without overwriting `out_csv`.
     """
     logs_dir.mkdir(parents=True, exist_ok=True)
     csv_files = sorted(logs_dir.glob("*.csv"))
-    if not csv_files:
-        print(f"[Human Logs] No participant CSV files found in '{logs_dir}/'.")
+    token_files = sorted(list(logs_dir.glob("*.txt")) + list(logs_dir.glob("*.b64")))
+    if not csv_files and not token_files:
+        print(f"[Human Logs] No participant CSV or token files found in '{logs_dir}/'.")
         return None, None
 
     frames = []
@@ -76,7 +116,17 @@ def aggregate_human_logs(
         if missing:
             print(f"[Human Logs] Skipping '{path.name}' (missing columns: {sorted(missing)}).")
             continue
+        if "participant_name" not in df.columns:
+            df["participant_name"] = ""
         frames.append(df)
+
+    for tpath in token_files:
+        text = tpath.read_text(encoding="utf-8", errors="ignore")
+        for match in re.findall(r"VL1:[A-Za-z0-9+/=_-]+", text):
+            try:
+                frames.append(decode_vl1_token(match))
+            except Exception as exc:
+                print(f"[Human Logs] Could not decode VL1 token in '{tpath.name}': {exc}")
 
     if not frames:
         print(f"[Human Logs] No valid participant logs found in '{logs_dir}/'.")
@@ -84,6 +134,7 @@ def aggregate_human_logs(
 
     raw = pd.concat(frames, ignore_index=True)
     raw["participant"] = raw["participant"].astype(str).str.strip()
+    raw["participant_name"] = raw["participant_name"].fillna("").astype(str).str.strip()
     raw["condition"] = raw["condition"].astype(str).str.strip()
     raw["uid"] = pd.to_numeric(raw["uid"], errors="coerce").astype("Int64")
     raw["trial"] = pd.to_numeric(raw["trial"], errors="coerce").astype("Int64")
@@ -96,8 +147,12 @@ def aggregate_human_logs(
         print(f"[Human Logs] Deduplicated {before_dedup - len(raw)} duplicate (participant, trial) row(s).")
 
     participants = sorted(raw["participant"].unique())
-    counts_by_p = raw.groupby("participant").size().to_dict()
-    print(f"[Human Logs] Loaded {len(raw)} trials across {len(participants)} participant(s): {counts_by_p}")
+    roster = {}
+    for pid, grp in raw.groupby("participant"):
+        names = [n for n in grp["participant_name"].unique() if n]
+        label = f"{pid} ({names[-1]})" if names else str(pid)
+        roster[label] = len(grp)
+    print(f"[Human Logs] Loaded {len(raw)} trials across {len(participants)} participant(s): {roster}")
     if "rt_ms" in raw.columns:
         rts = pd.to_numeric(raw["rt_ms"], errors="coerce").dropna()
         if not rts.empty:
@@ -345,3 +400,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
