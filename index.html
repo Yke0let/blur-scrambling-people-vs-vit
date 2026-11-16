@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vision Lab — People vs. Vision Models</title>
+    <!-- Tailwind CSS & Chart.js & PapaParse -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #06080F;
+            color: #F8FAFC;
+            overflow-x: hidden;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glow-border:hover {
+            border-color: rgba(99, 102, 241, 0.6);
+            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.35);
+        }
+
+        .bg-grid {
+            background-size: 32px 32px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+        }
+
+        .fixation-pulse {
+            animation: pulse-ring 1.2s infinite ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-grid flex flex-col justify-between relative selection:bg-indigo-500 selection:text-white">
+
+    <!-- Ambient glowing orbs -->
+    <div
+        class="pointer-events-none fixed top-[-150px] left-[-150px] w-96 h-96 rounded-full bg-indigo-600/15 blur-[120px]">
+    </div>
+    <div
+        class="pointer-events-none fixed bottom-[-150px] right-[-150px] w-96 h-96 rounded-full bg-cyan-500/15 blur-[120px]">
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="w-full px-6 py-4 flex items-center justify-between border-b border-white/5 glass z-20">
+        <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_12px_#6366f1]"></div>
+            <span class="font-semibold tracking-tight text-sm md:text-base">
+                NEURAL VISION LAB <span class="text-slate-500 font-normal">| Blur & Scrambling Psychophysics</span>
+            </span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div id="status-badge"
+                class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs mono text-slate-300">
+                <span id="badge-participant">P01</span> • <span id="badge-progress">0 / 70</span>
+            </div>
+            <button onclick="toggleAdminModal()"
+                class="text-xs mono px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-white/10 transition">
+                Mode Chercheur (CSV)
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 flex items-center justify-center p-4 md:p-8 z-10">
+
+        <!-- ==================== VIEW 1: WELCOME & CONSENT ==================== -->
+        <section id="view-welcome" class="max-w-3xl w-full glass rounded-2xl p-6 md:p-10 shadow-2xl space-y-8">
+            <div class="space-y-3">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-medium mono">
+                    HUMAN VS. VISION TRANSFORMERS (CLIP & DINOv2)
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white">
+                    Visual Robustness Experiment
+                </h1>
+                <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+                    You will see <strong>70 brief line drawings</strong> (from 10 everyday categories), some of which
+                    are blurred or cut into shuffled tiles. Each image appears for <strong>exactly 2.0 seconds</strong>
+                    followed by a visual noise mask.
+                </p>
+            </div>
+
+            <!-- Visual preview of the 10 categories -->
+            <div class="space-y-2">
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 mono">
+                    The 10 Target Categories (memorize them before starting)
+                </label>
+                <div id="welcome-categories" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-1"></div>
+            </div>
+
+            <!-- Participant ID & Local File Fallback -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div class="p-4 rounded-xl bg-slate-900/70 border border-white/10 space-y-2">
+                    <label class="text-xs text-slate-400 mono block">1. SELECT YOUR PARTICIPANT ID</label>
+                    <select id="participant-select"
+                        class="w-full bg-slate-950 border border-white/15 rounded-lg px-3 py-2.5 text-white font-medium mono focus:outline-none focus:border-indigo-500">
+                        <option value="P01">Participant P01</option>
+                        <option value="P02">Participant P02</option>
+                        <option value="P03">Participant P03</option>
+                        <option value="P04">Participant P04</option>
+                        <option value="P05">Participant P05</option>
+                        <option value="P06">Participant P06</option>
+                        <option value="P07">Participant P07</option>
+                        <option value="P08">Participant P08</option>
+                        <option value="P09">Participant P09</option>
+                        <option value="P10">Participant P10</option>
+                        <option value="P11">Participant P11</option>
+                        <option value="P12">Participant P12</option>
+                    </select>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900/70 border border-white/10 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs text-slate-400 mono">2. STIMULI SOURCE</label>
+                        <span id="source-status" class="text-xs mono text-emerald-400">Auto-detecting...</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-snug">
+                        Hosted mode loads <code class="text-slate-200">human_trials.csv</code> automatically. Running
+                        offline? Load files below:
+                    </p>
+                    <div class="flex gap-2 pt-1">
+                        <label
+                            class="flex-1 text-center cursor-pointer text-xs mono py-1.5 px-2 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition">
+                            + CSV
+                            <input type="file" id="local-csv-input" accept=".csv" class="hidden" />
+                        </label>
+                        <label
+                            class="flex-1 text-center cursor-pointer text-xs mono py-1.5 px-2 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition">
+                            + PNG Folder
+                            <input type="file" id="local-folder-input" webkitdirectory directory multiple
+                                class="hidden" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saved Progress / Resume Banner (Populated dynamically from localStorage) -->
+            <div id="resume-banner"
+                class="hidden p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-0.5">
+                    <div id="resume-title" class="text-xs font-semibold mono text-cyan-300">SAVED PROGRESS FOUND</div>
+                    <div id="resume-subtitle" class="text-xs text-slate-300"></div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button id="btn-view-saved-results" onclick="restoreCompletedSession()"
+                        class="hidden text-xs mono px-3 py-1.5 rounded-lg bg-emerald-600/80 hover:bg-emerald-500 text-white transition">
+                        View Results / CSV
+                    </button>
+                    <button onclick="resetCurrentParticipantProgress()"
+                        class="text-xs mono px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-900/70 text-slate-300 hover:text-rose-200 border border-white/10 transition">
+                        Reset Saved
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ethics & Consent Box -->
+            <label
+                class="flex items-start gap-3 p-4 rounded-xl bg-indigo-950/20 border border-indigo-500/20 cursor-pointer select-none">
+                <input type="checkbox" id="consent-checkbox" class="mt-1 w-4 h-4 accent-indigo-500 rounded" />
+                <span class="text-xs md:text-sm text-slate-300 leading-relaxed">
+                    <strong>Informed Consent:</strong> I understand that participation is voluntary (~10–12 min), only
+                    anonymous response accuracy and reaction times are recorded, and I may stop or close this page at
+                    any time without consequence.
+                </span>
+            </label>
+
+            <!-- Preload Progress Bar (Hidden until start) -->
+            <div id="preload-container" class="hidden space-y-2">
+                <div class="flex justify-between text-xs mono text-indigo-300">
+                    <span id="preload-label">Preloading 70 stimuli into RAM for 0ms latency...</span>
+                    <span id="preload-pct">0%</span>
+                </div>
+                <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                    <div id="preload-bar"
+                        class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 w-0 transition-all duration-150">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <button id="btn-practice" onclick="startPractice()"
+                    class="py-4 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-indigo-500/30 hover:border-indigo-400/60 text-indigo-200 font-medium text-sm transition flex items-center justify-center gap-2">
+                    <span>Practice / Warm-up (2 Trials)</span>
+                </button>
+                <button id="btn-start" onclick="startExperiment()"
+                    class="sm:col-span-2 py-4 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold tracking-wide shadow-lg shadow-indigo-600/25 transition transform active:scale-[0.99]">
+                    Initialize Calibration & Start Experiment →
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 2: ACTIVE TRIAL ARENA ==================== -->
+        <section id="view-trial" class="hidden max-w-4xl w-full flex flex-col items-center space-y-6">
+
+            <!-- Practice Mode Banner -->
+            <div id="practice-banner"
+                class="hidden w-full max-w-md px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs mono text-center">
+                PRACTICE WARM-UP MODE • Responses are NOT recorded
+            </div>
+
+            <!-- Top Trial Progress Bar -->
+            <div class="w-full max-w-md space-y-2">
+                <div class="flex items-center justify-between text-xs mono text-slate-400">
+                    <span id="trial-counter-text">TRIAL 01 / 70</span>
+                    <div class="flex items-center gap-3">
+                        <span id="trial-phase-text" class="text-indigo-400">FIXATION</span>
+                        <button onclick="quitToWelcome()"
+                            class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition text-[11px]">
+                            Pause / Exit
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                    <div id="trial-progress-bar" class="h-full bg-indigo-500 w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Practice Feedback Card (Shown only after a practice response) -->
+            <div id="practice-feedback-card"
+                class="hidden w-full max-w-md p-4 rounded-xl glass border border-indigo-500/30 text-center space-y-3">
+                <div id="practice-feedback-text" class="text-sm text-slate-200"></div>
+                <button id="practice-next-btn" onclick="advancePractice()"
+                    class="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold mono transition">
+                    Next Practice Trial →
+                </button>
+            </div>
+
+            <!-- STIMULUS VIEWPORT (Exact 224x224 scaled cleanly + SVG timer ring) -->
+            <div class="relative flex items-center justify-center w-[280px] h-[280px]">
+                <!-- SVG Countdown Ring -->
+                <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 280 280">
+                    <circle cx="140" cy="140" r="132" stroke="rgba(255,255,255,0.06)" stroke-width="4" fill="none" />
+                    <circle id="timer-ring" cx="140" cy="140" r="132" stroke="#6366f1" stroke-width="4" fill="none"
+                        stroke-dasharray="829.38" stroke-dashoffset="0" stroke-linecap="round" />
+                </svg>
+
+                <!-- 224x224 Native Resolution Box -->
+                <div
+                    class="relative w-[224px] h-[224px] rounded-xl overflow-hidden shadow-2xl border border-white/15 bg-slate-950 flex items-center justify-center">
+
+                    <!-- Phase 1: Fixation Cross -->
+                    <div id="fixation-layer" class="hidden flex items-center justify-center w-full h-full bg-slate-950">
+                        <div class="relative w-8 h-8 fixation-pulse">
+                            <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-indigo-400"></div>
+                            <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-indigo-400"></div>
+                            <div
+                                class="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-cyan-400">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 2: Stimulus Image (224x224) -->
+                    <img id="stimulus-img" src="" alt="Stimulus"
+                        class="hidden w-[224px] h-[224px] object-contain bg-white select-none pointer-events-none"
+                        style="image-rendering: pixelated;" />
+
+                    <!-- Phase 3: Procedural Backward Mask Canvas (224x224) -->
+                    <canvas id="mask-canvas" width="224" height="224" class="hidden w-[224px] h-[224px]"></canvas>
+
+                    <!-- Phase 4: Prompt Overlay -->
+                    <div id="prompt-layer"
+                        class="hidden flex flex-col items-center justify-center w-full h-full bg-slate-950 text-center p-4">
+                        <span class="text-xs mono text-indigo-400 uppercase tracking-widest mb-1">Time's up</span>
+                        <span class="text-sm font-medium text-slate-200">Select the category below</span>
+                        <span class="text-[11px] mono text-slate-500 mt-2">Click or press keys [1–9, 0]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10-WAY FORCED CHOICE RESPONSE GRID -->
+            <div id="response-grid"
+                class="grid grid-cols-2 sm:grid-cols-5 gap-3 w-full max-w-3xl opacity-30 pointer-events-none transition-opacity duration-150">
+                <!-- Populated dynamically by JS -->
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 3: RESULTS & AI COMPARISON ==================== -->
+        <section id="view-results" class="hidden max-w-5xl w-full glass rounded-2xl p-6 md:p-10 shadow-2xl space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+                <div>
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium mono mb-2">
+                        EXPERIMENT COMPLETE • CSV EXPORTED
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">
+                        Your Visual Cortex vs. Vision Transformers
+                    </h2>
+                    <p class="text-slate-400 text-sm">
+                        Live comparison of your 10-way accuracy against frozen <strong>CLIP ViT-L/14</strong> and
+                        <strong>DINOv2 ViT-B/14</strong> linear probes.
+                    </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 shrink-0">
+                    <button onclick="returnToWelcomeFromResults()"
+                        class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs mono border border-white/10 transition">
+                        ← Participant Setup
+                    </button>
+                    <button onclick="downloadParticipantCSV()"
+                        class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm mono shadow-lg shadow-indigo-600/30 transition">
+                        ⬇ Re-download My CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Summary Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-white/10">
+                    <span class="text-xs mono text-slate-400">YOUR OVERALL ACCURACY</span>
+                    <div id="stat-overall" class="text-2xl font-bold text-white mt-1">--%</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-white/10">
+                    <span class="text-xs mono text-slate-400">YOUR SHUFFLE ROBUSTNESS</span>
+                    <div id="stat-shuffle" class="text-2xl font-bold text-cyan-400 mt-1">--%</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-white/10">
+                    <span class="text-xs mono text-slate-400">YOUR BLUR ROBUSTNESS</span>
+                    <div id="stat-blur" class="text-2xl font-bold text-indigo-400 mt-1">--%</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-white/10">
+                    <span class="text-xs mono text-slate-400">MEDIAN REACTION TIME</span>
+                    <div id="stat-rt" class="text-2xl font-bold text-emerald-400 mt-1">-- ms</div>
+                </div>
+            </div>
+
+            <!-- Two-Panel Interactive Chart (Blur | Shuffle) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-5 rounded-xl bg-slate-950/80 border border-white/10">
+                    <h3 class="text-sm font-semibold text-slate-200 mono mb-3 text-center">Panel A — Gaussian Blur (Fine
+                        Contours)</h3>
+                    <canvas id="chart-blur" height="220"></canvas>
+                </div>
+                <div class="p-5 rounded-xl bg-slate-950/80 border border-white/10">
+                    <h3 class="text-sm font-semibold text-slate-200 mono mb-3 text-center">Panel B — Tile Shuffle (7 px
+                        Offset Grid)</h3>
+                    <canvas id="chart-shuffle" height="220"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== ADMIN MODAL: CSV AGGREGATOR ==================== -->
+    <div id="admin-modal"
+        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="max-w-lg w-full glass rounded-2xl p-6 space-y-5 border border-white/15">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white mono">Chercheur : Générer human_results.csv</h3>
+                <button onclick="toggleAdminModal()" class="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Sélectionnez tous les fichiers <code class="text-indigo-300">responses_P01.csv ... P12.csv</code>
+                récoltés. Cet outil calcule automatiquement l'Accuracy (%) et l'intervalle de confiance à 95 % par
+                <strong>Bootstrap (2000 resamples)</strong> et télécharge le fichier <code
+                    class="text-emerald-300">human_results.csv</code> prêt pour votre Notebook Colab !
+            </p>
+            <input type="file" id="admin-files" accept=".csv" multiple
+                class="w-full text-xs mono text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:text-white hover:file:bg-indigo-500" />
+            <div id="admin-output" class="text-xs mono text-emerald-400 whitespace-pre-wrap"></div>
+            <button onclick="aggregateHumanCSVs()"
+                class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs mono transition">
+                Calculer Bootstrap CI & Télécharger human_results.csv
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full py-3 px-6 text-center text-xs text-slate-600 mono border-t border-white/5">
+        Quick, Draw! Dataset (CC BY 4.0) • Fixed 2000ms Exposure + 400ms Procedural Backward Mask
+    </footer>
+
+    <!-- ==================== APPLICATION SCRIPT ==================== -->
+    <script>
+        // 1. CATEGORIES & CUSTOM MINIMALIST SVG ICONS
+        const CATEGORIES = [
+            { id: "airplane", key: "1", label: "Airplane", fr: "Avion", svg: `<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>` },
+            { id: "bicycle", key: "2", label: "Bicycle", fr: "Vélo", svg: `<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>` },
+            { id: "car", key: "3", label: "Car", fr: "Voiture", svg: `<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>` },
+            { id: "cat", key: "4", label: "Cat", fr: "Chat", svg: `<path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z"/>` },
+            { id: "chair", key: "5", label: "Chair", fr: "Chaise", svg: `<path d="M6 19v2M18 19v2M6 3v10h12V3M6 13h12l1 6H5l1-6Z"/>` },
+            { id: "clock", key: "6", label: "Clock", fr: "Horloge", svg: `<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>` },
+            { id: "fish", key: "7", label: "Fish", fr: "Poisson", svg: `<path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z"/><path d="M2 9l4.5 3L2 15V9Z"/>` },
+            { id: "house", key: "8", label: "House", fr: "Maison", svg: `<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>` },
+            { id: "tree", key: "9", label: "Tree", fr: "Arbre", svg: `<path d="M12 19v3M8 19h8l-2-5h3l-3-5h2L12 3 8 9h2l-3 5h3l-2 5Z"/>` },
+            { id: "umbrella", key: "0", label: "Umbrella", fr: "Parapluie", svg: `<path d="M22 12a10.06 10.06 1 0 0-20 0Z"/><path d="M12 12v8a2 2 0 0 0 4 0"/>` }
+        ];
+
+        // Exact model reference accuracies from your Colab Notebook (model_results.csv, N=1000)
+        const MODEL_BENCHMARKS = {
+            "CLIP ViT-L/14": { intact: 97.7, blur_low: 91.9, blur_medium: 84.5, blur_high: 50.8, shuffle_low: 63.5, shuffle_medium: 23.8, shuffle_high: 15.5 },
+            "DINOv2 ViT-B/14": { intact: 97.5, blur_low: 97.5, blur_medium: 76.5, blur_high: 58.2, shuffle_low: 76.8, shuffle_medium: 21.2, shuffle_high: 10.4 }
+        };
+
+        // Timing constants (Fixed in advance per proposal)
+        const TIME_FIXATION_MS = 600;
+        const TIME_EXPOSURE_MS = 2000;
+        const TIME_MASK_MS = 400;
+
+        // LocalStorage keys
+        const STORAGE_PREFIX = "blur_scrambling_progress_v1_";
+        const STORAGE_LAST_PID = "blur_scrambling_last_pid_v1";
+
+        // State variables
+        let allTrialsCSV = [];
+        let csvSourceMode = "detecting"; // "hosted" | "local" | "none" | "detecting"
+        let localFilesMap = {}; // filename -> ObjectURL (if loaded offline)
+        let participantTrials = [];
+        let preloadedImages = {};
+        let currentTrialIdx = 0;
+        let canRespond = false;
+        let responseStartTime = 0;
+        let recordedResponses = [];
+
+        // Practice warm-up state (isolated from real recordedResponses & localStorage)
+        let isPracticeMode = false;
+        let practiceTrials = [];
+        let practiceIdx = 0;
+        let practiceCorrectCount = 0;
+
+        // Active timer handles for clean cancellation on pause/exit
+        let fixationTimerId = null;
+        let exposureRafId = null;
+        let maskTimerId = null;
+        let maskAnimId = null;
+
+        // Chart.js instances
+        let chartBlurInstance = null;
+        let chartShuffleInstance = null;
+
+        // 2. INITIALIZE UI, RESTORE PARTICIPANT ID & AUTO-FETCH CSV
+        window.addEventListener("DOMContentLoaded", () => {
+            renderCategoryGrids();
+
+            const pidSelect = document.getElementById("participant-select");
+            try {
+                const lastPid = localStorage.getItem(STORAGE_LAST_PID);
+                if (lastPid && Array.from(pidSelect.options).some(o => o.value === lastPid)) {
+                    pidSelect.value = lastPid;
+                }
+            } catch (_) { /* ignore storage errors */ }
+
+            pidSelect.addEventListener("change", () => {
+                try {
+                    localStorage.setItem(STORAGE_LAST_PID, pidSelect.value);
+                } catch (_) { /* ignore */ }
+                refreshResumeBanner();
+            });
+
+            refreshResumeBanner();
+            tryAutoFetchCSV();
+
+            // Local CSV fallback
+            document.getElementById("local-csv-input").addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                Papa.parse(file, {
+                    header: true, skipEmptyLines: true,
+                    complete: (res) => {
+                        allTrialsCSV = sanitizeCSVRows(res.data);
+                        csvSourceMode = "local";
+                        updateSourceStatus();
+                        refreshResumeBanner();
+                    }
+                });
+            });
+
+            // Local PNG folder fallback
+            document.getElementById("local-folder-input").addEventListener("change", (e) => {
+                for (const f of e.target.files) {
+                    if (f.name.toLowerCase().endsWith(".png")) {
+                        localFilesMap[f.name] = URL.createObjectURL(f);
+                    }
+                }
+                updateSourceStatus();
+            });
+
+            // Keyboard shortcuts 1-9, 0 during response phase
+            window.addEventListener("keydown", (e) => {
+                if (!canRespond) return;
+                const found = CATEGORIES.find(c => c.key === e.key);
+                if (found) submitResponse(found.id);
+            });
+        });
+
+        function sanitizeCSVRows(rows) {
+            return (rows || [])
+                .map(r => ({
+                    participant: (r.participant || "").trim(),
+                    uid: (r.uid || "").toString().trim(),
+                    condition: (r.condition || "").trim(),
+                    file: (r.file || "").trim(),
+                    correct_label: (r.correct_label || "").trim(),
+                    trial: (r.trial || "").toString().trim()
+                }))
+                .filter(r => r.participant && r.file && r.condition && r.correct_label);
+        }
+
+        function updateSourceStatus() {
+            const el = document.getElementById("source-status");
+            const pngCount = Object.keys(localFilesMap).length;
+            el.classList.remove("text-emerald-400", "text-amber-400");
+
+            if (csvSourceMode === "hosted") {
+                el.textContent = pngCount > 0 ? `Hosted CSV + ${pngCount} Local PNGs ✓` : "Hosted CSV Ready ✓";
+                el.classList.add("text-emerald-400");
+            } else if (csvSourceMode === "local") {
+                if (pngCount > 0) {
+                    el.textContent = `Local CSV (${allTrialsCSV.length} rows) & ${pngCount} PNGs ✓`;
+                    el.classList.add("text-emerald-400");
+                } else {
+                    el.textContent = `CSV Loaded (${allTrialsCSV.length} rows) — select PNG folder if offline`;
+                    el.classList.add("text-amber-400");
+                }
+            } else {
+                el.textContent = pngCount > 0 ? `${pngCount} PNGs Ready — select CSV` : "Select local CSV/PNGs";
+                el.classList.add("text-amber-400");
+            }
+        }
+
+        function renderCategoryGrids() {
+            const welcomeGrid = document.getElementById("welcome-categories");
+            const responseGrid = document.getElementById("response-grid");
+            welcomeGrid.innerHTML = "";
+            responseGrid.innerHTML = "";
+
+            CATEGORIES.forEach(c => {
+                welcomeGrid.innerHTML += `
+          <div class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-900/60 border border-white/5">
+            <svg class="w-5 h-5 text-indigo-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
+            <div class="leading-tight">
+              <div class="text-xs font-semibold text-white">${c.label}</div>
+              <div class="text-[10px] text-slate-500">${c.fr}</div>
+            </div>
+          </div>`;
+
+                responseGrid.innerHTML += `
+          <button onclick="submitResponse('${c.id}')" class="group relative flex flex-col items-center justify-center p-3.5 rounded-xl glass glow-border transition transform active:scale-95 text-center">
+            <span class="absolute top-2 right-2 text-[10px] mono px-1.5 py-0.5 rounded bg-white/5 text-slate-400 group-hover:text-indigo-300">[${c.key}]</span>
+            <svg class="w-6 h-6 text-slate-300 group-hover:text-indigo-400 mb-1.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
+            <span class="text-xs font-semibold text-white">${c.label}</span>
+            <span class="text-[10px] text-slate-500">${c.fr}</span>
+          </button>`;
+            });
+        }
+
+        async function tryAutoFetchCSV() {
+            try {
+                const resp = await fetch("./human_trials.csv", { cache: "no-store" });
+                if (!resp.ok) throw new Error("Not hosted");
+                const text = await resp.text();
+                Papa.parse(text, {
+                    header: true, skipEmptyLines: true,
+                    complete: (res) => {
+                        allTrialsCSV = sanitizeCSVRows(res.data);
+                        csvSourceMode = "hosted";
+                        updateSourceStatus();
+                        refreshResumeBanner();
+                    }
+                });
+            } catch (err) {
+                csvSourceMode = "none";
+                updateSourceStatus();
+            }
+        }
+
+        // 2B. LOCALSTORAGE AUTO-SAVE & RESUME HELPERS
+        function getSavedProgress(pid) {
+            try {
+                const raw = localStorage.getItem(STORAGE_PREFIX + pid);
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                if (!parsed || parsed.participant !== pid || !Array.isArray(parsed.recordedResponses)) return null;
+                return parsed;
+            } catch (_) {
+                return null;
+            }
+        }
+
+        function saveParticipantProgress(pid, trialIdx, responses, completed) {
+            try {
+                localStorage.setItem(STORAGE_PREFIX + pid, JSON.stringify({
+                    participant: pid,
+                    currentTrialIdx: trialIdx,
+                    recordedResponses: responses,
+                    completed: Boolean(completed),
+                    updatedAt: new Date().toISOString()
+                }));
+                localStorage.setItem(STORAGE_LAST_PID, pid);
+            } catch (_) { /* ignore quota/privacy errors */ }
+        }
+
+        function clearParticipantProgress(pid) {
+            try {
+                localStorage.removeItem(STORAGE_PREFIX + pid);
+            } catch (_) { /* ignore */ }
+        }
+
+        function refreshResumeBanner() {
+            const pid = document.getElementById("participant-select").value;
+            const saved = getSavedProgress(pid);
+            const banner = document.getElementById("resume-banner");
+            const title = document.getElementById("resume-title");
+            const subtitle = document.getElementById("resume-subtitle");
+            const viewBtn = document.getElementById("btn-view-saved-results");
+            const startBtn = document.getElementById("btn-start");
+
+            const pidTrials = allTrialsCSV.filter(r => r.participant === pid);
+            const expectedTotal = pidTrials.length || 70;
+
+            if (!saved || saved.recordedResponses.length === 0) {
+                banner.classList.add("hidden");
+                viewBtn.classList.add("hidden");
+                startBtn.textContent = "Initialize Calibration & Start Experiment →";
+                return;
+            }
+
+            const count = saved.recordedResponses.length;
+            const when = saved.updatedAt ? new Date(saved.updatedAt).toLocaleString() : "earlier";
+            banner.classList.remove("hidden");
+
+            if (saved.completed || saved.currentTrialIdx >= expectedTotal) {
+                banner.className = "p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+                title.className = "text-xs font-semibold mono text-emerald-300";
+                title.textContent = `${pid} ALREADY COMPLETED (${count} / ${expectedTotal} TRIALS)`;
+                subtitle.textContent = `Finished ${when}. You can re-view results & re-download CSV, or reset to run again.`;
+                viewBtn.classList.remove("hidden");
+                startBtn.textContent = `Restart ${pid} from Trial 1 →`;
+            } else {
+                banner.className = "p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+                title.className = "text-xs font-semibold mono text-cyan-300";
+                title.textContent = `SAVED SESSION FOUND FOR ${pid}`;
+                subtitle.textContent = `Completed ${count} / ${expectedTotal} trials (last saved ${when}). Click Resume to continue at Trial ${saved.currentTrialIdx + 1}.`;
+                viewBtn.classList.add("hidden");
+                startBtn.textContent = `Resume ${pid} at Trial ${saved.currentTrialIdx + 1} / ${expectedTotal} →`;
+            }
+        }
+
+        function resetCurrentParticipantProgress() {
+            const pid = document.getElementById("participant-select").value;
+            if (!confirm(`Clear saved progress for ${pid}? This cannot be undone.`)) return;
+            clearParticipantProgress(pid);
+            refreshResumeBanner();
+        }
+
+        function restoreCompletedSession() {
+            const pid = document.getElementById("participant-select").value;
+            const saved = getSavedProgress(pid);
+            if (!saved || !saved.recordedResponses.length) return;
+            recordedResponses = saved.recordedResponses;
+            currentTrialIdx = saved.currentTrialIdx;
+            document.getElementById("view-welcome").classList.add("hidden");
+            document.getElementById("view-results").classList.remove("hidden");
+            document.getElementById("status-badge").classList.remove("hidden");
+            document.getElementById("badge-participant").textContent = pid;
+            document.getElementById("badge-progress").textContent = `${recordedResponses.length} / ${recordedResponses.length}`;
+            renderResultsDashboard();
+        }
+
+        // 2C. 2-TRIAL PRACTICE / WARM-UP (SYNTHETIC 224x224 STIMULI — UNSCORED)
+        function generatePracticeStimuli() {
+            // Draws two synthetic 224x224 grayscale Quick, Draw!-style line drawings (20px margin, 4px stroke)
+            const makeCanvas = () => {
+                const c = document.createElement("canvas");
+                c.width = 224;
+                c.height = 224;
+                const ctx = c.getContext("2d");
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, 224, 224);
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 4;
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+                return { c, ctx };
+            };
+
+            // Practice Trial 1: Intact Clock
+            const p1 = makeCanvas();
+            p1.ctx.beginPath();
+            p1.ctx.arc(112, 112, 78, 0, Math.PI * 2);
+            p1.ctx.stroke();
+            for (let a = 0; a < 4; a++) {
+                const ang = (a * Math.PI) / 2;
+                p1.ctx.beginPath();
+                p1.ctx.moveTo(112 + Math.cos(ang) * 64, 112 + Math.sin(ang) * 64);
+                p1.ctx.lineTo(112 + Math.cos(ang) * 76, 112 + Math.sin(ang) * 76);
+                p1.ctx.stroke();
+            }
+            p1.ctx.beginPath();
+            p1.ctx.moveTo(112, 112);
+            p1.ctx.lineTo(112, 60);
+            p1.ctx.moveTo(112, 112);
+            p1.ctx.lineTo(150, 128);
+            p1.ctx.stroke();
+
+            // Practice Trial 2: House with 7px-offset 2x2 tile shuffle
+            const p2raw = makeCanvas();
+            p2raw.ctx.beginPath();
+            // Roof
+            p2raw.ctx.moveTo(36, 108);
+            p2raw.ctx.lineTo(112, 38);
+            p2raw.ctx.lineTo(188, 108);
+            p2raw.ctx.closePath();
+            p2raw.ctx.stroke();
+            // Body
+            p2raw.ctx.strokeRect(52, 108, 120, 82);
+            // Door
+            p2raw.ctx.strokeRect(98, 138, 28, 52);
+            // Window
+            p2raw.ctx.strokeRect(64, 124, 24, 24);
+
+            // Apply exact 7px-offset 2x2 derangement [2, 3, 0, 1]
+            const rolled = makeCanvas();
+            rolled.ctx.drawImage(p2raw.c, 7, 7);
+            const shuffled = makeCanvas();
+            const perm = [2, 3, 0, 1];
+            for (let dst = 0; dst < 4; dst++) {
+                const src = perm[dst];
+                const sx = (src % 2) * 112, sy = Math.floor(src / 2) * 112;
+                const dx = (dst % 2) * 112, dy = Math.floor(dst / 2) * 112;
+                shuffled.ctx.drawImage(rolled.c, sx, sy, 112, 112, dx, dy, 112, 112);
+            }
+            const p2out = makeCanvas();
+            p2out.ctx.drawImage(shuffled.c, -7, -7);
+
+            return [
+                { label: "clock", condition: "intact (practice)", dataUrl: p1.c.toDataURL("image/png") },
+                { label: "house", condition: "2x2 shuffle (practice)", dataUrl: p2out.c.toDataURL("image/png") }
+            ];
+        }
+
+        function startPractice() {
+            clearTrialTimers();
+            isPracticeMode = true;
+            practiceTrials = generatePracticeStimuli();
+            practiceIdx = 0;
+            practiceCorrectCount = 0;
+
+            document.getElementById("view-welcome").classList.add("hidden");
+            document.getElementById("view-results").classList.add("hidden");
+            document.getElementById("view-trial").classList.remove("hidden");
+            document.getElementById("practice-banner").classList.remove("hidden");
+            document.getElementById("practice-feedback-card").classList.add("hidden");
+            document.getElementById("status-badge").classList.remove("hidden");
+            document.getElementById("badge-participant").textContent = "WARM-UP";
+
+            runTrial(0);
+        }
+
+        function advancePractice() {
+            document.getElementById("practice-feedback-card").classList.add("hidden");
+            practiceIdx++;
+            if (practiceIdx >= practiceTrials.length) {
+                quitToWelcome(true);
+            } else {
+                runTrial(practiceIdx);
+            }
+        }
+
+        // 3. PRELOAD & START EXPERIMENT
+        async function startExperiment() {
+            if (!document.getElementById("consent-checkbox").checked) {
+                alert("Please check the Informed Consent box before starting.");
+                return;
+            }
+            if (allTrialsCSV.length === 0) {
+                alert("human_trials.csv is not loaded yet! Either host this file next to human_trials.csv or click '+ CSV' to select it.");
+                return;
+            }
+
+            const pid = document.getElementById("participant-select").value;
+            participantTrials = allTrialsCSV.filter(r => r.participant === pid);
+            if (participantTrials.length === 0) {
+                alert(`No trials found for ${pid} in human_trials.csv.`);
+                return;
+            }
+
+            // Check saved localStorage state for resume
+            const saved = getSavedProgress(pid);
+            let resumeIdx = 0;
+            let resumeResponses = [];
+            if (saved && !saved.completed && saved.currentTrialIdx > 0 && saved.currentTrialIdx < participantTrials.length) {
+                const sameCount = saved.recordedResponses.length === saved.currentTrialIdx;
+                const sameFirst = saved.recordedResponses[0] && String(saved.recordedResponses[0].uid) === String(participantTrials[0].uid);
+                if (sameCount && sameFirst) {
+                    resumeIdx = saved.currentTrialIdx;
+                    resumeResponses = saved.recordedResponses.slice();
+                }
+            } else if (saved && (saved.completed || saved.currentTrialIdx >= participantTrials.length)) {
+                if (!confirm(`${pid} already has a completed session saved. Restart ${pid} from Trial 1 and overwrite saved progress?`)) {
+                    return;
+                }
+                clearParticipantProgress(pid);
+            }
+
+            const trialsToPreload = participantTrials.slice(resumeIdx);
+            document.getElementById("preload-container").classList.remove("hidden");
+            document.getElementById("preload-label").textContent =
+                resumeIdx > 0
+                    ? `Preloading ${trialsToPreload.length} remaining stimuli to resume Trial ${resumeIdx + 1}...`
+                    : `Preloading ${trialsToPreload.length} stimuli into RAM for 0ms latency...`;
+            document.getElementById("preload-pct").textContent = "0%";
+            document.getElementById("preload-bar").style.width = "0%";
+            document.getElementById("btn-start").disabled = true;
+
+            // Preload required images into RAM
+            let loaded = 0;
+            const failedFiles = [];
+            await Promise.all(trialsToPreload.map(row => new Promise((resolve) => {
+                const img = new Image();
+                const fname = row.file.trim();
+                const src = localFilesMap[fname] ? localFilesMap[fname] : `./stimuli_human/${fname}`;
+                img.onload = () => {
+                    preloadedImages[fname] = src;
+                    loaded++;
+                    const pct = Math.round((loaded / trialsToPreload.length) * 100);
+                    document.getElementById("preload-pct").textContent = `${pct}%`;
+                    document.getElementById("preload-bar").style.width = `${pct}%`;
+                    resolve();
+                };
+                img.onerror = () => {
+                    failedFiles.push(fname);
+                    loaded++;
+                    const pct = Math.round((loaded / trialsToPreload.length) * 100);
+                    document.getElementById("preload-pct").textContent = `${pct}%`;
+                    document.getElementById("preload-bar").style.width = `${pct}%`;
+                    resolve();
+                };
+                img.src = src;
+            })));
+
+            if (failedFiles.length > 0) {
+                document.getElementById("btn-start").disabled = false;
+                document.getElementById("preload-container").classList.add("hidden");
+                alert(`Could not load ${failedFiles.length} stimulus image(s) (first missing: ${failedFiles[0]}).\n\nIf running offline via file://, click '+ PNG Folder' and select the 'stimuli_human' directory.`);
+                return;
+            }
+
+            // Switch to Trial Arena
+            isPracticeMode = false;
+            document.getElementById("practice-banner").classList.add("hidden");
+            document.getElementById("practice-feedback-card").classList.add("hidden");
+            document.getElementById("view-welcome").classList.add("hidden");
+            document.getElementById("view-trial").classList.remove("hidden");
+            document.getElementById("status-badge").classList.remove("hidden");
+            document.getElementById("badge-participant").textContent = pid;
+
+            currentTrialIdx = resumeIdx;
+            recordedResponses = resumeResponses;
+            runTrial(currentTrialIdx);
+        }
+
+        function clearTrialTimers() {
+            if (fixationTimerId !== null) { clearTimeout(fixationTimerId); fixationTimerId = null; }
+            if (maskTimerId !== null) { clearTimeout(maskTimerId); maskTimerId = null; }
+            if (exposureRafId !== null) { cancelAnimationFrame(exposureRafId); exposureRafId = null; }
+            stopProceduralMask();
+        }
+
+        function quitToWelcome(skipConfirm = false) {
+            if (!isPracticeMode && !skipConfirm) {
+                const msg = currentTrialIdx > 0
+                    ? `Pause experiment? Your ${currentTrialIdx} completed response(s) are saved in this browser so you can resume at Trial ${currentTrialIdx + 1} anytime.`
+                    : "Return to participant setup?";
+                if (!confirm(msg)) return;
+            }
+            clearTrialTimers();
+            canRespond = false;
+            isPracticeMode = false;
+            document.getElementById("view-trial").classList.add("hidden");
+            document.getElementById("practice-banner").classList.add("hidden");
+            document.getElementById("practice-feedback-card").classList.add("hidden");
+            document.getElementById("view-welcome").classList.remove("hidden");
+            document.getElementById("preload-container").classList.add("hidden");
+            document.getElementById("btn-start").disabled = false;
+            document.getElementById("status-badge").classList.add("hidden");
+            refreshResumeBanner();
+        }
+
+        function returnToWelcomeFromResults() {
+            document.getElementById("view-results").classList.add("hidden");
+            document.getElementById("view-welcome").classList.remove("hidden");
+            document.getElementById("preload-container").classList.add("hidden");
+            document.getElementById("btn-start").disabled = false;
+            document.getElementById("status-badge").classList.add("hidden");
+            refreshResumeBanner();
+        }
+
+        // 4. HIGH-PRECISION TRIAL STATE MACHINE (Fixation -> 2000ms Stimulus -> 400ms Mask -> Response)
+        function runTrial(idx) {
+            clearTrialTimers();
+
+            const activeList = isPracticeMode ? practiceTrials : participantTrials;
+            if (idx >= activeList.length) {
+                if (isPracticeMode) {
+                    quitToWelcome(true);
+                } else {
+                    finishExperiment();
+                }
+                return;
+            }
+
+            const trial = activeList[idx];
+            canRespond = false;
+
+            // Update counters
+            const total = activeList.length;
+            document.getElementById("badge-progress").textContent = isPracticeMode
+                ? `PRACTICE ${idx + 1} / ${total}`
+                : `${idx + 1} / ${total}`;
+            document.getElementById("trial-counter-text").textContent = isPracticeMode
+                ? `PRACTICE TRIAL ${String(idx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`
+                : `TRIAL ${String(idx + 1).padStart(2, '0')} / ${total}`;
+            document.getElementById("trial-progress-bar").style.width = `${(idx / total) * 100}%`;
+
+            const fixLayer = document.getElementById("fixation-layer");
+            const stimImg = document.getElementById("stimulus-img");
+            const maskCanvas = document.getElementById("mask-canvas");
+            const promptLayer = document.getElementById("prompt-layer");
+            const respGrid = document.getElementById("response-grid");
+            const timerRing = document.getElementById("timer-ring");
+
+            // Reset layers
+            fixLayer.classList.remove("hidden");
+            stimImg.classList.add("hidden");
+            maskCanvas.classList.add("hidden");
+            promptLayer.classList.add("hidden");
+            document.getElementById("practice-feedback-card").classList.add("hidden");
+            respGrid.classList.add("opacity-30", "pointer-events-none");
+            timerRing.style.strokeDashoffset = "0";
+            document.getElementById("trial-phase-text").textContent = "FIXATION";
+
+            if (isPracticeMode) {
+                stimImg.src = trial.dataUrl;
+            } else {
+                const fname = trial.file.trim();
+                stimImg.src = preloadedImages[fname] || localFilesMap[fname] || `./stimuli_human/${fname}`;
+            }
+
+            // PHASE 1: FIXATION (600 ms)
+            fixationTimerId = setTimeout(() => {
+                fixationTimerId = null;
+                fixLayer.classList.add("hidden");
+                stimImg.classList.remove("hidden");
+                document.getElementById("trial-phase-text").textContent = "EXPOSURE (2.0s)";
+
+                // PHASE 2: STIMULUS (Exact 2000 ms with 60fps ring countdown)
+                const startExp = performance.now();
+                const circumference = 829.38;
+
+                function tickExposure(now) {
+                    const elapsed = now - startExp;
+                    const frac = Math.min(elapsed / TIME_EXPOSURE_MS, 1);
+                    timerRing.style.strokeDashoffset = `${frac * circumference}`;
+
+                    if (elapsed < TIME_EXPOSURE_MS) {
+                        exposureRafId = requestAnimationFrame(tickExposure);
+                    } else {
+                        exposureRafId = null;
+                        // PHASE 3: PROCEDURAL BACKWARD MASK (400 ms)
+                        stimImg.classList.add("hidden");
+                        maskCanvas.classList.remove("hidden");
+                        document.getElementById("trial-phase-text").textContent = "BACKWARD MASK";
+                        startProceduralMask(maskCanvas);
+
+                        maskTimerId = setTimeout(() => {
+                            maskTimerId = null;
+                            stopProceduralMask();
+                            maskCanvas.classList.add("hidden");
+                            promptLayer.classList.remove("hidden");
+                            document.getElementById("trial-phase-text").textContent = "AWAITING RESPONSE";
+
+                            // Enable 10-AFC buttons & start RT clock
+                            respGrid.classList.remove("opacity-30", "pointer-events-none");
+                            responseStartTime = performance.now();
+                            canRespond = true;
+                        }, TIME_MASK_MS);
+                    }
+                }
+                exposureRafId = requestAnimationFrame(tickExposure);
+            }, TIME_FIXATION_MS);
+        }
+
+        // Procedural Backward Mask (White noise + Random QuickDraw-like strokes at 60fps)
+        function startProceduralMask(canvas) {
+            const ctx = canvas.getContext("2d");
+            function drawFrame() {
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, 224, 224);
+                // High-contrast 7x7 checker noise
+                for (let y = 0; y < 224; y += 7) {
+                    for (let x = 0; x < 224; x += 7) {
+                        if (Math.random() > 0.5) {
+                            ctx.fillStyle = "#000000";
+                            ctx.fillRect(x, y, 7, 7);
+                        }
+                    }
+                }
+                // Random 4px orientation strokes to mask contour orientation detectors in V1
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 4;
+                for (let i = 0; i < 35; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(Math.random() * 224, Math.random() * 224);
+                    ctx.lineTo(Math.random() * 224, Math.random() * 224);
+                    ctx.stroke();
+                }
+                maskAnimId = requestAnimationFrame(drawFrame);
+            }
+            drawFrame();
+        }
+
+        function stopProceduralMask() {
+            if (maskAnimId !== null) {
+                cancelAnimationFrame(maskAnimId);
+                maskAnimId = null;
+            }
+        }
+
+        // 5. RECORD RESPONSE & ADVANCE (WITH LOCALSTORAGE AUTO-SAVE)
+        function submitResponse(chosenCategory) {
+            if (!canRespond) return;
+            canRespond = false;
+
+            const rt = Math.round(performance.now() - responseStartTime);
+
+            if (isPracticeMode) {
+                const pt = practiceTrials[practiceIdx];
+                const ok = chosenCategory === pt.label;
+                if (ok) practiceCorrectCount++;
+                const chosenCat = CATEGORIES.find(c => c.id === chosenCategory);
+                const correctCat = CATEGORIES.find(c => c.id === pt.label);
+
+                document.getElementById("response-grid").classList.add("opacity-30", "pointer-events-none");
+                document.getElementById("trial-progress-bar").style.width = `${((practiceIdx + 1) / practiceTrials.length) * 100}%`;
+                const card = document.getElementById("practice-feedback-card");
+                const txt = document.getElementById("practice-feedback-text");
+                const btn = document.getElementById("practice-next-btn");
+
+                const statusHtml = ok
+                    ? `<span class="text-emerald-400 font-semibold">✓ Correct!</span> That was <strong>${correctCat.label}</strong> (${rt} ms).`
+                    : `<span class="text-rose-400 font-semibold">✗ You chose ${chosenCat.label}.</span> The drawing was <strong>${correctCat.label}</strong> (${rt} ms).`;
+
+                if (practiceIdx + 1 < practiceTrials.length) {
+                    txt.innerHTML = `${statusHtml}<br><span class="text-xs text-slate-400">Next warm-up trial uses a 7px-offset 2×2 tile shuffle.</span>`;
+                    btn.textContent = "Next Practice Trial →";
+                } else {
+                    txt.innerHTML = `${statusHtml}<br><span class="text-xs text-indigo-300 font-semibold mt-1 inline-block">Warm-up complete (${practiceCorrectCount} / ${practiceTrials.length} correct). You're ready for the 70 real trials!</span>`;
+                    btn.textContent = "Return to Setup & Start Real Experiment →";
+                }
+                card.classList.remove("hidden");
+                return;
+            }
+
+            const t = participantTrials[currentTrialIdx];
+            const isCorrect = (chosenCategory === t.correct_label.trim()) ? 1 : 0;
+
+            recordedResponses.push({
+                participant: t.participant,
+                trial: t.trial,
+                uid: t.uid,
+                condition: t.condition.trim(),
+                file: t.file.trim(),
+                correct_label: t.correct_label.trim(),
+                response: chosenCategory,
+                correct: isCorrect,
+                rt_ms: rt
+            });
+
+            currentTrialIdx++;
+            saveParticipantProgress(t.participant, currentTrialIdx, recordedResponses, currentTrialIdx >= participantTrials.length);
+            runTrial(currentTrialIdx);
+        }
+
+        // 6. FINISH EXPERIMENT, AUTO-DOWNLOAD CSV & RENDER AI DASHBOARD
+        function finishExperiment() {
+            if (recordedResponses.length > 0) {
+                saveParticipantProgress(recordedResponses[0].participant, currentTrialIdx, recordedResponses, true);
+            }
+            document.getElementById("view-trial").classList.add("hidden");
+            document.getElementById("view-results").classList.remove("hidden");
+
+            downloadParticipantCSV();
+            renderResultsDashboard();
+        }
+
+        function downloadParticipantCSV() {
+            if (recordedResponses.length === 0) return;
+            const pid = recordedResponses[0].participant;
+            const csv = Papa.unparse(recordedResponses);
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `responses_${pid}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function renderResultsDashboard() {
+            const byCond = {};
+            const condList = ["intact", "blur_low", "blur_medium", "blur_high", "shuffle_low", "shuffle_medium", "shuffle_high"];
+            condList.forEach(c => byCond[c] = []);
+
+            recordedResponses.forEach(r => {
+                if (byCond[r.condition]) byCond[r.condition].push(Number(r.correct) * 100);
+            });
+
+            const mean = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length) : 0;
+            const userAcc = {};
+            condList.forEach(c => userAcc[c] = Number(mean(byCond[c]).toFixed(1)));
+
+            // KPIs
+            const allAcc = mean(recordedResponses.map(r => Number(r.correct) * 100)).toFixed(1);
+            const shufAcc = mean(["shuffle_low", "shuffle_medium", "shuffle_high"].map(c => userAcc[c])).toFixed(1);
+            const blurAcc = mean(["blur_low", "blur_medium", "blur_high"].map(c => userAcc[c])).toFixed(1);
+            const rts = recordedResponses.map(r => Number(r.rt_ms)).sort((a, b) => a - b);
+            const medRt = rts[Math.floor(rts.length / 2)] || 0;
+
+            document.getElementById("stat-overall").textContent = `${allAcc}%`;
+            document.getElementById("stat-shuffle").textContent = `${shufAcc}%`;
+            document.getElementById("stat-blur").textContent = `${blurAcc}%`;
+            document.getElementById("stat-rt").textContent = `${medRt} ms`;
+
+            // Render Two-Panel Chart (destroy previous instances if re-rendered)
+            if (chartBlurInstance) { chartBlurInstance.destroy(); chartBlurInstance = null; }
+            if (chartShuffleInstance) { chartShuffleInstance.destroy(); chartShuffleInstance = null; }
+
+            const commonOpts = {
+                responsive: true,
+                scales: {
+                    y: { min: 0, max: 100, ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.06)" }, title: { display: true, text: "10-way Accuracy (%)", color: "#94a3b8" } },
+                    x: { ticks: { color: "#cbd5e1" }, grid: { color: "rgba(255,255,255,0.04)" } }
+                },
+                plugins: { legend: { labels: { color: "#e2e8f0" } } }
+            };
+
+            const blurConds = ["intact", "blur_low", "blur_medium", "blur_high"];
+            chartBlurInstance = new Chart(document.getElementById("chart-blur"), {
+                type: "line",
+                data: {
+                    labels: ["Intact", "σ = 2", "σ = 5", "σ = 10"],
+                    datasets: [
+                        { label: "You (Human)", data: blurConds.map(c => userAcc[c]), borderColor: "#f43f5e", backgroundColor: "#f43f5e", borderWidth: 3, tension: 0.2 },
+                        { label: "CLIP ViT-L/14", data: blurConds.map(c => MODEL_BENCHMARKS["CLIP ViT-L/14"][c]), borderColor: "#3b82f6", borderDash: [5, 5], tension: 0.2 },
+                        { label: "DINOv2 ViT-B/14", data: blurConds.map(c => MODEL_BENCHMARKS["DINOv2 ViT-B/14"][c]), borderColor: "#10b981", borderDash: [5, 5], tension: 0.2 }
+                    ]
+                },
+                options: commonOpts
+            });
+
+            const shufConds = ["intact", "shuffle_low", "shuffle_medium", "shuffle_high"];
+            chartShuffleInstance = new Chart(document.getElementById("chart-shuffle"), {
+                type: "line",
+                data: {
+                    labels: ["Intact", "4 Tiles", "16 Tiles", "64 Tiles"],
+                    datasets: [
+                        { label: "You (Human)", data: shufConds.map(c => userAcc[c]), borderColor: "#f43f5e", backgroundColor: "#f43f5e", borderWidth: 3, tension: 0.2 },
+                        { label: "CLIP ViT-L/14", data: shufConds.map(c => MODEL_BENCHMARKS["CLIP ViT-L/14"][c]), borderColor: "#3b82f6", borderDash: [5, 5], tension: 0.2 },
+                        { label: "DINOv2 ViT-B/14", data: shufConds.map(c => MODEL_BENCHMARKS["DINOv2 ViT-B/14"][c]), borderColor: "#10b981", borderDash: [5, 5], tension: 0.2 }
+                    ]
+                },
+                options: commonOpts
+            });
+        }
+
+        // 7. RESEARCHER MODE: AGGREGATE MULTIPLE PARTICIPANT CSVs -> human_results.csv
+        function toggleAdminModal() {
+            document.getElementById("admin-modal").classList.toggle("hidden");
+        }
+
+        async function aggregateHumanCSVs() {
+            const files = document.getElementById("admin-files").files;
+            if (!files.length) {
+                alert("Please select at least one responses_PXX.csv file.");
+                return;
+            }
+
+            let allRows = [];
+            for (const f of files) {
+                const text = await f.text();
+                const parsed = Papa.parse(text, { header: true, skipEmptyLines: true }).data;
+                allRows = allRows.concat(parsed);
+            }
+
+            const conds = ["intact", "blur_low", "blur_medium", "blur_high", "shuffle_low", "shuffle_medium", "shuffle_high"];
+            const outRows = [];
+
+            for (const c of conds) {
+                const scores = allRows.filter(r => r.condition && r.condition.trim() === c).map(r => Number(r.correct));
+                if (!scores.length) continue;
+                const acc = (scores.reduce((a, b) => a + b, 0) / scores.length) * 100;
+
+                // 2000-sample Bootstrap 95% CI (matching your Colab notebook!)
+                const bootMeans = [];
+                for (let b = 0; b < 2000; b++) {
+                    let sum = 0;
+                    for (let i = 0; i < scores.length; i++) {
+                        sum += scores[Math.floor(Math.random() * scores.length)];
+                    }
+                    bootMeans.push((sum / scores.length) * 100);
+                }
+                bootMeans.sort((a, b) => a - b);
+                const ci_low = bootMeans[Math.floor(0.025 * 2000)];
+                const ci_high = bootMeans[Math.floor(0.975 * 2000)];
+
+                outRows.push({
+                    condition: c,
+                    accuracy: acc.toFixed(2),
+                    ci_low: ci_low.toFixed(2),
+                    ci_high: ci_high.toFixed(2)
+                });
+            }
+
+            const csv = Papa.unparse(outRows);
+            document.getElementById("admin-output").textContent = csv;
+
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "human_results.csv";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+model,condition,family,level,param,n,n_correct,accuracy,ci_low,ci_high
+CLIP ViT-L/14,intact,intact,none,0,1000,977,97.7,96.7,98.6
+CLIP ViT-L/14,blur_low,blur,low,2,1000,919,91.9,90.10000000000001,93.60000000000001
+CLIP ViT-L/14,blur_medium,blur,medium,5,1000,845,84.5,82.2975,86.8
+CLIP ViT-L/14,blur_high,blur,high,10,1000,508,50.8,47.5975,53.800000000000004
+CLIP ViT-L/14,shuffle_low,shuffle,low,2,1000,635,63.5,60.699999999999996,66.5
+CLIP ViT-L/14,shuffle_medium,shuffle,medium,4,1000,238,23.799999999999997,21.2,26.40249999999999
+CLIP ViT-L/14,shuffle_high,shuffle,high,8,1000,155,15.5,13.200000000000001,17.702499999999986
+DINOv2 ViT-B/14,intact,intact,none,0,1000,975,97.5,96.5,98.4
+DINOv2 ViT-B/14,blur_low,blur,low,2,1000,975,97.5,96.5,98.4
+DINOv2 ViT-B/14,blur_medium,blur,medium,5,1000,765,76.5,73.9,79.10000000000001
+DINOv2 ViT-B/14,blur_high,blur,high,10,1000,582,58.199999999999996,55.1,61.1
+DINOv2 ViT-B/14,shuffle_low,shuffle,low,2,1000,768,76.8,74.2,79.5
+DINOv2 ViT-B/14,shuffle_medium,shuffle,medium,4,1000,212,21.2,18.7,23.799999999999997
+DINOv2 ViT-B/14,shuffle_high,shuffle,high,8,1000,104,10.4,8.5975,12.3
