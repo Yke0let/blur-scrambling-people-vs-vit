@@ -1,12 +1,18 @@
 """Post-collection analysis & figure pipeline for Blur and Scrambling: People vs. Vision Models.
 
-This script performs two main tasks:
-1. Aggregates participant trial logs (`human_logs/responses_*.csv`) into `human_results.csv`
-   with 2000-resample bootstrap 95% confidence intervals (columns: condition, accuracy, ci_low, ci_high).
-2. Evaluates CLIP ViT-L/14 and DINOv2 ViT-B/14 strictly on the 70 unique `human_uids`
-   (from `human_trials.csv` + `model_predictions.csv`) alongside the full 1000-image test set
-   (`model_results.csv`), producing `model_results_human_subset.csv`, `comparison_results.csv`,
-   and the comparison figure (`comparison_figure.png`, plus updating `main_figure.png` when human data exists).
+Supports the 21-participant (3 Groups x 7 Slices: P01-P21) design:
+- Group 1 (G1): P01..P07 (Slices 1..7, covering all 490 stimuli)
+- Group 2 (G2): P08..P14 (Slices 1..7, covering all 490 stimuli)
+- Group 3 (G3): P15..P21 (Slices 1..7, covering all 490 stimuli)
+
+Tasks performed:
+1. Optionally syncs completed participant submissions from the cloud registry into `human_logs/`.
+2. Aggregates participant logs (`human_logs/responses_*.csv` and/or `VL1:...` tokens) into:
+   - `human_results.csv` (global human accuracy + 2000-resample bootstrap 95% CIs)
+   - `human_results_by_group.csv` (per-group accuracy + 2000-resample bootstrap 95% CIs for G1, G2, G3)
+3. Evaluates CLIP ViT-L/14 and DINOv2 ViT-B/14 strictly on the 70 unique `human_uids`
+   (`model_results_human_subset.csv`) alongside the full 1000-image test set (`model_results.csv`),
+   producing `comparison_results.csv` and `comparison_figure.png`.
 """
 
 from __future__ import annotations
@@ -18,10 +24,12 @@ import re
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import requests
 import matplotlib.pyplot as plt
 
 BASE_SEED = 1234
 N_BOOT = 2000
+NTFY_TOPIC = "aims2026_visual_perception_v2_registry"
 
 CATEGORIES = [
     "airplane", "bicycle", "car", "cat", "chair",
@@ -42,6 +50,16 @@ CONDITIONS = [
 COND_NAMES = [c["name"] for c in CONDITIONS]
 COND_META = {c["name"]: c for c in CONDITIONS}
 MODEL_NAMES = ["CLIP ViT-L/14", "DINOv2 ViT-B/14"]
+GROUPS = ["G1", "G2", "G3"]
+
+
+def infer_group_and_slice(pid: str) -> tuple[str, int]:
+    """Map P01..P21 to ('G1'..'G3', 1..7)."""
+    m = re.search(r"(\d+)", str(pid))
+    num = int(m.group(1)) if m else 1
+    grp_idx = ((num - 1) // 7) + 1
+    slot_idx = ((num - 1) % 7) + 1
+    return f"G{grp_idx}", slot_idx
 
 
 def bootstrap_ci(correct: np.ndarray, n_boot: int = N_BOOT, seed: int = BASE_SEED) -> tuple[float, float]:
@@ -63,7 +81,7 @@ def decode_vl1_token(token_str: str) -> pd.DataFrame:
         cleaned = cleaned[4:]
     payload = json.loads(base64.b64decode(cleaned).decode("utf-8"))
     pid = str(payload.get("p", "P01")).strip()
-    pname = str(payload.get("n", "")).strip()
+    grp, slot = infer_group_and_slice(pid)
     rows = []
     for chunk in str(payload.get("d", "")).split(";"):
         if not chunk:
@@ -74,7 +92,8 @@ def decode_vl1_token(token_str: str) -> pd.DataFrame:
         resp_lbl = CATEGORIES[rsp_idx]
         rows.append({
             "participant": pid,
-            "participant_name": pname,
+            "group": str(payload.get("g", grp)),
+            "slot_in_group": int(payload.get("s", slot)),
             "trial": trial,
             "uid": uid,
             "condition": cond,
@@ -87,24 +106,54 @@ def decode_vl1_token(token_str: str) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def sync_cloud_submissions_to_logs(logs_dir: Path) -> int:
+    """Fetch any cloud-recorded submissions from ntfy.sh and write `responses_PXX.csv` into `logs_dir`."""
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    saved_count = 0
+    try:
+        url = f"https://ntfy.sh/{NTFY_TOPIC}/json?poll=1&since=all"
+        resp = requests.get(url, timeout=8)
+        if not resp.ok:
+            return 0
+        for line in resp.text.splitlines():
+            if not line.strip():
+                continue
+            try:
+                evt = json.loads(line)
+                if evt.get("event") != "message" or not evt.get("message"):
+                    continue
+                msg = json.loads(evt["message"])
+                token = msg.get("token", "")
+                if token.startswith("VL1:"):
+                    df = decode_vl1_token(token)
+                    if not df.empty:
+                        pid = str(df["participant"].iloc[0])
+                        out_file = logs_dir / f"responses_{pid}.csv"
+                        df.to_csv(out_file, index=False)
+                        saved_count += 1
+            except Exception:
+                continue
+    except Exception:
+        return 0
+    if saved_count > 0:
+        print(f"[Cloud Sync] Pulled {saved_count} submission(s) into '{logs_dir}/'.")
+    return saved_count
+
+
 def aggregate_human_logs(
     logs_dir: Path,
     out_csv: Path,
+    out_group_csv: Path,
     n_boot: int = N_BOOT,
     seed: int = BASE_SEED,
-) -> tuple[pd.DataFrame | None, pd.DataFrame | None]:
-    """Aggregate participant CSVs (and optional VL1:... token files) in `logs_dir` into `human_results.csv`.
-
-    Tolerates optional `participant_name` column in `responses_*.csv`.
-    Returns `(human_results_df, raw_human_trials_df)`. If no valid logs are found in `logs_dir`,
-    returns `(None, None)` without overwriting `out_csv`.
-    """
+) -> tuple[pd.DataFrame | None, pd.DataFrame | None, pd.DataFrame | None]:
+    """Aggregate participant CSVs (P01..P21) in `logs_dir` into global `human_results.csv` and per-group CSV."""
     logs_dir.mkdir(parents=True, exist_ok=True)
     csv_files = sorted(logs_dir.glob("*.csv"))
     token_files = sorted(list(logs_dir.glob("*.txt")) + list(logs_dir.glob("*.b64")))
     if not csv_files and not token_files:
         print(f"[Human Logs] No participant CSV or token files found in '{logs_dir}/'.")
-        return None, None
+        return None, None, None
 
     frames = []
     required_cols = {"participant", "trial", "uid", "condition", "correct"}
@@ -116,8 +165,6 @@ def aggregate_human_logs(
         if missing:
             print(f"[Human Logs] Skipping '{path.name}' (missing columns: {sorted(missing)}).")
             continue
-        if "participant_name" not in df.columns:
-            df["participant_name"] = ""
         frames.append(df)
 
     for tpath in token_files:
@@ -130,34 +177,35 @@ def aggregate_human_logs(
 
     if not frames:
         print(f"[Human Logs] No valid participant logs found in '{logs_dir}/'.")
-        return None, None
+        return None, None, None
 
     raw = pd.concat(frames, ignore_index=True)
     raw["participant"] = raw["participant"].astype(str).str.strip()
-    raw["participant_name"] = raw["participant_name"].fillna("").astype(str).str.strip()
     raw["condition"] = raw["condition"].astype(str).str.strip()
     raw["uid"] = pd.to_numeric(raw["uid"], errors="coerce").astype("Int64")
     raw["trial"] = pd.to_numeric(raw["trial"], errors="coerce").astype("Int64")
     raw["correct"] = pd.to_numeric(raw["correct"], errors="coerce")
     raw = raw.dropna(subset=["uid", "trial", "correct"])
 
+    # Assign group (G1, G2, G3) and slot_in_group (1..7) from participant ID
+    inferred = raw["participant"].map(infer_group_and_slice)
+    raw["group"] = [g for g, _ in inferred]
+    raw["slot_in_group"] = [s for _, s in inferred]
+
     before_dedup = len(raw)
-    raw = raw.drop_duplicates(subset=["participant", "trial"], keep="last").reset_index(drop=True)
+    raw = raw.drop_duplicates(subset=["participant", "uid", "condition"], keep="last").reset_index(drop=True)
     if len(raw) < before_dedup:
-        print(f"[Human Logs] Deduplicated {before_dedup - len(raw)} duplicate (participant, trial) row(s).")
+        print(f"[Human Logs] Deduplicated {before_dedup - len(raw)} duplicate row(s).")
 
     participants = sorted(raw["participant"].unique())
-    roster = {}
-    for pid, grp in raw.groupby("participant"):
-        names = [n for n in grp["participant_name"].unique() if n]
-        label = f"{pid} ({names[-1]})" if names else str(pid)
-        roster[label] = len(grp)
-    print(f"[Human Logs] Loaded {len(raw)} trials across {len(participants)} participant(s): {roster}")
+    by_grp = {g: sorted(raw[raw["group"] == g]["participant"].unique()) for g in GROUPS}
+    print(f"[Human Logs] Loaded {len(raw)} trials across {len(participants)} participant(s): {by_grp}")
     if "rt_ms" in raw.columns:
         rts = pd.to_numeric(raw["rt_ms"], errors="coerce").dropna()
         if not rts.empty:
             print(f"[Human Logs] Median RT: {rts.median():.0f} ms (IQR: {rts.quantile(0.25):.0f}-{rts.quantile(0.75):.0f} ms)")
 
+    # 1. Global aggregation (human_results.csv)
     rows = []
     for cond in COND_NAMES:
         scores = raw.loc[raw["condition"] == cond, "correct"].to_numpy(dtype=float)
@@ -174,8 +222,36 @@ def aggregate_human_logs(
 
     human_df = pd.DataFrame(rows, columns=["condition", "accuracy", "ci_low", "ci_high"])
     human_df.to_csv(out_csv, index=False)
-    print(f"[Human Logs] Saved aggregated human results -> '{out_csv}'")
-    return human_df, raw
+    print(f"[Human Logs] Saved global human results -> '{out_csv}'")
+
+    # 2. Per-group aggregation (G1, G2, G3 -> human_results_by_group.csv)
+    group_rows = []
+    for grp in GROUPS:
+        gdf = raw[raw["group"] == grp]
+        if gdf.empty:
+            continue
+        for cond in COND_NAMES:
+            scores = gdf.loc[gdf["condition"] == cond, "correct"].to_numpy(dtype=float)
+            if scores.size == 0:
+                continue
+            acc = float(scores.mean() * 100.0)
+            lo, hi = bootstrap_ci(scores, n_boot=n_boot, seed=seed)
+            group_rows.append({
+                "group": grp,
+                "condition": cond,
+                "n": int(scores.size),
+                "n_correct": int(scores.sum()),
+                "accuracy": round(acc, 4),
+                "ci_low": round(lo, 4),
+                "ci_high": round(hi, 4),
+            })
+
+    group_df = pd.DataFrame(group_rows) if group_rows else None
+    if group_df is not None:
+        group_df.to_csv(out_group_csv, index=False)
+        print(f"[Human Logs] Saved per-group human results -> '{out_group_csv}'")
+
+    return human_df, group_df, raw
 
 
 def evaluate_models_on_human_subset(
@@ -211,6 +287,7 @@ def evaluate_models_on_human_subset(
                 "family": meta["family"],
                 "level": meta["level"],
                 "param": meta["param"],
+                "subset": "human_subset",
                 "n": int(arr.size),
                 "n_correct": int(arr.sum()),
                 "accuracy": float(arr.mean() * 100.0),
@@ -229,10 +306,11 @@ def build_comparison_table(
     full_df: pd.DataFrame,
     subset_df: pd.DataFrame,
     human_df: pd.DataFrame | None,
+    group_df: pd.DataFrame | None,
     raw_human_df: pd.DataFrame | None,
     out_comparison_csv: Path,
 ) -> pd.DataFrame:
-    """Create a unified comparison CSV aligning full N=1000, N=70 human_uids, and human accuracy."""
+    """Create a unified comparison CSV aligning full N=1000, N=70 human_uids, per-group, and global human accuracy."""
     rows = []
     for cond in COND_NAMES:
         row: dict[str, object] = {"condition": cond}
@@ -247,6 +325,12 @@ def build_comparison_table(
             row[f"{slug}_human70_ci_low"] = round(float(s_rec["ci_low"]), 2)
             row[f"{slug}_human70_ci_high"] = round(float(s_rec["ci_high"]), 2)
             row[f"{slug}_delta_70_vs_1000"] = round(float(s_rec["accuracy"]) - float(f_rec["accuracy"]), 2)
+
+        if group_df is not None and not group_df.empty:
+            for grp in GROUPS:
+                g_match = group_df[(group_df["group"] == grp) & (group_df["condition"] == cond)]
+                if not g_match.empty:
+                    row[f"human_{grp}_acc"] = round(float(g_match.iloc[0]["accuracy"]), 2)
 
         if human_df is not None and not human_df.empty:
             h_match = human_df[human_df["condition"] == cond]
@@ -353,15 +437,17 @@ def plot_comparison_figure(
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Aggregate human logs and evaluate ViTs on the 70 human_uids.")
+    parser = argparse.ArgumentParser(description="Aggregate 21-participant human logs and evaluate ViTs on 70 human_uids.")
     parser.add_argument("--human-logs", type=Path, default=Path("human_logs"), help="Directory of participant CSVs")
-    parser.add_argument("--human-trials", type=Path, default=Path("human_trials.csv"), help="Input trial schedule CSV")
+    parser.add_argument("--human-trials", type=Path, default=Path("human_trials.csv"), help="Input trial schedule CSV (P01-P21)")
     parser.add_argument("--model-results", type=Path, default=Path("model_results.csv"), help="Full N=1000 model results CSV")
     parser.add_argument("--model-predictions", type=Path, default=Path("model_predictions.csv"), help="Per-UID model predictions CSV")
-    parser.add_argument("--out-human", type=Path, default=Path("human_results.csv"), help="Aggregated human CSV output")
+    parser.add_argument("--out-human", type=Path, default=Path("human_results.csv"), help="Global aggregated human CSV output")
+    parser.add_argument("--out-group-human", type=Path, default=Path("human_results_by_group.csv"), help="Per-group human CSV output")
     parser.add_argument("--out-subset", type=Path, default=Path("model_results_human_subset.csv"), help="70 human_uids model results CSV")
     parser.add_argument("--out-comparison", type=Path, default=Path("comparison_results.csv"), help="Side-by-side comparison CSV")
     parser.add_argument("--out-figure", type=Path, default=Path("comparison_figure.png"), help="Comparison figure PNG path")
+    parser.add_argument("--sync-cloud", action="store_true", help="Pull cloud submissions into human_logs/ before aggregating")
     parser.add_argument("--update-main-figure", action="store_true", help="Always overwrite main_figure.png as well")
     parser.add_argument("--n-boot", type=int, default=N_BOOT, help="Bootstrap resamples (default: 2000)")
     parser.add_argument("--seed", type=int, default=BASE_SEED, help="Random seed for bootstrap (default: 1234)")
@@ -371,9 +457,12 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    # (a) Aggregate participant logs -> human_results.csv
-    human_df, raw_human_df = aggregate_human_logs(
-        args.human_logs, args.out_human, n_boot=args.n_boot, seed=args.seed
+    if args.sync_cloud:
+        sync_cloud_submissions_to_logs(args.human_logs)
+
+    # (a) Aggregate participant logs (P01..P21) -> human_results.csv & human_results_by_group.csv
+    human_df, group_df, raw_human_df = aggregate_human_logs(
+        args.human_logs, args.out_human, args.out_group_human, n_boot=args.n_boot, seed=args.seed
     )
     if human_df is None and args.out_human.exists():
         human_df = pd.read_csv(args.out_human)
@@ -389,7 +478,7 @@ def main() -> None:
         seed=args.seed,
     )
 
-    comp_df = build_comparison_table(full_df, subset_df, human_df, raw_human_df, args.out_comparison)
+    comp_df = build_comparison_table(full_df, subset_df, human_df, group_df, raw_human_df, args.out_comparison)
     print("\n=== Model (N=1000 vs. 70 human_uids) & Human Summary (%) ===")
     print(comp_df.to_string(index=False))
 
@@ -400,4 +489,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

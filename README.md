@@ -16,7 +16,7 @@
 ## 2. Experimental Design & Scientific Invariants
 
 - **Dataset & Stimulus Geometry:**
-  - `224 × 224` px grayscale line drawings rendered from *Quick, Draw!* (CC BY 4.0), centered with a `20 px` white margin and `4 px` stroke width.
+  - `224 × 224` px grayscale line drawings rendered from *Quick, Draw!* (CC BY 4.0), centered with a `20 px` white margin and `4 px` stroke width (displayed at `384 × 384` px in the web UI for comfortable viewing).
   - **10 Forced-Choice Categories (10-AFC, chance = 10%):** `airplane`, `bicycle`, `car`, `cat`, `chair`, `clock`, `fish`, `house`, `tree`, `umbrella`.
 - **ViT Patch Geometry & Offset Scrambling:**
   - Both vision backbones use a `14 × 14` px patch grid (`16 × 16` patches).
@@ -25,9 +25,15 @@
   1. `intact` — Uncorrupted baseline drawing
   2. `blur_low` ($\sigma = 2\text{ px}$), `blur_medium` ($\sigma = 5\text{ px}$), `blur_high` ($\sigma = 10\text{ px}$) — Gaussian blur
   3. `shuffle_low` ($2\times 2 = 4$ tiles), `shuffle_medium` ($4\times 4 = 16$ tiles), `shuffle_high` ($8\times 8 = 64$ tiles) — Offset tile scrambling
-- **Human Psychophysics Protocol:**
-  - **12 participants (`P01`–`P12`)**, Latin-square rotation across `70` test drawings (`7` per category = `10` trials per condition per participant, `840` total human trials).
-  - **Trial Timing:** `600 ms` central fixation cross $\rightarrow$ **exact `2000 ms`** (`performance.now()`) stimulus exposure $\rightarrow$ **`400 ms`** procedural backward visual mask (`60 fps` checker noise + random `4 px` strokes) $\rightarrow$ untimed 10-AFC category selection.
+- **Human Psychophysics Protocol (21 Participants = 3 Groups × 7 Slices):**
+  - **21 anonymous participants (`P01`–`P21`)** partitioned into **3 Groups of 7**:
+    - **Group 1 (`G1`):** `P01`–`P07` (Slices `S1`–`S7`)
+    - **Group 2 (`G2`):** `P08`–`P14` (Slices `S1`–`S7`)
+    - **Group 3 (`G3`):** `P15`–`P21` (Slices `S1`–`S7`)
+  - Within each group, the 7 participants partition all `490` stimuli (`70` unique test `uid`s × `7` conditions) into 7 disjoint Latin-square slices (`70` trials per participant = `10` per condition, `7` per category). Person $k \in \{1..7\}$ of Groups 1, 2, and 3 evaluates the exact same 70 stimulus images (Slice $k$).
+  - **Warm-Up Practice:** 2 intact drawings only (no repetition).
+  - **Trial Timing:** `600 ms` central fixation cross $\rightarrow$ **exact `1500 ms` (`1.5s`)** (`performance.now()`) stimulus exposure $\rightarrow$ **`400 ms`** procedural backward visual mask $\rightarrow$ 10-AFC category selection with a **hidden `15000 ms` (`15s`) answer timeout** (any unanswered trial is automatically re-queued to the end of the participant's session).
+  - **Strict Anonymity & Automatic Cloud Sync:** No personal names are collected; completed 70-trial sessions are automatically transmitted to the research cloud registry without displaying scores or graphs to the participant.
 
 ---
 
@@ -52,50 +58,36 @@ Linear probes were trained strictly on **intact** training images (`N = 5000`, v
 ## 4. Repository Structure
 
 ```text
-├── index.html                        # 5-step web psychophysics platform (hosted on GitHub Pages & offline-ready)
-├── human_trials.csv                  # Latin-square schedule for P01–P12 (840 rows = 12 participants × 70 trials)
-├── stimuli_human/                    # 490 PNG stimuli (70 test UIDs × 7 conditions, 224×224 grayscale)
-├── analyze_results.py                # Post-collection aggregation & model vs. human comparison script
+├── index.html                          # 5-step academic web platform + password-protected Admin Portal
+├── human_trials.csv                    # 21-participant Latin-square schedule (1470 rows = 3 groups × 7 × 70 trials)
+├── stimuli_human/                      # 490 PNG stimuli (70 test UIDs × 7 conditions, 224×224 grayscale)
+├── analyze_results.py                  # Post-collection cloud sync, per-group & global aggregation script
 ├── blur_scrambling_people_vs_vit.ipynb # End-to-end Colab notebook (stimulus generation, ViT probing, figures)
-├── model_results.csv                 # Model accuracies & 95% bootstrap CIs on the full N=1000 test set
-├── model_results_human_subset.csv    # Model accuracies & 95% bootstrap CIs on the 70 human_uids subset
-├── comparison_results.csv            # Side-by-side table comparing N=1000 vs. N=70 human_uids (& humans)
-├── model_predictions.csv             # Per-image predictions (2 models × 7 conditions × 1000 UIDs)
-├── stimuli_manifest.csv              # Seeds, tile permutations, and ink-tile fractions for all 7000 stimuli
-├── main_figure.png                   # Baseline two-panel accuracy plot (Blur | Tile Shuffle)
-├── comparison_figure.png             # Two-panel plot overlaying N=1000 and N=70 human_uids curves
-├── human_logs/                       # Directory for collected participant files (responses_P01.csv ... P12.csv)
-└── project_outputs/                  # Raw Colab archive & trained linear probe weights (probe_*.pt)
+├── model_results.csv                   # Model accuracies & 95% bootstrap CIs on the full N=1000 test set
+├── model_results_human_subset.csv      # Model accuracies & 95% bootstrap CIs on the 70 human_uids subset
+├── comparison_results.csv              # Side-by-side table comparing N=1000 vs. N=70 human_uids (& humans)
+├── model_predictions.csv               # Per-image predictions (2 models × 7 conditions × 1000 UIDs)
+├── stimuli_manifest.csv                # Seeds, tile permutations, and ink-tile fractions for all 7000 stimuli
+├── main_figure.png                     # Two-panel accuracy plot on the 70 human_uids subset (Blur | Tile Shuffle)
+├── comparison_figure.png               # Two-panel plot overlaying N=1000 and N=70 human_uids curves
+├── human_logs/                         # Directory for participant files (responses_P01.csv ... P21.csv)
+└── project_outputs/                    # Raw Colab archive & trained linear probe weights (probe_*.pt)
 ```
 
 ---
 
 ## 5. Running the Experiment & Analyzing Human Data
 
-### A. Collecting Human Responses (Online or Local)
-1. **Online (GitHub Pages):** Send participants the study URL:
-   - General link: `https://yke0let.github.io/blur-scrambling-people-vs-vit/`
-   - Direct participant link (pre-selects slot `P01`–`P12`): e.g. `https://yke0let.github.io/blur-scrambling-people-vs-vit/?p=P04`
-2. **Local Server (Plan B):**
-   ```bash
-   python3 -m http.server 8000
-   # Open http://localhost:8000 in any browser
-   ```
-3. At the end of the 70 trials, each participant's browser automatically downloads `responses_<PXX>_<Name>.csv` and provides a 1-click **Result Code (`VL1:...`)** that can be sent via WhatsApp or email.
+### A. Participant Data Collection
+- **Live URL:** `https://yke0let.github.io/blur-scrambling-people-vs-vit/`
+- **Direct Slot Link (`P01`–`P21`):** e.g. `https://yke0let.github.io/blur-scrambling-people-vs-vit/?p=P08`
+- **Admin / Manager Dashboard:** Click **`Admin / Manager`** in the footer of `index.html` to view live candidate progress (`P01`–`P21`), group comparisons (`Group 1`, `Group 2`, `Group 3`), global human vs. ViT curves, and 1-click CSV exports.
 
-### B. Aggregating Human Logs & Updating Figures
-Place collected `responses_*.csv` files (or `.txt` files containing `VL1:...` Result Codes) into `human_logs/` and run:
-
+### B. Python Analysis Pipeline
 ```bash
-python3 analyze_results.py
+# Pull cloud-synced participant submissions into human_logs/ and generate all tables & figures:
+python3 analyze_results.py --sync-cloud
 ```
-
-This script:
-- Aggregates all participant trials in `human_logs/` into `human_results.csv` (`condition,accuracy,ci_low,ci_high`) with 2,000-resample bootstrap 95% confidence intervals.
-- Evaluates `CLIP ViT-L/14` and `DINOv2 ViT-B/14` on the 70 `human_uids` alongside the full `N = 1000` test set (`comparison_results.csv`).
-- Updates `main_figure.png` and `comparison_figure.png` with the human psychometric curve overlaid.
-
-*(Alternatively, click **`Chercheur / Admin`** in the footer of `index.html` to merge CSVs or `VL1:...` codes and export `human_results.csv` directly in the browser.)*
 
 ---
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Visual Perception Study — Human vs. Vision Models</title>
+    <title>Visual Perception Study — Human Cortex vs. Vision Models</title>
     <!-- Tailwind CSS, Chart.js, PapaParse -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -37,7 +37,7 @@
         .academic-card {
             background-color: #FFFFFF;
             border: 1px solid #E2E8F0;
-            border-radius: 12px;
+            border-radius: 14px;
             box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
         }
 
@@ -75,10 +75,9 @@
 
 <body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
 
-    <!-- ==================== MINIMAL ACADEMIC TOP HEADER & 5-STEP STEPPER ==================== -->
+    <!-- ==================== ACADEMIC TOP HEADER & 5-STEP STEPPER ==================== -->
     <header class="w-full bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <!-- Study Title -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div class="flex items-center gap-2.5">
                 <div class="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0"></div>
                 <span class="font-semibold text-slate-900 text-sm sm:text-base tracking-tight">
@@ -88,24 +87,24 @@
 
             <!-- 5-Step Progress Stepper -->
             <nav aria-label="Study progress" class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-0.5 text-xs">
-                <div id="stepper-1" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap">
-                    <span class="mono text-[11px]">1.</span><span>Identification</span>
+                <div id="stepper-1" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap">
+                    <span class="mono text-[11px]">1.</span><span>Overview &amp; ID</span>
                 </div>
                 <span class="text-slate-300">→</span>
-                <div id="stepper-2" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-500 border border-transparent whitespace-nowrap">
+                <div id="stepper-2" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-400 border border-transparent whitespace-nowrap">
                     <span class="mono text-[11px]">2.</span><span>Instructions</span>
                 </div>
                 <span class="text-slate-300">→</span>
-                <div id="stepper-3" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-500 border border-transparent whitespace-nowrap">
+                <div id="stepper-3" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-400 border border-transparent whitespace-nowrap">
                     <span class="mono text-[11px]">3.</span><span>Practice</span>
                 </div>
                 <span class="text-slate-300">→</span>
-                <div id="stepper-4" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-500 border border-transparent whitespace-nowrap">
+                <div id="stepper-4" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-400 border border-transparent whitespace-nowrap">
                     <span class="mono text-[11px]">4.</span><span>Experiment (70 trials)</span>
                 </div>
                 <span class="text-slate-300">→</span>
-                <div id="stepper-5" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-500 border border-transparent whitespace-nowrap">
-                    <span class="mono text-[11px]">5.</span><span>Results</span>
+                <div id="stepper-5" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium text-slate-400 border border-transparent whitespace-nowrap">
+                    <span class="mono text-[11px]">5.</span><span>Completion</span>
                 </div>
             </nav>
         </div>
@@ -115,40 +114,89 @@
     <main class="flex-1 w-full flex items-center justify-center px-4 py-8 sm:py-10">
 
         <!-- =========================================================================
-             STEP 1: WELCOME, IDENTIFICATION & CONSENT (#step-welcome)
+             STEP 1: COMPLETE PROJECT DESCRIPTION, ANONYMOUS ID & CONSENT (#step-welcome)
              ========================================================================= -->
-        <section id="step-welcome" class="w-full max-w-xl academic-card p-6 sm:p-8 space-y-6">
-            <div class="space-y-2">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                    Academic Psychophysics Study
-                </span>
-                <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                    Welcome to the Visual Perception Study
+        <section id="step-welcome" class="w-full max-w-4xl academic-card p-6 sm:p-10 space-y-8">
+            <!-- Header & Title -->
+            <div class="space-y-3 border-b border-slate-200 pb-6">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        Psychophysics &amp; Computer Vision Study
+                    </span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
+                        Strictly Anonymous Protocol • ~8–10 Minutes
+                    </span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+                    Blur and Scrambling: People vs. Vision Models
                 </h1>
-                <p class="text-sm text-slate-600 leading-relaxed">
-                    Thank you for participating in our research investigating how human vision compares to modern
-                    computer vision models (CLIP &amp; DINOv2) when recognizing degraded drawings.
+                <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                    <strong>Research Team:</strong> Uriel-Darlin Azemfack-Himele, Fanès Houeha, Halik Mamam, and Franck Tchangani.
                 </p>
             </div>
 
-            <!-- 3 Simple Bullet Points -->
-            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2.5 text-xs sm:text-sm text-slate-700">
-                <div class="flex items-start gap-2.5">
-                    <span class="text-blue-600 font-semibold">•</span>
-                    <div><strong class="text-slate-900">Duration:</strong> Approximately 8–10 minutes (70 short trials).</div>
+            <!-- Comprehensive Scientific Overview Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-700 leading-relaxed">
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-blue-700">
+                        1. Research Question &amp; Scientific Background
+                    </h2>
+                    <p>
+                        This study investigates a fundamental question in biological and artificial vision:
+                        <strong>Which types of visual degradation break human recognition and modern Vision Transformers together, and which break only one of them?</strong>
+                    </p>
+                    <p class="text-xs text-slate-600">
+                        We compare human observers against two state-of-the-art pretrained Vision Transformer models—<strong>CLIP ViT-L/14</strong> and <strong>DINOv2 ViT-B/14</strong>—when classifying brief grayscale line drawings from the <em>Google Quick, Draw!</em> dataset across 10 everyday object categories.
+                    </p>
                 </div>
-                <div class="flex items-start gap-2.5">
-                    <span class="text-blue-600 font-semibold">•</span>
-                    <div><strong class="text-slate-900">Task:</strong> Observe a brief line drawing for 2.0 seconds and select which of 10 everyday categories it belongs to.</div>
+
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-blue-700">
+                        2. Visual Degradations Tested
+                    </h2>
+                    <ul class="space-y-1.5 text-xs sm:text-sm text-slate-600 list-disc pl-4">
+                        <li>
+                            <strong class="text-slate-900">Intact Baseline:</strong> Uncorrupted black-on-white line drawings (`224×224` resolution).
+                        </li>
+                        <li>
+                            <strong class="text-slate-900">Gaussian Blur ($\sigma \in \{2, 5, 10\}$ px):</strong> Progressively removes fine high-frequency stroke edges while preserving coarse spatial layout.
+                        </li>
+                        <li>
+                            <strong class="text-slate-900">Offset Tile Scrambling ($4, 16, 64$ tiles):</strong> Cuts the drawing into a grid shifted by $+7\text{ px}$ (half of a $14\text{ px}$ ViT patch) and randomly permutes all tiles so local stroke parts remain visible while global object configuration is disrupted.
+                        </li>
+                    </ul>
                 </div>
-                <div class="flex items-start gap-2.5">
-                    <span class="text-blue-600 font-semibold">•</span>
-                    <div><strong class="text-slate-900">Confidentiality:</strong> Data is used strictly for academic research and analysis.</div>
+
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-blue-700">
+                        3. Experimental Procedure (70 Trials)
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-600">
+                        You will first complete <strong>2 intact warm-up trials</strong>, followed by <strong>70 main trials</strong>. On every trial:
+                    </p>
+                    <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4">
+                        <li>A central fixation cross (`+`) appears for <strong>0.6 seconds</strong>.</li>
+                        <li>A line drawing is displayed for <strong>exactly 1.5 seconds</strong>.</li>
+                        <li>A brief visual noise mask appears for <strong>0.4 seconds</strong> to clear retinal afterimages.</li>
+                        <li>You select which of the <strong>10 categories</strong> matches the drawing (within 15 seconds; any unanswered drawing is automatically re-queued at the end of your session).</li>
+                    </ol>
+                </div>
+
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-blue-700">
+                        4. Strict Anonymity &amp; Data Protection
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-600">
+                        <strong>No personal name, email, or identifying information is collected.</strong> You are automatically assigned an anonymous Participant Number (<code class="mono text-slate-800">P01</code>–<code class="mono text-slate-800">P21</code>, organized into 3 balanced groups of 7 participants covering all 490 experimental stimuli).
+                    </p>
+                    <p class="text-xs text-slate-600">
+                        At the end of the 70 trials, your anonymous category responses and reaction times are automatically transmitted to the research database.
+                    </p>
                 </div>
             </div>
 
-            <!-- Saved Progress Resume Banner (Shown automatically if localStorage has data for selected ID) -->
-            <div id="resume-banner" class="hidden rounded-lg p-4 bg-blue-50/80 border border-blue-200 space-y-3">
+            <!-- Saved Progress Resume Banner -->
+            <div id="resume-banner" class="hidden rounded-xl p-4 bg-blue-50/90 border border-blue-200 space-y-3">
                 <div class="flex items-start justify-between gap-3">
                     <div class="space-y-0.5">
                         <div id="resume-title" class="text-xs font-semibold text-blue-900 uppercase tracking-wide">
@@ -159,90 +207,103 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <button id="btn-resume-session" type="button" onclick="resumeSavedExperiment()"
-                        class="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition">
+                        class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition">
                         Resume Experiment →
-                    </button>
-                    <button id="btn-view-saved-results" type="button" onclick="restoreCompletedSession()"
-                        class="hidden px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition">
-                        View Completed Results →
                     </button>
                     <button type="button" onclick="resetCurrentParticipantProgress()"
                         class="px-3 py-2 rounded-lg bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 text-xs font-medium transition">
-                        Start Over
+                        Reset &amp; Start Over
                     </button>
                 </div>
             </div>
 
-            <!-- Identification Form -->
-            <div class="space-y-4">
-                <!-- 1. Full Name -->
-                <div class="space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <label for="observer-name-input" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                            Full Name (Nom &amp; Prénom) <span class="text-rose-600">*</span>
-                        </label>
-                        <span id="name-validation-msg" class="hidden text-xs font-medium text-rose-600">
-                            Please enter your full name to continue.
+            <!-- Anonymous Participant ID Assignment Card & Informed Consent -->
+            <div class="p-5 rounded-xl bg-white border border-slate-200 space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                    <div class="space-y-1">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Your Automatically Assigned Anonymous ID
                         </span>
+                        <div class="flex items-center gap-3">
+                            <span id="assigned-id-badge" class="mono text-2xl font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3.5 py-1 rounded-lg">
+                                #P01
+                            </span>
+                            <div>
+                                <div id="assigned-group-label" class="text-sm font-semibold text-slate-900">
+                                    Group 1 (Slice 1 of 7)
+                                </div>
+                                <div id="source-status" class="mono text-xs text-emerald-600">
+                                    Stimuli schedule ready ✓
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <input type="text" id="observer-name-input" placeholder="e.g., Marie Curie" autocomplete="name"
-                        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15 transition" />
-                </div>
 
-                <!-- 2. Assigned Participant ID (P01 to P12) -->
-                <div class="space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <label for="participant-select" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                            Assigned Participant ID
+                    <!-- Discreet manual selector if coordinator assigned a specific ID -->
+                    <div class="space-y-1">
+                        <label for="participant-select" class="block text-[11px] font-medium text-slate-500">
+                            Assigned a specific ID by researcher?
                         </label>
-                        <span id="source-status" class="mono text-[11px] text-emerald-600">Loading stimuli schedule...</span>
+                        <select id="participant-select"
+                            class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:border-blue-600 focus:outline-none">
+                            <optgroup label="Group 1 (P01–P07 • 490 Stimuli)">
+                                <option value="P01">P01 — Group 1 (Slice 1)</option>
+                                <option value="P02">P02 — Group 1 (Slice 2)</option>
+                                <option value="P03">P03 — Group 1 (Slice 3)</option>
+                                <option value="P04">P04 — Group 1 (Slice 4)</option>
+                                <option value="P05">P05 — Group 1 (Slice 5)</option>
+                                <option value="P06">P06 — Group 1 (Slice 6)</option>
+                                <option value="P07">P07 — Group 1 (Slice 7)</option>
+                            </optgroup>
+                            <optgroup label="Group 2 (P08–P14 • 490 Stimuli)">
+                                <option value="P08">P08 — Group 2 (Slice 1)</option>
+                                <option value="P09">P09 — Group 2 (Slice 2)</option>
+                                <option value="P10">P10 — Group 2 (Slice 3)</option>
+                                <option value="P11">P11 — Group 2 (Slice 4)</option>
+                                <option value="P12">P12 — Group 2 (Slice 5)</option>
+                                <option value="P13">P13 — Group 2 (Slice 6)</option>
+                                <option value="P14">P14 — Group 2 (Slice 7)</option>
+                            </optgroup>
+                            <optgroup label="Group 3 (P15–P21 • 490 Stimuli)">
+                                <option value="P15">P15 — Group 3 (Slice 1)</option>
+                                <option value="P16">P16 — Group 3 (Slice 2)</option>
+                                <option value="P17">P17 — Group 3 (Slice 3)</option>
+                                <option value="P18">P18 — Group 3 (Slice 4)</option>
+                                <option value="P19">P19 — Group 3 (Slice 5)</option>
+                                <option value="P20">P20 — Group 3 (Slice 6)</option>
+                                <option value="P21">P21 — Group 3 (Slice 7)</option>
+                            </optgroup>
+                        </select>
                     </div>
-                    <select id="participant-select"
-                        class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15 transition">
-                        <option value="P01">Participant P01</option>
-                        <option value="P02">Participant P02</option>
-                        <option value="P03">Participant P03</option>
-                        <option value="P04">Participant P04</option>
-                        <option value="P05">Participant P05</option>
-                        <option value="P06">Participant P06</option>
-                        <option value="P07">Participant P07</option>
-                        <option value="P08">Participant P08</option>
-                        <option value="P09">Participant P09</option>
-                        <option value="P10">Participant P10</option>
-                        <option value="P11">Participant P11</option>
-                        <option value="P12">Participant P12</option>
-                    </select>
                 </div>
 
-                <!-- 3. Informed Consent Checkbox -->
+                <!-- Informed Consent Checkbox -->
                 <label for="consent-checkbox"
-                    class="flex items-start gap-3 p-3.5 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer select-none hover:border-slate-300 transition">
+                    class="flex items-start gap-3 p-4 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer select-none hover:border-slate-300 transition">
                     <input type="checkbox" id="consent-checkbox"
                         class="mt-0.5 w-4 h-4 accent-blue-600 rounded border-slate-300 shrink-0" />
-                    <span class="text-xs text-slate-600 leading-relaxed">
-                        <strong class="text-slate-900">Informed Consent:</strong> I understand that my participation is
-                        voluntary, that only my category responses and reaction times will be recorded for academic
-                        research, and that I may pause or stop the experiment at any time.
+                    <span class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong class="text-slate-900">Informed Consent:</strong> I have read the project description above. I understand that my participation is voluntary and completely anonymous, that only my category choices and reaction times will be recorded under my anonymous Participant ID, and that I may stop at any time.
                     </span>
                 </label>
                 <p id="consent-validation-msg" class="hidden text-xs font-medium text-rose-600">
-                    Please check the Informed Consent box before continuing.
+                    Please check the Informed Consent box above to continue.
                 </p>
+
+                <!-- Primary Action Button -->
+                <button id="btn-continue-instructions" type="button" onclick="goToInstructionsStep()"
+                    class="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm sm:text-base shadow-sm transition">
+                    Continue to Instructions →
+                </button>
             </div>
 
-            <!-- Single Clear Primary Action Button -->
-            <button id="btn-continue-instructions" type="button" onclick="goToInstructionsStep()"
-                class="w-full py-3 px-5 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm shadow-sm transition">
-                Continue to Instructions →
-            </button>
-
             <!-- Discreet Offline Fallback (Plan B) -->
-            <details class="text-xs text-slate-500 pt-1">
-                <summary class="cursor-pointer hover:text-slate-700 select-none">
-                    Running offline without a web server? Load local files
+            <details class="text-xs text-slate-400">
+                <summary class="cursor-pointer hover:text-slate-600 select-none">
+                    Offline Lab Mode (Manual File Loader)
                 </summary>
-                <div class="mt-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                    <span>Select <code class="mono text-slate-700">human_trials.csv</code> and <code class="mono text-slate-700">stimuli_human/</code>:</span>
+                <div class="mt-2 p-3 rounded-lg bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-slate-600">
+                    <span>Load local <code class="mono">human_trials.csv</code> and <code class="mono">stimuli_human/</code> folder:</span>
                     <div class="flex gap-2">
                         <label class="cursor-pointer px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium">
                             + CSV
@@ -260,171 +321,172 @@
         <!-- =========================================================================
              STEP 2: VISUAL INSTRUCTIONS & CATEGORY FAMILIARIZATION (#step-instructions)
              ========================================================================= -->
-        <section id="step-instructions" class="hidden w-full max-w-2xl academic-card p-6 sm:p-8 space-y-6">
+        <section id="step-instructions" class="hidden w-full max-w-4xl academic-card p-6 sm:p-10 space-y-7">
             <div class="space-y-1.5">
-                <span class="text-xs font-semibold uppercase tracking-wider text-blue-600">Step 2 of 5 • Study Instructions</span>
-                <h2 class="text-xl sm:text-2xl font-bold text-slate-900">How Each Trial Works</h2>
-                <p class="text-sm text-slate-600">
-                    Each trial follows an automatic timed sequence. Please keep your eyes focused on the center of the frame.
+                <span class="text-xs font-semibold uppercase tracking-wider text-blue-600">Step 2 of 5 • Task Instructions</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">How Each Trial Works</h2>
+                <p class="text-sm sm:text-base text-slate-600">
+                    Each trial follows an automatic timed sequence. Keep your eyes focused on the center of the display frame.
                 </p>
             </div>
 
             <!-- 4 Visual Step Cards in a Row -->
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3.5">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="mono text-xs font-semibold text-blue-600">1. Fixation</span>
-                        <span class="mono text-[11px] text-slate-500">0.6s</span>
+                        <span class="mono text-xs font-semibold text-slate-600">0.6s</span>
                     </div>
-                    <div class="h-14 rounded bg-white border border-slate-200 flex items-center justify-center">
-                        <span class="text-slate-700 font-semibold text-lg">+</span>
+                    <div class="h-16 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+                        <span class="text-slate-800 font-semibold text-xl">+</span>
                     </div>
-                    <p class="text-xs text-slate-600 leading-snug">Look at the center cross to focus your gaze.</p>
+                    <p class="text-xs text-slate-600 leading-snug">Focus your gaze on the central cross.</p>
                 </div>
 
-                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="mono text-xs font-semibold text-blue-600">2. Drawing</span>
-                        <span class="mono text-[11px] text-slate-500">2.0s</span>
+                        <span class="mono text-xs font-semibold text-slate-600">1.5s</span>
                     </div>
-                    <div class="h-14 rounded bg-white border border-slate-200 flex items-center justify-center">
-                        <svg class="w-7 h-7 text-slate-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+                    <div class="h-16 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-slate-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
                     </div>
-                    <p class="text-xs text-slate-600 leading-snug">Observe the drawing (intact, blurred, or shuffled tiles).</p>
+                    <p class="text-xs text-slate-600 leading-snug">Observe the drawing carefully for <strong>1.5 seconds</strong>.</p>
                 </div>
 
-                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="mono text-xs font-semibold text-blue-600">3. Visual Mask</span>
-                        <span class="mono text-[11px] text-slate-500">0.4s</span>
+                        <span class="mono text-xs font-semibold text-slate-600">0.4s</span>
                     </div>
-                    <div class="h-14 rounded bg-white border border-slate-200 flex items-center justify-center">
-                        <div class="w-10 h-8 rounded bg-slate-200 grid grid-cols-4 gap-0.5 p-0.5">
+                    <div class="h-16 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+                        <div class="w-11 h-9 rounded bg-slate-200 grid grid-cols-4 gap-0.5 p-0.5">
                             <div class="bg-slate-800"></div><div class="bg-white"></div><div class="bg-slate-800"></div><div class="bg-white"></div>
                             <div class="bg-white"></div><div class="bg-slate-800"></div><div class="bg-white"></div><div class="bg-slate-800"></div>
                         </div>
                     </div>
-                    <p class="text-xs text-slate-600 leading-snug">A brief pattern clears retinal afterimages.</p>
+                    <p class="text-xs text-slate-600 leading-snug">A brief noise pattern clears retinal afterimages.</p>
                 </div>
 
-                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="mono text-xs font-semibold text-blue-600">4. Your Answer</span>
-                        <span class="mono text-[11px] text-slate-500">Untimed</span>
+                        <span class="mono text-xs font-semibold text-slate-600">10 Choices</span>
                     </div>
-                    <div class="h-14 rounded bg-white border border-slate-200 flex items-center justify-center">
-                        <span class="px-2 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200 mono text-[11px] font-medium">Click / [1–0]</span>
+                    <div class="h-16 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+                        <span class="px-2.5 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200 mono text-xs font-medium">Click / [1–0]</span>
                     </div>
-                    <p class="text-xs text-slate-600 leading-snug">Select the matching category as accurately as possible.</p>
+                    <p class="text-xs text-slate-600 leading-snug">Click the matching category (or press keys <code class="mono">1–9, 0</code>).</p>
                 </div>
             </div>
 
             <!-- The 10 Possible Categories (5x2 Grid) -->
-            <div class="space-y-2.5">
+            <div class="space-y-3">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-700">
-                        The 10 Possible Categories (Please review before starting)
+                        The 10 Possible Categories (Memorize them before starting)
                     </h3>
                     <span class="text-xs text-slate-500">English (Français)</span>
                 </div>
-                <div id="welcome-categories" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                <div id="welcome-categories" class="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     <!-- Populated by JS -->
                 </div>
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
+            <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
                 <button type="button" onclick="showStep(1)"
-                    class="px-4 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm transition">
+                    class="px-5 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm transition">
                     ← Back
                 </button>
                 <button type="button" onclick="startPracticeStep()"
-                    class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition">
-                    Start Practice (2 trials) →
+                    class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition">
+                    Start Practice (2 Intact Trials) →
                 </button>
             </div>
         </section>
 
         <!-- =========================================================================
-             STEP 3: GUIDED PRACTICE PHASE (#step-practice)
+             STEP 3: GUIDED PRACTICE PHASE (#step-practice — 2 INTACT IMAGES ONLY, NO REPEAT)
              ========================================================================= -->
-        <section id="step-practice" class="hidden w-full max-w-2xl space-y-5">
-            <!-- Practice Arena Card (Shown during the 2 practice trials) -->
+        <section id="step-practice" class="hidden w-full max-w-4xl space-y-5">
+            <!-- Practice Arena Card -->
             <div id="practice-arena-container" class="academic-card p-6 sm:p-8 space-y-6">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2.5">
                         <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                            Practice Warm-Up
+                            Practice Warm-Up (Intact Drawings)
                         </span>
-                        <span id="practice-counter-text" class="mono text-xs font-medium text-slate-600">
+                        <span id="practice-counter-text" class="mono text-xs sm:text-sm font-semibold text-slate-700">
                             Practice Trial 1 of 2
                         </span>
                     </div>
                     <span id="practice-phase-label" class="mono text-xs text-slate-500">Focus on center</span>
                 </div>
 
-                <!-- 224x224 Stimulus Viewport for Practice -->
-                <div class="flex flex-col items-center justify-center py-2 space-y-3">
-                    <div class="relative p-3 rounded-xl bg-slate-100 border border-slate-200 flex flex-col items-center space-y-2.5">
-                        <div class="relative w-[224px] h-[224px] bg-white border border-slate-300 rounded-lg overflow-hidden flex items-center justify-center shadow-inner">
+                <!-- Enlarged 384x384 Stimulus Viewport for Practice -->
+                <div class="flex flex-col items-center justify-center py-2">
+                    <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col items-center space-y-3">
+                        <div class="relative w-[320px] h-[320px] sm:w-[384px] sm:h-[384px] bg-white border border-slate-300 rounded-xl overflow-hidden flex items-center justify-center shadow-inner">
                             <!-- Fixation -->
                             <div id="prac-fixation-layer" class="flex items-center justify-center w-full h-full bg-white">
-                                <div class="relative w-7 h-7 fixation-cross">
-                                    <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-slate-800"></div>
-                                    <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-slate-800"></div>
+                                <div class="relative w-9 h-9 fixation-cross">
+                                    <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2.5px] bg-slate-800"></div>
+                                    <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2.5px] bg-slate-800"></div>
                                 </div>
                             </div>
-                            <!-- Stimulus -->
+                            <!-- Stimulus (384x384 display of 224x224 drawing) -->
                             <img id="prac-stimulus-img" src="" alt="Practice Stimulus"
-                                class="hidden w-[224px] h-[224px] object-contain bg-white select-none pointer-events-none"
+                                class="hidden w-full h-full object-contain bg-white select-none pointer-events-none"
                                 style="image-rendering: pixelated;" />
                             <!-- Mask -->
-                            <canvas id="prac-mask-canvas" width="224" height="224" class="hidden w-[224px] h-[224px]"></canvas>
+                            <canvas id="prac-mask-canvas" width="224" height="224"
+                                class="hidden w-full h-full" style="image-rendering: pixelated;"></canvas>
                             <!-- Prompt -->
-                            <div id="prac-prompt-layer" class="hidden flex flex-col items-center justify-center w-full h-full bg-slate-50 text-center p-4">
-                                <span class="text-xs font-semibold text-slate-800">Select the matching category below</span>
-                                <span class="mono text-[11px] text-slate-500 mt-1">Click a card or press keys [1–9, 0]</span>
+                            <div id="prac-prompt-layer" class="hidden flex flex-col items-center justify-center w-full h-full bg-slate-50 text-center p-6">
+                                <span class="text-sm font-semibold text-slate-800">Select the matching category below</span>
+                                <span class="mono text-xs text-slate-500 mt-1">Click a card or press keys [1–9, 0]</span>
                             </div>
                         </div>
 
-                        <!-- Subtle 2.0s Exposure Timer Bar -->
-                        <div class="w-[224px] h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                        <!-- Subtle 1.5s Exposure Timer Bar -->
+                        <div class="w-[320px] sm:w-[384px] h-1.5 bg-slate-200 rounded-full overflow-hidden">
                             <div id="prac-timer-bar" class="h-full bg-blue-600 w-0"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Immediate Practice Feedback Banner -->
-                <div id="practice-feedback-card" class="hidden p-4 rounded-lg bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div id="practice-feedback-card" class="hidden p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div id="practice-feedback-text" class="text-sm text-slate-800"></div>
                     <button id="practice-next-btn" type="button" onclick="advancePractice()"
-                        class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shrink-0 transition">
+                        class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shrink-0 transition">
                         Next Practice Trial →
                     </button>
                 </div>
 
                 <!-- 10-Category Response Grid for Practice -->
-                <div id="prac-response-grid" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 opacity-40 pointer-events-none transition-opacity duration-150">
+                <div id="prac-response-grid" class="grid grid-cols-2 sm:grid-cols-5 gap-3 opacity-40 pointer-events-none transition-opacity duration-150">
                     <!-- Populated by JS -->
                 </div>
             </div>
 
-            <!-- Practice Complete Confirmation Card (Shown after 2nd practice trial) -->
-            <div id="practice-complete-card" class="hidden academic-card p-6 sm:p-8 text-center space-y-6">
+            <!-- Practice Complete Confirmation Card (NO Repeat Practice button) -->
+            <div id="practice-complete-card" class="hidden academic-card p-8 sm:p-10 text-center space-y-6">
                 <div class="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto text-xl font-bold">
                     ✓
                 </div>
-                <div class="space-y-2 max-w-md mx-auto">
-                    <h2 class="text-2xl font-bold text-slate-900">Practice Complete!</h2>
-                    <p id="practice-summary-line" class="text-sm text-slate-600 leading-relaxed">
-                        The 70 real trials will now begin (preloaded in memory for exact timing).
+                <div class="space-y-2 max-w-lg mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-900">Warm-Up Complete</h2>
+                    <p id="practice-summary-line" class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                        You are now ready to begin the 70 experimental trials. In the main experiment, some drawings will be intact, some blurred, and some split into shuffled tiles.
                     </p>
                 </div>
 
-                <!-- Preload Progress Bar (Shown while preloading the 70 PNGs) -->
-                <div id="preload-container" class="hidden max-w-md mx-auto space-y-2 p-4 rounded-lg bg-slate-50 border border-slate-200">
+                <!-- Preload Progress Bar -->
+                <div id="preload-container" class="hidden max-w-md mx-auto space-y-2 p-4 rounded-xl bg-slate-50 border border-slate-200">
                     <div class="flex justify-between text-xs font-medium text-slate-700">
-                        <span id="preload-label">Preloading 70 drawings into memory...</span>
+                        <span id="preload-label">Preloading 70 stimuli into memory...</span>
                         <span id="preload-pct" class="mono">0%</span>
                     </div>
                     <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
@@ -432,13 +494,9 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                    <button type="button" onclick="startPracticeStep()"
-                        class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm transition">
-                        Repeat Practice (2 trials)
-                    </button>
+                <div class="pt-2">
                     <button id="btn-start-main" type="button" onclick="startExperiment()"
-                        class="w-full sm:w-auto px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition">
+                        class="px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm sm:text-base shadow-sm transition">
                         Begin Main Experiment (70 Trials) →
                     </button>
                 </div>
@@ -446,19 +504,19 @@
         </section>
 
         <!-- =========================================================================
-             STEP 4: DISTRACTION-FREE EXPERIMENT ARENA (#step-arena)
+             STEP 4: DISTRACTION-FREE EXPERIMENT ARENA (#step-arena — 384x384 VIEWPORT)
              ========================================================================= -->
-        <section id="step-arena" class="hidden w-full max-w-2xl academic-card p-6 sm:p-8 space-y-6">
+        <section id="step-arena" class="hidden w-full max-w-4xl academic-card p-6 sm:p-8 space-y-6">
             <!-- Subtle Top Bar -->
             <div class="space-y-2.5">
-                <div class="flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-2">
+                <div class="flex items-center justify-between text-xs sm:text-sm">
+                    <div class="flex items-center gap-2.5">
                         <span id="trial-counter-text" class="mono font-semibold text-slate-900">Trial 1 of 70</span>
                         <span class="text-slate-300">•</span>
-                        <span id="arena-observer-tag" class="text-slate-500"></span>
+                        <span id="arena-observer-tag" class="mono text-xs text-slate-500"></span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span id="trial-phase-text" class="mono text-slate-500">Fixation</span>
+                        <span id="trial-phase-text" class="mono text-xs text-slate-500">Fixation</span>
                         <button type="button" onclick="quitToWelcome()"
                             class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-medium transition">
                             Pause / Quit
@@ -470,35 +528,36 @@
                 </div>
             </div>
 
-            <!-- Centered 224x224 Stimulus Frame -->
+            <!-- Enlarged Centered 384x384 Stimulus Frame -->
             <div class="flex flex-col items-center justify-center py-2">
-                <div class="p-3.5 rounded-xl bg-slate-100 border border-slate-200 flex flex-col items-center space-y-2.5">
-                    <div class="relative w-[224px] h-[224px] bg-white border border-slate-300 rounded-lg overflow-hidden flex items-center justify-center shadow-inner">
+                <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col items-center space-y-3">
+                    <div class="relative w-[320px] h-[320px] sm:w-[384px] sm:h-[384px] bg-white border border-slate-300 rounded-xl overflow-hidden flex items-center justify-center shadow-inner">
                         <!-- Phase 1: Fixation Cross (600ms) -->
                         <div id="fixation-layer" class="flex items-center justify-center w-full h-full bg-white">
-                            <div class="relative w-7 h-7 fixation-cross">
-                                <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-slate-800"></div>
-                                <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-slate-800"></div>
+                            <div class="relative w-9 h-9 fixation-cross">
+                                <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2.5px] bg-slate-800"></div>
+                                <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2.5px] bg-slate-800"></div>
                             </div>
                         </div>
 
-                        <!-- Phase 2: 224x224 Stimulus Image (2000ms) -->
+                        <!-- Phase 2: Enlarged 384x384 Display of 224x224 Stimulus Image (1500ms) -->
                         <img id="stimulus-img" src="" alt="Stimulus"
-                            class="hidden w-[224px] h-[224px] object-contain bg-white select-none pointer-events-none"
+                            class="hidden w-full h-full object-contain bg-white select-none pointer-events-none"
                             style="image-rendering: pixelated;" />
 
                         <!-- Phase 3: Procedural Backward Mask (400ms) -->
-                        <canvas id="mask-canvas" width="224" height="224" class="hidden w-[224px] h-[224px]"></canvas>
+                        <canvas id="mask-canvas" width="224" height="224"
+                            class="hidden w-full h-full" style="image-rendering: pixelated;"></canvas>
 
-                        <!-- Phase 4: Answer Prompt -->
-                        <div id="prompt-layer" class="hidden flex flex-col items-center justify-center w-full h-full bg-slate-50 text-center p-4">
-                            <span class="text-xs font-semibold text-slate-800">Select the matching category</span>
-                            <span class="mono text-[11px] text-slate-500 mt-1">Click below or press [1–9, 0]</span>
+                        <!-- Phase 4: Answer Prompt (Hidden 15s timeout active in background) -->
+                        <div id="prompt-layer" class="hidden flex flex-col items-center justify-center w-full h-full bg-slate-50 text-center p-6">
+                            <span class="text-sm font-semibold text-slate-800">Select the matching category</span>
+                            <span class="mono text-xs text-slate-500 mt-1">Click below or press keys [1–9, 0]</span>
                         </div>
                     </div>
 
-                    <!-- Smooth Linear 2.0s Exposure Timer Indicator -->
-                    <div class="w-[224px] h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                    <!-- Smooth Linear 1.5s Exposure Timer Indicator -->
+                    <div class="w-[320px] sm:w-[384px] h-1.5 bg-slate-200 rounded-full overflow-hidden">
                         <div id="arena-timer-bar" class="h-full bg-blue-600 w-0"></div>
                     </div>
                 </div>
@@ -506,190 +565,294 @@
 
             <!-- 5x2 Response Button Grid -->
             <div id="response-grid"
-                class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 opacity-40 pointer-events-none transition-opacity duration-150">
+                class="grid grid-cols-2 sm:grid-cols-5 gap-3 opacity-40 pointer-events-none transition-opacity duration-150">
                 <!-- Populated by JS -->
             </div>
         </section>
 
         <!-- =========================================================================
-             STEP 5: STUDY DEBRIEFING, RESULTS & EASY DATA SUBMISSION (#step-results)
+             STEP 5: BLIND PARTICIPANT COMPLETION PAGE (#step-results — NO SCORES/CHARTS)
              ========================================================================= -->
-        <section id="step-results" class="hidden w-full max-w-4xl space-y-6">
-
-            <!-- Warm Thank-You & Prominent Data Submission Card -->
-            <div class="academic-card p-6 sm:p-8 space-y-6 border-t-4 border-t-emerald-600">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
-                    <div class="space-y-1">
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            ✓ Session Complete (70 / 70 Trials)
-                        </span>
-                        <h2 id="results-thank-you-title" class="text-2xl font-bold text-slate-900">
-                            Thank you! Your session is complete.
-                        </h2>
-                        <p class="text-sm text-slate-600">
-                            Your response file (<code id="dossier-csv-filename" class="mono text-slate-800 font-medium">responses_P01.csv</code>) has been downloaded automatically.
-                        </p>
-                    </div>
-                    <button type="button" onclick="downloadParticipantCSV()"
-                        class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition shrink-0">
-                        ⬇ Download My Results CSV
-                    </button>
-                </div>
-
-                <!-- Remote Tester 1-Click Result Code Submission Box -->
-                <div class="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                        <div>
-                            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-800">
-                                Send Your Results to the Research Team
-                            </h3>
-                            <p class="text-xs text-slate-600 mt-0.5">
-                                Please send us the downloaded CSV file, or click <strong>Copy Result Code</strong> below and paste it in a message (WhatsApp / Email):
-                            </p>
-                        </div>
-                        <span id="copy-code-feedback" class="hidden text-xs font-semibold text-emerald-600">
-                            ✓ Result Code copied to clipboard!
-                        </span>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row items-stretch gap-2.5">
-                        <input id="result-code-input" type="text" readonly
-                            class="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 mono text-xs text-slate-600 focus:outline-none select-all"
-                            value="" />
-                        <button type="button" onclick="copyResultCode()"
-                            class="px-4 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition shrink-0">
-                            📋 Copy Result Code
-                        </button>
-                        <button type="button" onclick="sendViaWhatsApp()"
-                            class="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition shrink-0">
-                            💬 Send via WhatsApp
-                        </button>
-                    </div>
-                </div>
+        <section id="step-results" class="hidden w-full max-w-xl academic-card p-8 sm:p-10 text-center space-y-6 border-t-4 border-t-emerald-600">
+            <div class="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-bold">
+                ✓
             </div>
 
-            <!-- Scientific Debriefing & KPIs -->
-            <div class="academic-card p-6 sm:p-8 space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-900">Your Performance vs. Vision Models</h3>
-                        <p class="text-xs sm:text-sm text-slate-600">
-                            Comparison of your 10-choice recognition accuracy against frozen <strong>CLIP ViT-L/14</strong> and <strong>DINOv2 ViT-B/14</strong> classifiers.
-                        </p>
-                    </div>
-                    <button type="button" onclick="returnToWelcomeFromResults()"
-                        class="text-xs font-medium text-slate-500 hover:text-slate-800 underline self-start sm:self-auto">
-                        ← Return to Welcome Screen
-                    </button>
-                </div>
+            <div class="space-y-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    Experiment Complete • 70 / 70 Trials Recorded
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">
+                    Thank You for Your Participation
+                </h2>
+                <p class="text-sm sm:text-base text-slate-600 leading-relaxed pt-1">
+                    Your anonymous session (<strong id="completion-id-label" class="mono text-slate-900">ID: P01 • Group 1</strong>) has been completed.
+                </p>
+            </div>
 
-                <!-- 4 Summary KPI Cards -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-                    <div class="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-xs font-medium text-slate-500">Overall Accuracy</span>
-                        <div id="stat-overall" class="mono text-2xl font-bold text-slate-900 mt-1">--%</div>
-                        <span class="text-[11px] text-slate-500">Across all 70 trials</span>
-                    </div>
-                    <div class="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-xs font-medium text-slate-500">Blur Accuracy</span>
-                        <div id="stat-blur" class="mono text-2xl font-bold text-blue-600 mt-1">--%</div>
-                        <span class="text-[11px] text-slate-500">Mean across σ = 2, 5, 10</span>
-                    </div>
-                    <div class="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-xs font-medium text-slate-500">Shuffle Accuracy</span>
-                        <div id="stat-shuffle" class="mono text-2xl font-bold text-emerald-600 mt-1">--%</div>
-                        <span class="text-[11px] text-slate-500">Mean across 4, 16, 64 tiles</span>
-                    </div>
-                    <div class="p-4 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-xs font-medium text-slate-500">Median Reaction Time</span>
-                        <div id="stat-rt" class="mono text-2xl font-bold text-slate-900 mt-1">-- ms</div>
-                        <span class="text-[11px] text-slate-500">Decision latency</span>
-                    </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs sm:text-sm text-slate-600">
+                <div id="cloud-sync-status" class="font-semibold text-emerald-700">
+                    ✓ Your anonymous responses have been automatically transmitted to the research database.
                 </div>
-
-                <!-- Publication-Style Two-Panel Chart (Blur vs. Tile Shuffle) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
-                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 text-center">
-                            Panel A — Gaussian Blur
-                        </h4>
-                        <canvas id="chart-blur" height="220"></canvas>
-                    </div>
-                    <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
-                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 text-center">
-                            Panel B — Offset Tile Shuffle
-                        </h4>
-                        <canvas id="chart-shuffle" height="220"></canvas>
-                    </div>
-                </div>
+                <p class="text-xs text-slate-500">
+                    No further action is required on your part. You may now safely close this browser tab.
+                </p>
             </div>
         </section>
     </main>
 
-    <!-- ==================== RESEARCHER / ADMIN MODAL ==================== -->
+    <!-- ==================== PASSWORD-PROTECTED ADMIN / MANAGER PORTAL ==================== -->
     <div id="admin-modal"
-        class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
-        <div class="max-w-2xl w-full academic-card p-6 sm:p-8 space-y-5 my-8">
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
+
+        <!-- 1. PASSWORD PROMPT CARD -->
+        <div id="admin-login-card" class="max-w-md w-full academic-card p-6 sm:p-8 space-y-5">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-blue-600">Researcher Utility</span>
-                    <h3 class="text-lg font-bold text-slate-900">Aggregate Participant Results (`human_results.csv`)</h3>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-blue-600">Restricted Access</span>
+                    <h3 class="text-lg font-bold text-slate-900">Admin / Manager Authentication</h3>
                 </div>
-                <button type="button" onclick="toggleAdminModal()"
+                <button type="button" onclick="closeAdminModal()"
                     class="px-2.5 py-1 rounded-md border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-medium">
-                    ✕ Close
+                    ✕
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
-                    <label class="block text-xs font-semibold text-slate-800">Option A: Upload Participant CSVs</label>
-                    <p class="text-xs text-slate-600">Select one or more <code class="mono">responses_PXX_*.csv</code> files.</p>
-                    <input type="file" id="admin-files" accept=".csv" multiple
-                        class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-blue-600 file:text-white file:font-medium hover:file:bg-blue-700 cursor-pointer" />
+            <div class="space-y-2">
+                <label for="admin-password-input" class="block text-xs font-semibold text-slate-700 uppercase">
+                    Enter Manager Password
+                </label>
+                <input type="password" id="admin-password-input" placeholder="Password..."
+                    onkeydown="if(event.key==='Enter') verifyAdminPassword()"
+                    class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm mono text-slate-900 focus:border-blue-600 focus:outline-none" />
+                <p id="admin-login-error" class="hidden text-xs font-medium text-rose-600">
+                    Invalid password. Access denied.
+                </p>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeAdminModal()"
+                    class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-xs font-medium hover:bg-slate-50">
+                    Cancel
+                </button>
+                <button type="button" onclick="verifyAdminPassword()"
+                    class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold">
+                    Unlock Dashboard →
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. UNLOCKED ADMIN / MANAGER ANALYTICS DASHBOARD -->
+        <div id="admin-dashboard-card" class="hidden max-w-6xl w-full academic-card p-6 sm:p-8 space-y-6 my-8 max-h-[92vh] overflow-y-auto">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                            Admin / Manager Portal
+                        </span>
+                        <span id="admin-cloud-sync-badge" class="mono text-xs text-emerald-600">
+                            Cloud Sync Ready
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mt-1">
+                        Experiment Telemetry &amp; Results (21 Candidates • 3 Groups × 7 Slices)
+                    </h3>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="syncFromCloudAndRefreshAdmin()"
+                        class="px-3.5 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-semibold transition">
+                        ↻ Sync Cloud Registry
+                    </button>
+                    <label class="cursor-pointer px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition">
+                        + Import CSV Files
+                        <input type="file" id="admin-files" accept=".csv" multiple class="hidden" onchange="handleAdminFileUpload()" />
+                    </label>
+                    <button type="button" onclick="closeAdminModal()"
+                        class="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-medium">
+                        ✕ Close
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs: 1. By Candidate | 2. By Group | 3. Global Results -->
+            <div class="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
+                <button id="admin-tab-btn-candidates" type="button" onclick="switchAdminTab('candidates')"
+                    class="px-4 py-2 rounded-lg text-xs font-semibold bg-blue-600 text-white transition">
+                    1. By Candidate (P01–P21)
+                </button>
+                <button id="admin-tab-btn-groups" type="button" onclick="switchAdminTab('groups')"
+                    class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+                    2. By Group (Group 1, Group 2, Group 3)
+                </button>
+                <button id="admin-tab-btn-global" type="button" onclick="switchAdminTab('global')"
+                    class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+                    3. Global Experiment Results (Humans vs. ViTs)
+                </button>
+            </div>
+
+            <!-- ==================== TAB 1: BY CANDIDATE (P01 - P21) ==================== -->
+            <div id="admin-tab-candidates" class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <p id="admin-candidates-summary" class="text-xs sm:text-sm text-slate-600">
+                        Showing all 21 participant slots across Group 1 (P01–P07), Group 2 (P08–P14), and Group 3 (P15–P21).
+                    </p>
+                    <button type="button" onclick="downloadMergedRawCSV()"
+                        class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shrink-0">
+                        ⬇ Download All Candidate Responses CSV
+                    </button>
                 </div>
 
-                <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
-                    <label class="block text-xs font-semibold text-slate-800">Option B: Paste Result Codes (`VL1:...`)</label>
-                    <p class="text-xs text-slate-600">Paste one or more Result Codes sent by participants:</p>
-                    <textarea id="admin-b64-input" rows="3"
-                        placeholder="Paste VL1:... result codes here..."
-                        class="w-full rounded-md border border-slate-300 bg-white p-2 mono text-[11px] text-slate-800 focus:border-blue-600 focus:outline-none"></textarea>
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
+                                <th class="py-2.5 px-3">Slot</th>
+                                <th class="py-2.5 px-3">Group</th>
+                                <th class="py-2.5 px-3">Slice (70 Imgs)</th>
+                                <th class="py-2.5 px-3">Status</th>
+                                <th class="py-2.5 px-3">Overall</th>
+                                <th class="py-2.5 px-3">Intact</th>
+                                <th class="py-2.5 px-3">Blur Mean</th>
+                                <th class="py-2.5 px-3">Shuffle Mean</th>
+                                <th class="py-2.5 px-3">Median RT</th>
+                                <th class="py-2.5 px-3">Timeouts</th>
+                                <th class="py-2.5 px-3 text-right">CSV</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-candidates-tbody" class="divide-y divide-slate-100 mono">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-2.5">
-                <button type="button" onclick="aggregateHumanCSVs()"
-                    class="flex-1 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition">
-                    Compute 2000-Bootstrap 95% CI &amp; Download human_results.csv
-                </button>
-                <button type="button" onclick="downloadMergedRawCSV()"
-                    class="py-2.5 px-4 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs transition">
-                    ⬇ Download Combined Raw CSV
-                </button>
+            <!-- ==================== TAB 2: BY GROUP (G1, G2, G3 & SLICES S1..S7) ==================== -->
+            <div id="admin-tab-groups" class="hidden space-y-6">
+                <!-- 3 Group Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="admin-group-cards">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Group Comparison Charts (Blur vs Shuffle for G1, G2, G3) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 text-center">
+                            Group Comparison — Gaussian Blur (G1 vs. G2 vs. G3)
+                        </h4>
+                        <canvas id="admin-chart-groups-blur" height="210"></canvas>
+                    </div>
+                    <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 text-center">
+                            Group Comparison — Offset Tile Shuffle (G1 vs. G2 vs. G3)
+                        </h4>
+                        <canvas id="admin-chart-groups-shuffle" height="210"></canvas>
+                    </div>
+                </div>
+
+                <!-- Slice-by-Slice (S1..S7) Cross-Group Comparison Table -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">
+                            Matched Stimulus Slice Comparison (Identical 70 Drawings Across Groups 1, 2 &amp; 3)
+                        </h4>
+                        <button type="button" onclick="downloadAllGroupsComparisonCSV()"
+                            class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold">
+                            ⬇ Download Group Comparison CSV
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                        <table class="w-full text-left border-collapse text-xs mono">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-sans font-semibold uppercase">
+                                    <th class="py-2 px-3">Stimulus Slice</th>
+                                    <th class="py-2 px-3">Group 1 Slot</th>
+                                    <th class="py-2 px-3">Group 2 Slot</th>
+                                    <th class="py-2 px-3">Group 3 Slot</th>
+                                    <th class="py-2 px-3">Mean Slice Accuracy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-slices-tbody" class="divide-y divide-slate-100">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <div class="space-y-1.5">
-                <div id="admin-roster" class="text-xs text-slate-600">No participant files loaded yet.</div>
-                <pre id="admin-output"
-                    class="p-3 rounded-lg bg-slate-900 text-slate-100 mono text-xs overflow-x-auto max-h-48"></pre>
+            <!-- ==================== TAB 3: GLOBAL EXPERIMENT RESULTS (ALL HUMANS VS. VITS) ==================== -->
+            <div id="admin-tab-global" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900">Global Aggregated Human Benchmark (`human_results.csv`)</h4>
+                        <p id="admin-global-subtitle" class="text-xs text-slate-600">
+                            2000-resample percentile bootstrap 95% confidence intervals across all completed human trials vs. CLIP ViT-L/14 and DINOv2 ViT-B/14.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 shrink-0">
+                        <button type="button" onclick="downloadGlobalHumanResultsCSV()"
+                            class="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition">
+                            ⬇ Download human_results.csv
+                        </button>
+                        <button type="button" onclick="downloadMergedRawCSV()"
+                            class="px-4 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition">
+                            ⬇ Download all_human_responses.csv
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Global Two-Panel Interactive Chart -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 text-center">
+                            Panel A — Gaussian Blur (Humans vs. Vision Transformers)
+                        </h4>
+                        <canvas id="admin-chart-global-blur" height="220"></canvas>
+                    </div>
+                    <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 text-center">
+                            Panel B — 7px-Offset Tile Shuffle (Humans vs. Vision Transformers)
+                        </h4>
+                        <canvas id="admin-chart-global-shuffle" height="220"></canvas>
+                    </div>
+                </div>
+
+                <!-- Global Condition Table -->
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse text-xs mono">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-sans font-semibold uppercase">
+                                <th class="py-2.5 px-3">Condition</th>
+                                <th class="py-2.5 px-3">Human Trials (N)</th>
+                                <th class="py-2.5 px-3">Human Acc (%)</th>
+                                <th class="py-2.5 px-3">Human 95% CI</th>
+                                <th class="py-2.5 px-3">CLIP ViT-L/14 (70 UIDs / 1000)</th>
+                                <th class="py-2.5 px-3">DINOv2 ViT-B/14 (70 UIDs / 1000)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-global-tbody" class="divide-y divide-slate-100">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- ==================== MINIMAL ACADEMIC FOOTER ==================== -->
     <footer class="w-full border-t border-slate-200 bg-white py-3.5 px-6">
-        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
             <div>Visual Perception Project • Quick, Draw! Dataset (CC BY 4.0)</div>
-            <button type="button" onclick="toggleAdminModal()" class="text-slate-400 hover:text-slate-700 transition">
-                Chercheur / Admin
+            <button type="button" onclick="openAdminModal()" class="text-slate-400 hover:text-slate-700 font-medium transition">
+                Admin / Manager
             </button>
         </div>
     </footer>
 
-    <!-- ==================== STUDY APPLICATION SCRIPT ==================== -->
+    <!-- ==================== STUDY & CLOUD TELEMETRY SCRIPT ==================== -->
     <script>
-        // 1. SCIENTIFIC INVARIANTS, 10 CATEGORIES & MODEL BENCHMARKS
+        // =========================================================================
+        // 1. SCIENTIFIC INVARIANTS, 21-SLOT SCHEDULE & BENCHMARKS
+        // =========================================================================
         const CATEGORIES = [
             { id: "airplane", key: "1", label: "Airplane", fr: "Avion", svg: `<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>` },
             { id: "bicycle", key: "2", label: "Bicycle", fr: "Vélo", svg: `<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>` },
@@ -709,20 +872,45 @@
             "shuffle_low", "shuffle_medium", "shuffle_high"
         ];
 
-        const MODEL_BENCHMARKS = {
+        const ALL_PIDS = Array.from({ length: 21 }, (_, i) => `P${String(i + 1).padStart(2, "0")}`);
+
+        function getGroupInfo(pid) {
+            const num = parseInt((pid || "P01").replace("P", ""), 10) || 1;
+            const groupIdx = Math.floor((num - 1) / 7) + 1;
+            const sliceIdx = ((num - 1) % 7) + 1;
+            return {
+                pid: `P${String(num).padStart(2, "0")}`,
+                group: `G${groupIdx}`,
+                groupLabel: `Group ${groupIdx}`,
+                slice: sliceIdx,
+                sliceLabel: `Slice ${sliceIdx}`
+            };
+        }
+
+        // Model Reference Accuracies on the 70 human_uids (from model_results_human_subset.csv) and full N=1000
+        const MODEL_BENCHMARKS_70 = {
+            "CLIP ViT-L/14": { intact: 98.57, blur_low: 92.86, blur_medium: 88.57, blur_high: 52.86, shuffle_low: 54.29, shuffle_medium: 21.43, shuffle_high: 17.14 },
+            "DINOv2 ViT-B/14": { intact: 95.71, blur_low: 97.14, blur_medium: 85.71, blur_high: 54.29, shuffle_low: 67.14, shuffle_medium: 15.71, shuffle_high: 10.00 }
+        };
+
+        const MODEL_BENCHMARKS_1000 = {
             "CLIP ViT-L/14": { intact: 97.7, blur_low: 91.9, blur_medium: 84.5, blur_high: 50.8, shuffle_low: 63.5, shuffle_medium: 23.8, shuffle_high: 15.5 },
             "DINOv2 ViT-B/14": { intact: 97.5, blur_low: 97.5, blur_medium: 76.5, blur_high: 58.2, shuffle_low: 76.8, shuffle_medium: 21.2, shuffle_high: 10.4 }
         };
 
-        // Fixed Protocol Timing Constants
+        // Strict Timing Protocol Constants
         const TIME_FIXATION_MS = 600;
-        const TIME_EXPOSURE_MS = 2000;
-        const TIME_MASK_MS = 400;
+        const TIME_EXPOSURE_MS = 1500;       // 1.5 seconds drawing exposure
+        const TIME_MASK_MS = 400;            // 0.4 seconds backward mask
+        const TIME_ANSWER_LIMIT_MS = 15000;  // Hidden 15-second answer timer (re-queues trial on timeout)
 
-        // LocalStorage Keys
-        const STORAGE_PREFIX = "blur_scrambling_progress_v1_";
-        const STORAGE_LAST_PID = "blur_scrambling_last_pid_v1";
-        const STORAGE_OBSERVER_NAME = "blur_scrambling_observer_name_v1";
+        // Cloud & Local Storage Configuration
+        const ADMIN_PASSWORD = "admin2026_Aims";
+        const NTFY_TOPIC = "aims2026_visual_perception_v2_registry";
+        const KV_APP_KEY = "7rd2rmj7";
+        const STORAGE_PREFIX = "blur_scrambling_progress_v2_";
+        const STORAGE_ASSIGNED_PID = "blur_scrambling_assigned_pid_v2";
+        const STORAGE_ADMIN_REGISTRY = "blur_scrambling_admin_registry_v2";
 
         // Runtime State
         let currentStep = 1;
@@ -735,59 +923,41 @@
         let canRespond = false;
         let responseStartTime = 0;
         let recordedResponses = [];
-        let activeObserverName = "";
+        let requeuedTimeoutsCount = 0;
 
-        // Practice State
+        // Practice State (2 Intact Trials Only)
         let isPracticeMode = false;
         let practiceTrials = [];
         let practiceIdx = 0;
-        let practiceCorrectCount = 0;
 
-        // Active Timers
+        // Timer Handles
         let fixationTimerId = null;
         let exposureRafId = null;
         let maskTimerId = null;
         let maskAnimId = null;
+        let answerTimeoutId = null;
 
-        // Chart Instances
-        let chartBlurInstance = null;
-        let chartShuffleInstance = null;
+        // Admin Portal State & Chart Instances
+        let adminUnlocked = false;
+        let adminRegistry = {}; // pid -> { participant, group, slice, responses: [...], timeouts: 0, updatedAt }
+        let chartGroupsBlur = null;
+        let chartGroupsShuffle = null;
+        let chartGlobalBlur = null;
+        let chartGlobalShuffle = null;
 
-        // Researcher Modal Cached Rows
-        let lastAdminMergedRows = [];
-
-        // 2. INITIALIZATION & STEPPER NAVIGATION
-        window.addEventListener("DOMContentLoaded", () => {
+        // =========================================================================
+        // 2. INITIALIZATION, AUTO-ID ASSIGNMENT & CLOUD REGISTRY SYNC
+        // =========================================================================
+        window.addEventListener("DOMContentLoaded", async () => {
             renderCategoryGrids();
+            loadLocalAdminRegistry();
 
             const pidSelect = document.getElementById("participant-select");
-            const nameInput = document.getElementById("observer-name-input");
-
-            // Support ?p=P04 URL query parameter
-            const params = new URLSearchParams(window.location.search);
-            const urlP = (params.get("p") || params.get("participant") || "").toUpperCase().trim();
-            const validPids = Array.from(pidSelect.options).map(o => o.value);
-
-            if (validPids.includes(urlP)) {
-                pidSelect.value = urlP;
-            } else {
-                try {
-                    const lastPid = localStorage.getItem(STORAGE_LAST_PID);
-                    if (lastPid && validPids.includes(lastPid)) {
-                        pidSelect.value = lastPid;
-                    }
-                } catch (_) {}
-            }
-
-            syncObserverNameFromStorage();
-
-            nameInput.addEventListener("input", () => {
-                document.getElementById("name-validation-msg").classList.add("hidden");
-                nameInput.classList.remove("border-rose-500");
-                const val = nameInput.value.trim();
-                try {
-                    if (val) localStorage.setItem(STORAGE_OBSERVER_NAME, val);
-                } catch (_) {}
+            pidSelect.addEventListener("change", () => {
+                const pid = pidSelect.value;
+                try { localStorage.setItem(STORAGE_ASSIGNED_PID, pid); } catch (_) {}
+                updateAssignedIdDisplay(pid);
+                refreshResumeBanner();
             });
 
             document.getElementById("consent-checkbox").addEventListener("change", (e) => {
@@ -796,18 +966,11 @@
                 }
             });
 
-            pidSelect.addEventListener("change", () => {
-                try {
-                    localStorage.setItem(STORAGE_LAST_PID, pidSelect.value);
-                } catch (_) {}
-                syncObserverNameFromStorage();
-                refreshResumeBanner();
-            });
+            // Initialize participant ID (URL ?p=PXX > saved local slot > random available slot from cloud)
+            await assignInitialParticipantSlot();
+            await tryAutoFetchCSV();
 
-            refreshResumeBanner();
-            tryAutoFetchCSV();
-
-            // Offline CSV fallback
+            // Offline CSV / PNG folder inputs
             document.getElementById("local-csv-input").addEventListener("change", (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -822,7 +985,6 @@
                 });
             });
 
-            // Offline PNG folder fallback
             document.getElementById("local-folder-input").addEventListener("change", (e) => {
                 for (const f of e.target.files) {
                     if (f.name.toLowerCase().endsWith(".png")) {
@@ -832,7 +994,7 @@
                 updateSourceStatus();
             });
 
-            // Keyboard shortcuts [1]–[9], [0] during active response phase
+            // Keyboard shortcuts [1]–[9], [0]
             window.addEventListener("keydown", (e) => {
                 if (!canRespond) return;
                 const found = CATEGORIES.find(c => c.key === e.key);
@@ -843,6 +1005,49 @@
                 }
             });
         });
+
+        async function assignInitialParticipantSlot() {
+            const pidSelect = document.getElementById("participant-select");
+            const params = new URLSearchParams(window.location.search);
+            const urlP = (params.get("p") || params.get("participant") || "").toUpperCase().trim();
+
+            if (ALL_PIDS.includes(urlP)) {
+                pidSelect.value = urlP;
+                updateAssignedIdDisplay(urlP);
+                refreshResumeBanner();
+                return;
+            }
+
+            // Check if this browser already has an assigned or in-progress slot
+            try {
+                const existingPid = localStorage.getItem(STORAGE_ASSIGNED_PID);
+                if (existingPid && ALL_PIDS.includes(existingPid)) {
+                    pidSelect.value = existingPid;
+                    updateAssignedIdDisplay(existingPid);
+                    refreshResumeBanner();
+                    return;
+                }
+            } catch (_) {}
+
+            // Fetch cloud registry silently to pick an unassigned slot
+            await fetchCloudSubmissionsSilent();
+            const completedPids = new Set(Object.keys(adminRegistry));
+            const available = ALL_PIDS.filter(p => !completedPids.has(p));
+            const pool = available.length > 0 ? available : ALL_PIDS;
+            const chosen = pool[Math.floor(Math.random() * pool.length)];
+
+            pidSelect.value = chosen;
+            try { localStorage.setItem(STORAGE_ASSIGNED_PID, chosen); } catch (_) {}
+            updateAssignedIdDisplay(chosen);
+            refreshResumeBanner();
+        }
+
+        function updateAssignedIdDisplay(pid) {
+            const info = getGroupInfo(pid);
+            document.getElementById("assigned-id-badge").textContent = `#${info.pid}`;
+            document.getElementById("assigned-group-label").textContent =
+                `${info.groupLabel} (${info.sliceLabel} of 7 • 70 Drawings)`;
+        }
 
         function showStep(stepNumber) {
             currentStep = stepNumber;
@@ -858,10 +1063,8 @@
                 if (el) el.classList.toggle("hidden", Number(num) !== stepNumber);
             });
 
-            // Neutral mid-light laboratory surround (#F1F5F9) during active stimulus presentation
             document.body.classList.toggle("lab-arena-bg", stepNumber === 3 || stepNumber === 4);
 
-            // Update 5-Step Progress Stepper in Header
             for (let i = 1; i <= 5; i++) {
                 const pill = document.getElementById(`stepper-${i}`);
                 if (!pill) continue;
@@ -886,7 +1089,7 @@
 
             CATEGORIES.forEach(c => {
                 welcomeGrid.innerHTML += `
-                    <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                    <div class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200">
                         <svg class="w-5 h-5 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
                         <div class="leading-tight">
                             <div class="text-xs font-semibold text-slate-900">${c.label}</div>
@@ -896,7 +1099,7 @@
 
                 const buttonCard = (prefix) => `
                     <button id="${prefix}-key-${c.id}" type="button" onclick="submitResponse('${c.id}')"
-                        class="response-btn relative flex flex-col items-center justify-center p-3 text-center select-none">
+                        class="response-btn relative flex flex-col items-center justify-center p-3.5 text-center select-none">
                         <span class="absolute top-1.5 right-1.5 mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">[${c.key}]</span>
                         <svg class="w-6 h-6 text-slate-700 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
                         <span class="text-xs font-semibold text-slate-900">${c.label}</span>
@@ -916,17 +1119,25 @@
             setTimeout(() => btn.classList.remove("key-flash"), 140);
         }
 
-        // 3. CSV LOADING & LOCALSTORAGE AUTO-SAVE / RESUME
+        // =========================================================================
+        // 3. CSV LOADING & LOCALSTORAGE AUTO-SAVE / RESUME (WITH QUEUE PERSISTENCE)
+        // =========================================================================
         function sanitizeCSVRows(rows) {
             return (rows || [])
-                .map(r => ({
-                    participant: (r.participant || "").trim(),
-                    uid: (r.uid || "").toString().trim(),
-                    condition: (r.condition || "").trim(),
-                    file: (r.file || "").trim(),
-                    correct_label: (r.correct_label || "").trim(),
-                    trial: (r.trial || "").toString().trim()
-                }))
+                .map(r => {
+                    const pid = (r.participant || "").trim();
+                    const info = getGroupInfo(pid);
+                    return {
+                        participant: pid,
+                        group: (r.group || info.group).trim(),
+                        slot_in_group: Number(r.slot_in_group || info.slice),
+                        uid: Number(r.uid || 0),
+                        condition: (r.condition || "").trim(),
+                        file: (r.file || "").trim(),
+                        correct_label: (r.correct_label || "").trim(),
+                        trial: Number(r.trial || 0)
+                    };
+                })
                 .filter(r => r.participant && r.file && r.condition && r.correct_label);
         }
 
@@ -934,14 +1145,14 @@
             const el = document.getElementById("source-status");
             const pngCount = Object.keys(localFilesMap).length;
             if (csvSourceMode === "hosted") {
-                el.textContent = "Stimuli ready ✓";
-                el.className = "mono text-[11px] text-emerald-600";
+                el.textContent = "Stimuli schedule ready (21 slots) ✓";
+                el.className = "mono text-xs text-emerald-600";
             } else if (csvSourceMode === "local") {
                 el.textContent = pngCount > 0 ? `Local CSV & ${pngCount} PNGs ready ✓` : `Local CSV loaded (${allTrialsCSV.length} rows)`;
-                el.className = "mono text-[11px] text-emerald-600";
+                el.className = "mono text-xs text-emerald-600";
             } else {
                 el.textContent = "Offline mode (load CSV below)";
-                el.className = "mono text-[11px] text-amber-600";
+                el.className = "mono text-xs text-amber-600";
             }
         }
 
@@ -977,18 +1188,17 @@
             }
         }
 
-        function saveParticipantProgress(pid, participantName, trialIdx, responses, completed) {
+        function saveParticipantProgress(pid, trialIdx, responses, activeQueue, timeoutsCount, completed) {
             try {
                 localStorage.setItem(STORAGE_PREFIX + pid, JSON.stringify({
                     participant: pid,
-                    participantName: participantName || "",
                     currentTrialIdx: trialIdx,
                     recordedResponses: responses,
+                    activeQueue: activeQueue,
+                    timeouts: timeoutsCount || 0,
                     completed: Boolean(completed),
                     updatedAt: new Date().toISOString()
                 }));
-                localStorage.setItem(STORAGE_LAST_PID, pid);
-                if (participantName) localStorage.setItem(STORAGE_OBSERVER_NAME, participantName);
             } catch (_) {}
         }
 
@@ -998,22 +1208,6 @@
             } catch (_) {}
         }
 
-        function syncObserverNameFromStorage() {
-            const pid = document.getElementById("participant-select").value;
-            const nameInput = document.getElementById("observer-name-input");
-            const saved = getSavedProgress(pid);
-            if (saved && saved.participantName) {
-                nameInput.value = saved.participantName;
-                return;
-            }
-            if (!nameInput.value.trim()) {
-                try {
-                    const globalName = localStorage.getItem(STORAGE_OBSERVER_NAME);
-                    if (globalName) nameInput.value = globalName;
-                } catch (_) {}
-            }
-        }
-
         function refreshResumeBanner() {
             const pid = document.getElementById("participant-select").value;
             const saved = getSavedProgress(pid);
@@ -1021,94 +1215,45 @@
             const title = document.getElementById("resume-title");
             const subtitle = document.getElementById("resume-subtitle");
             const resumeBtn = document.getElementById("btn-resume-session");
-            const viewBtn = document.getElementById("btn-view-saved-results");
 
-            const pidTrials = allTrialsCSV.filter(r => r.participant === pid);
-            const expectedTotal = pidTrials.length || 70;
-
-            if (!saved || saved.recordedResponses.length === 0) {
+            if (!saved || saved.recordedResponses.length === 0 || saved.completed || saved.recordedResponses.length >= 70) {
                 banner.classList.add("hidden");
                 return;
             }
 
             const count = saved.recordedResponses.length;
-            const savedName = saved.participantName || saved.recordedResponses[0]?.participant_name || pid;
             banner.classList.remove("hidden");
-
-            if (saved.completed || saved.currentTrialIdx >= expectedTotal) {
-                title.textContent = `${pid} (${savedName}) — Session Already Completed`;
-                subtitle.textContent = `All ${count} of ${expectedTotal} trials are saved in this browser. You can view your results or start over.`;
-                resumeBtn.classList.add("hidden");
-                viewBtn.classList.remove("hidden");
-            } else {
-                title.textContent = `Saved Progress Found for ${pid} (${savedName})`;
-                subtitle.textContent = `You completed ${count} of ${expectedTotal} trials. Would you like to resume at Trial ${saved.currentTrialIdx + 1}/${expectedTotal}?`;
-                resumeBtn.textContent = `Resume at Trial ${saved.currentTrialIdx + 1}/${expectedTotal} →`;
-                resumeBtn.classList.remove("hidden");
-                viewBtn.classList.add("hidden");
-            }
+            title.textContent = `Saved Progress Found for ${pid}`;
+            subtitle.textContent = `You have completed ${count} of 70 trials in this browser. You can resume directly at Trial ${count + 1} of 70.`;
+            resumeBtn.textContent = `Resume (${count}/70 Completed) →`;
         }
 
         function resetCurrentParticipantProgress() {
             const pid = document.getElementById("participant-select").value;
-            if (!confirm(`Start over and clear saved progress for ${pid}?`)) return;
+            if (!confirm(`Clear saved in-progress session for ${pid} and start over?`)) return;
             clearParticipantProgress(pid);
             refreshResumeBanner();
         }
 
-        function restoreCompletedSession() {
-            const pid = document.getElementById("participant-select").value;
-            const saved = getSavedProgress(pid);
-            if (!saved || !saved.recordedResponses.length) return;
-            recordedResponses = saved.recordedResponses;
-            currentTrialIdx = saved.currentTrialIdx;
-            activeObserverName = saved.participantName || saved.recordedResponses[0]?.participant_name || document.getElementById("observer-name-input").value.trim() || pid;
-            showStep(5);
-            renderResultsDashboard();
-        }
-
-        // 4. STEP VALIDATION & WIZARD FLOW
-        function validateStep1() {
-            const nameInput = document.getElementById("observer-name-input");
-            const nameVal = nameInput.value.trim();
-            const consentChecked = document.getElementById("consent-checkbox").checked;
-
-            if (!nameVal) {
-                document.getElementById("name-validation-msg").classList.remove("hidden");
-                nameInput.classList.add("border-rose-500");
-                nameInput.focus();
-                return null;
-            }
-            if (!consentChecked) {
-                document.getElementById("consent-validation-msg").classList.remove("hidden");
-                return null;
-            }
-            activeObserverName = nameVal;
-            try {
-                localStorage.setItem(STORAGE_OBSERVER_NAME, activeObserverName);
-            } catch (_) {}
-            return activeObserverName;
-        }
-
+        // =========================================================================
+        // 4. STEP 1 -> STEP 2 -> STEP 3 (PRACTICE: 2 INTACT IMAGES ONLY, NO REPEAT)
+        // =========================================================================
         function goToInstructionsStep() {
-            if (!validateStep1()) return;
+            if (!document.getElementById("consent-checkbox").checked) {
+                document.getElementById("consent-validation-msg").classList.remove("hidden");
+                return;
+            }
             showStep(2);
         }
 
         async function resumeSavedExperiment() {
-            const nameInput = document.getElementById("observer-name-input");
-            const pid = document.getElementById("participant-select").value;
-            const saved = getSavedProgress(pid);
-            if (saved && saved.participantName && !nameInput.value.trim()) {
-                nameInput.value = saved.participantName;
-            }
             document.getElementById("consent-checkbox").checked = true;
-            if (!validateStep1()) return;
+            document.getElementById("consent-validation-msg").classList.add("hidden");
             await startExperiment();
         }
 
-        // 5. STEP 3: GUIDED PRACTICE PHASE (2 WARM-UP TRIALS)
-        function generatePracticeStimuli() {
+        // Generate 2 strictly INTACT practice drawings (Clock & House)
+        function generateIntactPracticeStimuli() {
             const makeCanvas = () => {
                 const c = document.createElement("canvas");
                 c.width = 224;
@@ -1123,7 +1268,7 @@
                 return { c, ctx };
             };
 
-            // Practice 1: Intact Clock
+            // Intact Practice 1: Clock
             const p1 = makeCanvas();
             p1.ctx.beginPath();
             p1.ctx.arc(112, 112, 78, 0, Math.PI * 2);
@@ -1142,43 +1287,30 @@
             p1.ctx.lineTo(150, 128);
             p1.ctx.stroke();
 
-            // Practice 2: 2x2 Shuffled House (+7px offset)
-            const p2raw = makeCanvas();
-            p2raw.ctx.beginPath();
-            p2raw.ctx.moveTo(36, 108);
-            p2raw.ctx.lineTo(112, 38);
-            p2raw.ctx.lineTo(188, 108);
-            p2raw.ctx.closePath();
-            p2raw.ctx.stroke();
-            p2raw.ctx.strokeRect(52, 108, 120, 82);
-            p2raw.ctx.strokeRect(98, 138, 28, 52);
-            p2raw.ctx.strokeRect(64, 124, 24, 24);
-
-            const rolled = makeCanvas();
-            rolled.ctx.drawImage(p2raw.c, 7, 7);
-            const shuffled = makeCanvas();
-            const perm = [2, 3, 0, 1];
-            for (let dst = 0; dst < 4; dst++) {
-                const src = perm[dst];
-                const sx = (src % 2) * 112, sy = Math.floor(src / 2) * 112;
-                const dx = (dst % 2) * 112, dy = Math.floor(dst / 2) * 112;
-                shuffled.ctx.drawImage(rolled.c, sx, sy, 112, 112, dx, dy, 112, 112);
-            }
-            const p2out = makeCanvas();
-            p2out.ctx.drawImage(shuffled.c, -7, -7);
+            // Intact Practice 2: House (strictly intact, no tile shuffling or blur)
+            const p2 = makeCanvas();
+            p2.ctx.beginPath();
+            p2.ctx.moveTo(36, 108);
+            p2.ctx.lineTo(112, 38);
+            p2.ctx.lineTo(188, 108);
+            p2.ctx.closePath();
+            p2.ctx.stroke();
+            p2.ctx.strokeRect(52, 108, 120, 82);
+            p2.ctx.strokeRect(98, 138, 28, 52);
+            p2.ctx.strokeRect(64, 124, 24, 24);
+            p2.ctx.strokeRect(136, 124, 24, 24);
 
             return [
                 { label: "clock", condition: "intact", dataUrl: p1.c.toDataURL("image/png") },
-                { label: "house", condition: "shuffle_low", dataUrl: p2out.c.toDataURL("image/png") }
+                { label: "house", condition: "intact", dataUrl: p2.c.toDataURL("image/png") }
             ];
         }
 
         function startPracticeStep() {
             clearTrialTimers();
             isPracticeMode = true;
-            practiceTrials = generatePracticeStimuli();
+            practiceTrials = generateIntactPracticeStimuli();
             practiceIdx = 0;
-            practiceCorrectCount = 0;
 
             document.getElementById("practice-arena-container").classList.remove("hidden");
             document.getElementById("practice-complete-card").classList.add("hidden");
@@ -1193,21 +1325,19 @@
             if (practiceIdx >= practiceTrials.length) {
                 document.getElementById("practice-arena-container").classList.add("hidden");
                 document.getElementById("practice-complete-card").classList.remove("hidden");
-                document.getElementById("practice-summary-line").textContent =
-                    `You answered ${practiceCorrectCount} of ${practiceTrials.length} practice trials correctly. The 70 real trials will now begin (preloaded in memory for exact timing).`;
             } else {
                 runTrial(practiceIdx);
             }
         }
 
-        // 6. STEP 4: MAIN EXPERIMENT PRELOAD & EXECUTION (70 TRIALS)
+        // =========================================================================
+        // 5. STEP 4: MAIN EXPERIMENT (1.5s EXPOSURE + HIDDEN 15s RE-QUEUE TIMER)
+        // =========================================================================
         async function startExperiment() {
-            if (!activeObserverName) {
-                const v = validateStep1();
-                if (!v) {
-                    showStep(1);
-                    return;
-                }
+            if (!document.getElementById("consent-checkbox").checked) {
+                showStep(1);
+                document.getElementById("consent-validation-msg").classList.remove("hidden");
+                return;
             }
             if (allTrialsCSV.length === 0) {
                 alert("human_trials.csv is not loaded yet. If running offline via file://, please load human_trials.csv on Step 1.");
@@ -1216,53 +1346,54 @@
             }
 
             const pid = document.getElementById("participant-select").value;
-            participantTrials = allTrialsCSV.filter(r => r.participant === pid);
-            if (participantTrials.length === 0) {
+            const baseSchedule = allTrialsCSV.filter(r => r.participant === pid).map(r => ({ ...r }));
+            if (baseSchedule.length === 0) {
                 alert(`No trials found for ${pid} in human_trials.csv.`);
                 return;
             }
 
-            // Check saved localStorage state for resume
+            // Restore in-progress session if present
             const saved = getSavedProgress(pid);
-            let resumeIdx = 0;
-            let resumeResponses = [];
-            if (saved && !saved.completed && saved.currentTrialIdx > 0 && saved.currentTrialIdx < participantTrials.length) {
-                const sameCount = saved.recordedResponses.length === saved.currentTrialIdx;
-                const sameFirst = saved.recordedResponses[0] && String(saved.recordedResponses[0].uid) === String(participantTrials[0].uid);
-                if (sameCount && sameFirst) {
-                    resumeIdx = saved.currentTrialIdx;
-                    resumeResponses = saved.recordedResponses.map(r => ({
-                        ...r,
-                        participant_name: r.participant_name || activeObserverName
-                    }));
+            if (saved && !saved.completed && saved.recordedResponses.length > 0 && saved.recordedResponses.length < 70) {
+                recordedResponses = saved.recordedResponses.slice();
+                requeuedTimeoutsCount = saved.timeouts || 0;
+                if (Array.isArray(saved.activeQueue) && saved.activeQueue.length > saved.currentTrialIdx) {
+                    participantTrials = saved.activeQueue.slice();
+                    currentTrialIdx = saved.currentTrialIdx;
+                } else {
+                    const answeredUids = new Set(recordedResponses.map(r => Number(r.uid)));
+                    const remaining = baseSchedule.filter(r => !answeredUids.has(Number(r.uid)));
+                    participantTrials = [...recordedResponses, ...remaining];
+                    currentTrialIdx = recordedResponses.length;
                 }
-            } else if (saved && (saved.completed || saved.currentTrialIdx >= participantTrials.length)) {
+            } else {
                 clearParticipantProgress(pid);
+                participantTrials = baseSchedule;
+                currentTrialIdx = 0;
+                recordedResponses = [];
+                requeuedTimeoutsCount = 0;
             }
 
-            const trialsToPreload = participantTrials.slice(resumeIdx);
+            const uniqueFiles = Array.from(new Set(participantTrials.slice(currentTrialIdx).map(r => r.file.trim())));
             const preloadBox = document.getElementById("preload-container");
             const startBtn = document.getElementById("btn-start-main");
             preloadBox.classList.remove("hidden");
             if (startBtn) startBtn.disabled = true;
 
             document.getElementById("preload-label").textContent =
-                resumeIdx > 0
-                    ? `Preloading ${trialsToPreload.length} remaining drawings to resume at Trial ${resumeIdx + 1}...`
-                    : `Preloading ${trialsToPreload.length} drawings into memory...`;
+                `Preloading ${uniqueFiles.length} stimuli into memory...`;
             document.getElementById("preload-pct").textContent = "0%";
             document.getElementById("preload-bar").style.width = "0%";
 
             let loaded = 0;
             const failedFiles = [];
-            await Promise.all(trialsToPreload.map(row => new Promise((resolve) => {
+            await Promise.all(uniqueFiles.map(fname => new Promise((resolve) => {
                 const img = new Image();
-                const fname = row.file.trim();
                 const src = localFilesMap[fname] ? localFilesMap[fname] : `./stimuli_human/${fname}`;
                 img.onload = () => {
                     preloadedImages[fname] = src;
                     loaded++;
-                    const pct = Math.round((loaded / trialsToPreload.length) * 100);
+                    const pct = Math.round((loaded / uniqueFiles.length) * 100);
                     document.getElementById("preload-pct").textContent = `${pct}%`;
                     document.getElementById("preload-bar").style.width = `${pct}%`;
                     resolve();
@@ -1285,9 +1416,8 @@
             }
 
             isPracticeMode = false;
-            currentTrialIdx = resumeIdx;
-            recordedResponses = resumeResponses;
-            document.getElementById("arena-observer-tag").textContent = `${activeObserverName} (${pid})`;
+            const info = getGroupInfo(pid);
+            document.getElementById("arena-observer-tag").textContent = `ID: ${info.pid} (${info.groupLabel})`;
             showStep(4);
             runTrial(currentTrialIdx);
         }
@@ -1295,14 +1425,16 @@
         function clearTrialTimers() {
             if (fixationTimerId !== null) { clearTimeout(fixationTimerId); fixationTimerId = null; }
             if (maskTimerId !== null) { clearTimeout(maskTimerId); maskTimerId = null; }
+            if (answerTimeoutId !== null) { clearTimeout(answerTimeoutId); answerTimeoutId = null; }
             if (exposureRafId !== null) { cancelAnimationFrame(exposureRafId); exposureRafId = null; }
             stopProceduralMask();
         }
 
         function quitToWelcome() {
-            const msg = currentTrialIdx > 0
-                ? `Pause the experiment? Your ${currentTrialIdx} completed trial(s) are saved in this browser so you can resume at Trial ${currentTrialIdx + 1} anytime.`
-                : "Return to the welcome screen?";
+            const doneCount = recordedResponses.length;
+            const msg = doneCount > 0
+                ? `Pause the experiment? Your ${doneCount} completed response(s) are saved in this browser so you can resume anytime.`
+                : "Return to the overview screen?";
             if (!confirm(msg)) return;
 
             clearTrialTimers();
@@ -1312,17 +1444,14 @@
             showStep(1);
         }
 
-        function returnToWelcomeFromResults() {
-            clearTrialTimers();
-            canRespond = false;
-            isPracticeMode = false;
-            refreshResumeBanner();
-            showStep(1);
-        }
-
-        // 7. HIGH-PRECISION TRIAL STATE MACHINE (600ms Fixation -> 2000ms Stimulus -> 400ms Mask -> Response)
+        // High-Precision Trial State Machine: 600ms Fixation -> 1500ms Exposure -> 400ms Mask -> Hidden 15s Answer Window
         function runTrial(idx) {
             clearTrialTimers();
+
+            if (!isPracticeMode && recordedResponses.length >= 70) {
+                finishExperiment();
+                return;
+            }
 
             const activeList = isPracticeMode ? practiceTrials : participantTrials;
             if (idx >= activeList.length) {
@@ -1336,9 +1465,7 @@
 
             const trial = activeList[idx];
             canRespond = false;
-            const total = activeList.length;
 
-            // Select DOM elements for either Practice (Step 3) or Main Arena (Step 4)
             const fixLayer = document.getElementById(isPracticeMode ? "prac-fixation-layer" : "fixation-layer");
             const stimImg = document.getElementById(isPracticeMode ? "prac-stimulus-img" : "stimulus-img");
             const maskCanvas = document.getElementById(isPracticeMode ? "prac-mask-canvas" : "mask-canvas");
@@ -1348,11 +1475,12 @@
             const phaseLabel = document.getElementById(isPracticeMode ? "practice-phase-label" : "trial-phase-text");
 
             if (isPracticeMode) {
-                document.getElementById("practice-counter-text").textContent = `Practice Trial ${idx + 1} of ${total}`;
+                document.getElementById("practice-counter-text").textContent = `Practice Trial ${idx + 1} of 2`;
                 document.getElementById("practice-feedback-card").classList.add("hidden");
             } else {
-                document.getElementById("trial-counter-text").textContent = `Trial ${idx + 1} of ${total}`;
-                document.getElementById("trial-progress-bar").style.width = `${(idx / total) * 100}%`;
+                const completedCount = recordedResponses.length;
+                document.getElementById("trial-counter-text").textContent = `Trial ${completedCount + 1} of 70`;
+                document.getElementById("trial-progress-bar").style.width = `${(completedCount / 70) * 100}%`;
             }
 
             // Reset layers
@@ -1376,9 +1504,9 @@
                 fixationTimerId = null;
                 fixLayer.classList.add("hidden");
                 stimImg.classList.remove("hidden");
-                phaseLabel.textContent = "Viewing drawing (2.0s)";
+                phaseLabel.textContent = "Viewing drawing (1.5s)";
 
-                // PHASE 2: STIMULUS EXPOSURE (Exact 2000 ms via performance.now())
+                // PHASE 2: STIMULUS EXPOSURE (Exact 1500 ms via performance.now())
                 const startExp = performance.now();
 
                 function tickExposure(now) {
@@ -1410,11 +1538,36 @@
                             respGrid.classList.remove("opacity-40", "pointer-events-none");
                             responseStartTime = performance.now();
                             canRespond = true;
+
+                            // Start HIDDEN 15-second answer timer (in Main Experiment)
+                            if (!isPracticeMode) {
+                                answerTimeoutId = setTimeout(() => {
+                                    handleAnswerTimeoutRequeue();
+                                }, TIME_ANSWER_LIMIT_MS);
+                            }
                         }, TIME_MASK_MS);
                     }
                 }
                 exposureRafId = requestAnimationFrame(tickExposure);
             }, TIME_FIXATION_MS);
+        }
+
+        // Hidden 15s Timeout Handler: Lock buttons, push missed trial to end of queue, advance immediately
+        function handleAnswerTimeoutRequeue() {
+            if (!canRespond || isPracticeMode) return;
+            canRespond = false;
+            answerTimeoutId = null;
+
+            const timedOutTrial = participantTrials[currentTrialIdx];
+            requeuedTimeoutsCount++;
+
+            // Re-queue this exact drawing at the end of the participant's trial queue
+            participantTrials.push({ ...timedOutTrial });
+            currentTrialIdx++;
+
+            const pid = timedOutTrial.participant;
+            saveParticipantProgress(pid, currentTrialIdx, recordedResponses, participantTrials, requeuedTimeoutsCount, false);
+            runTrial(currentTrialIdx);
         }
 
         function startProceduralMask(canvas) {
@@ -1450,17 +1603,19 @@
             }
         }
 
-        // 8. RECORD RESPONSE & ADVANCE
         function submitResponse(chosenCategory) {
             if (!canRespond) return;
             canRespond = false;
+            if (answerTimeoutId !== null) {
+                clearTimeout(answerTimeoutId);
+                answerTimeoutId = null;
+            }
 
             const rt = Math.round(performance.now() - responseStartTime);
 
             if (isPracticeMode) {
                 const pt = practiceTrials[practiceIdx];
                 const ok = chosenCategory === pt.label;
-                if (ok) practiceCorrectCount++;
                 const chosenCat = CATEGORIES.find(c => c.id === chosenCategory);
                 const correctCat = CATEGORIES.find(c => c.id === pt.label);
 
@@ -1470,14 +1625,14 @@
                 const btn = document.getElementById("practice-next-btn");
 
                 const feedbackMsg = ok
-                    ? `<span class="text-emerald-700 font-semibold">✓ Correct!</span> That was a <strong>${correctCat.label} (${correctCat.fr})</strong>.`
-                    : `<span class="text-amber-700 font-semibold">Not quite:</span> You selected ${chosenCat.label}, and the drawing was a <strong>${correctCat.label} (${correctCat.fr})</strong>.`;
+                    ? `<span class="text-emerald-700 font-semibold">✓ Correct!</span> That intact drawing was a <strong>${correctCat.label} (${correctCat.fr})</strong>.`
+                    : `<span class="text-amber-700 font-semibold">Note:</span> You selected ${chosenCat.label}; the intact drawing was a <strong>${correctCat.label} (${correctCat.fr})</strong>.`;
 
                 if (practiceIdx + 1 < practiceTrials.length) {
-                    txt.innerHTML = `${feedbackMsg} Ready for the 2nd practice trial (shuffled tiles).`;
+                    txt.innerHTML = `${feedbackMsg} Ready for the 2nd intact practice trial.`;
                     btn.textContent = "Start 2nd Practice Trial →";
                 } else {
-                    txt.innerHTML = `${feedbackMsg} You have completed both practice trials.`;
+                    txt.innerHTML = `${feedbackMsg} Practice is now complete.`;
                     btn.textContent = "Continue →";
                 }
                 card.classList.remove("hidden");
@@ -1485,12 +1640,14 @@
             }
 
             const t = participantTrials[currentTrialIdx];
+            const info = getGroupInfo(t.participant);
             const isCorrect = (chosenCategory === t.correct_label.trim()) ? 1 : 0;
 
             recordedResponses.push({
-                participant: t.participant,
-                participant_name: activeObserverName,
-                trial: Number(t.trial),
+                participant: info.pid,
+                group: info.group,
+                slot_in_group: info.slice,
+                trial: recordedResponses.length + 1,
                 uid: Number(t.uid),
                 condition: t.condition.trim(),
                 file: t.file.trim(),
@@ -1501,44 +1658,65 @@
             });
 
             currentTrialIdx++;
-            saveParticipantProgress(t.participant, activeObserverName, currentTrialIdx, recordedResponses, currentTrialIdx >= participantTrials.length);
-            runTrial(currentTrialIdx);
+            const isDone = recordedResponses.length >= 70;
+            saveParticipantProgress(info.pid, currentTrialIdx, recordedResponses, participantTrials, requeuedTimeoutsCount, isDone);
+
+            if (isDone) {
+                finishExperiment();
+            } else {
+                runTrial(currentTrialIdx);
+            }
         }
 
-        // 9. STEP 5: RESULTS, CSV EXPORT & BASE64 RESULT CODE
-        function sanitizeFilenamePart(str) {
-            return (str || "Participant")
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-zA-Z0-9_-]+/g, "_")
-                .replace(/^_+|_+$/g, "")
-                .slice(0, 32) || "Participant";
+        // =========================================================================
+        // 6. STEP 5: AUTOMATIC CLOUD TRANSMISSION & BLIND COMPLETION SCREEN
+        // =========================================================================
+        async function finishExperiment() {
+            clearTrialTimers();
+            const pid = recordedResponses[0]?.participant || document.getElementById("participant-select").value;
+            const info = getGroupInfo(pid);
+
+            document.getElementById("completion-id-label").textContent =
+                `ID: ${info.pid} • ${info.groupLabel}`;
+            const statusEl = document.getElementById("cloud-sync-status");
+            statusEl.textContent = "Transmitting your anonymous responses to the research database...";
+            statusEl.className = "font-semibold text-blue-700";
+
+            showStep(5);
+
+            // Save into local admin registry & push automatically to dual cloud stores
+            registerSubmissionInAdminStore(info.pid, recordedResponses, requeuedTimeoutsCount);
+            const pushedOk = await pushParticipantToCloud(info.pid, recordedResponses, requeuedTimeoutsCount);
+
+            if (pushedOk) {
+                statusEl.textContent = "✓ Your anonymous responses have been automatically transmitted and recorded.";
+                statusEl.className = "font-semibold text-emerald-700";
+            } else {
+                statusEl.textContent = "✓ Your anonymous responses have been recorded locally on this station.";
+                statusEl.className = "font-semibold text-emerald-700";
+            }
         }
 
-        function getCSVFilename() {
-            if (!recordedResponses.length) return "responses_P01.csv";
-            const pid = recordedResponses[0].participant || "P01";
-            const name = recordedResponses[0].participant_name || activeObserverName || "Participant";
-            return `responses_${pid}_${sanitizeFilenamePart(name)}.csv`;
-        }
-
-        function encodeResultToken(responses) {
-            if (!responses || !responses.length) return "";
-            const pid = responses[0].participant || "P01";
-            const name = responses[0].participant_name || activeObserverName || "Participant";
+        // Encode 70 trials into a compact VL2 token
+        function encodeVL2Token(pid, responses, timeouts = 0) {
+            const info = getGroupInfo(pid);
             const catIds = CATEGORIES.map(c => c.id);
+            const sorted = responses.slice().sort((a, b) => Number(a.trial) - Number(b.trial));
 
-            const packedRows = responses.map(r => {
+            const packedRows = sorted.map((r, idx) => {
                 const cIdx = Math.max(0, COND_LIST.indexOf(r.condition));
                 const lblIdx = Math.max(0, catIds.indexOf(r.correct_label));
                 const rspIdx = Math.max(0, catIds.indexOf(r.response));
-                return `${r.trial},${r.uid},${cIdx},${lblIdx},${rspIdx},${r.rt_ms}`;
+                return `${idx + 1},${r.uid},${cIdx},${lblIdx},${rspIdx},${r.rt_ms}`;
             }).join(";");
 
             const payload = JSON.stringify({
-                v: 1,
-                p: pid,
-                n: name,
+                v: 2,
+                p: info.pid,
+                g: info.group,
+                s: info.slice,
+                to: timeouts || 0,
+                ts: new Date().toISOString(),
                 d: packedRows
             });
 
@@ -1550,7 +1728,7 @@
             return "VL1:" + btoa(binary);
         }
 
-        function decodeResultToken(tokenStr) {
+        function decodeVLToken(tokenStr) {
             const cleaned = tokenStr.trim().replace(/^VL1:/, "");
             const binary = atob(cleaned);
             const bytes = new Uint8Array(binary.length);
@@ -1558,21 +1736,21 @@
                 bytes[i] = binary.charCodeAt(i);
             }
             const payload = JSON.parse(new TextDecoder().decode(bytes));
-            if (!payload || !payload.d) throw new Error("Invalid VL1 token");
+            if (!payload || !payload.d) throw new Error("Invalid token");
 
-            const pid = payload.p || "P01";
-            const name = payload.n || "Participant";
+            const info = getGroupInfo(payload.p || "P01");
             const catIds = CATEGORIES.map(c => c.id);
 
-            return payload.d.split(";").filter(Boolean).map(chunk => {
+            const responses = payload.d.split(";").filter(Boolean).map(chunk => {
                 const [trial, uid, cIdx, lblIdx, rspIdx, rt] = chunk.split(",").map(Number);
                 const cond = COND_LIST[cIdx] || "intact";
                 const correctLabel = catIds[lblIdx] || "airplane";
                 const responseLabel = catIds[rspIdx] || "airplane";
                 const uidPadded = String(uid).padStart(4, "0");
                 return {
-                    participant: pid,
-                    participant_name: name,
+                    participant: info.pid,
+                    group: info.group,
+                    slot_in_group: info.slice,
                     trial: trial,
                     uid: uid,
                     condition: cond,
@@ -1583,295 +1761,738 @@
                     rt_ms: rt
                 };
             });
+
+            return {
+                participant: info.pid,
+                group: info.group,
+                slice: info.slice,
+                timeouts: Number(payload.to || 0),
+                updatedAt: payload.ts || new Date().toISOString(),
+                responses
+            };
         }
 
-        function finishExperiment() {
-            if (recordedResponses.length > 0) {
-                saveParticipantProgress(
-                    recordedResponses[0].participant,
-                    activeObserverName,
-                    currentTrialIdx,
-                    recordedResponses,
-                    true
-                );
+        // Ultra-compact 210-char KV mirror encoding for keyvalue.immanuel.co (ordered by uid ascending)
+        function encodeCompactKVString(pid, responses, timeouts = 0) {
+            const catIds = CATEGORIES.map(c => c.id);
+            const byUid = {};
+            responses.forEach(r => { byUid[Number(r.uid)] = r; });
+
+            const schedule = allTrialsCSV.filter(r => r.participant === pid).sort((a, b) => Number(a.uid) - Number(b.uid));
+            if (schedule.length !== 70) return null;
+
+            let respDigits = "";
+            let rtChars = "";
+            for (const item of schedule) {
+                const rec = byUid[Number(item.uid)];
+                const rspIdx = rec ? Math.max(0, catIds.indexOf(rec.response)) : 0;
+                const rt10 = rec ? Math.min(1295, Math.max(1, Math.round(Number(rec.rt_ms || 500) / 10))) : 50;
+                respDigits += String(rspIdx);
+                rtChars += rt10.toString(36).padStart(2, "0");
             }
-            showStep(5);
-            downloadParticipantCSV();
-            renderResultsDashboard();
+            return `${respDigits}_${rtChars}_${Math.min(99, timeouts || 0)}`;
         }
 
-        function downloadParticipantCSV() {
-            if (recordedResponses.length === 0) return;
-            const orderedCols = [
-                "participant", "participant_name", "trial", "uid",
-                "condition", "file", "correct_label", "response", "correct", "rt_ms"
-            ];
-            const normalized = recordedResponses.map(r => ({
-                participant: r.participant,
-                participant_name: r.participant_name || activeObserverName || "",
-                trial: r.trial,
-                uid: r.uid,
-                condition: r.condition,
-                file: r.file,
-                correct_label: r.correct_label,
-                response: r.response,
-                correct: r.correct,
-                rt_ms: r.rt_ms
-            }));
-            const csv = Papa.unparse(normalized, { columns: orderedCols });
-            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = getCSVFilename();
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }
+        function decodeCompactKVString(pid, kvStr) {
+            if (!kvStr || typeof kvStr !== "string" || !kvStr.includes("_")) return null;
+            const parts = kvStr.replace(/^"|"$/g, "").split("_");
+            if (parts.length < 2 || parts[0].length !== 70 || parts[1].length !== 140) return null;
 
-        function copyResultCode() {
-            const codeInput = document.getElementById("result-code-input");
-            if (!codeInput.value) return;
-            navigator.clipboard.writeText(codeInput.value).then(() => {
-                const fb = document.getElementById("copy-code-feedback");
-                fb.classList.remove("hidden");
-                setTimeout(() => fb.classList.add("hidden"), 4000);
-            }).catch(() => {
-                codeInput.select();
-                document.execCommand("copy");
-            });
-        }
+            const schedule = allTrialsCSV.filter(r => r.participant === pid).sort((a, b) => Number(a.uid) - Number(b.uid));
+            if (schedule.length !== 70) return null;
 
-        function sendViaWhatsApp() {
-            if (!recordedResponses.length) return;
-            const pid = recordedResponses[0].participant;
-            const name = recordedResponses[0].participant_name || activeObserverName || pid;
-            const acc = ((recordedResponses.reduce((a, b) => a + Number(b.correct), 0) / recordedResponses.length) * 100).toFixed(1);
-            const token = encodeResultToken(recordedResponses);
-            const text = [
-                `Visual Perception Study — Participant Results`,
-                `Name: ${name} (${pid})`,
-                `Overall Accuracy: ${acc}% (70 trials)`,
-                `Result Code:`,
-                token
-            ].join("\n");
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
-        }
+            const catIds = CATEGORIES.map(c => c.id);
+            const info = getGroupInfo(pid);
+            const timeouts = Number(parts[2] || 0);
 
-        function renderResultsDashboard() {
-            if (!recordedResponses.length) return;
-            const pid = recordedResponses[0].participant || "P01";
-            const obsName = recordedResponses[0].participant_name || activeObserverName || pid;
+            const byUidResp = {};
+            for (let i = 0; i < 70; i++) {
+                const item = schedule[i];
+                const rspIdx = parseInt(parts[0][i], 10) || 0;
+                const rt10 = parseInt(parts[1].slice(i * 2, i * 2 + 2), 36) || 50;
+                const respLabel = catIds[rspIdx] || "airplane";
+                byUidResp[Number(item.uid)] = {
+                    response: respLabel,
+                    correct: respLabel === item.correct_label ? 1 : 0,
+                    rt_ms: rt10 * 10
+                };
+            }
 
-            document.getElementById("results-thank-you-title").textContent =
-                `Thank you, ${obsName}! Your session (${pid}) is complete.`;
-            document.getElementById("dossier-csv-filename").textContent = getCSVFilename();
-            document.getElementById("result-code-input").value = encodeResultToken(recordedResponses);
-
-            const byCond = {};
-            COND_LIST.forEach(c => byCond[c] = []);
-            recordedResponses.forEach(r => {
-                if (byCond[r.condition]) byCond[r.condition].push(Number(r.correct) * 100);
+            const trialOrder = allTrialsCSV.filter(r => r.participant === pid).sort((a, b) => Number(a.trial) - Number(b.trial));
+            const responses = trialOrder.map((t, idx) => {
+                const ans = byUidResp[Number(t.uid)];
+                return {
+                    participant: info.pid,
+                    group: info.group,
+                    slot_in_group: info.slice,
+                    trial: idx + 1,
+                    uid: Number(t.uid),
+                    condition: t.condition,
+                    file: t.file,
+                    correct_label: t.correct_label,
+                    response: ans.response,
+                    correct: ans.correct,
+                    rt_ms: ans.rt_ms
+                };
             });
 
-            const mean = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length) : 0;
-            const userAcc = {};
-            COND_LIST.forEach(c => userAcc[c] = Number(mean(byCond[c]).toFixed(1)));
+            return {
+                participant: info.pid,
+                group: info.group,
+                slice: info.slice,
+                timeouts,
+                updatedAt: new Date().toISOString(),
+                responses
+            };
+        }
 
-            const allAcc = mean(recordedResponses.map(r => Number(r.correct) * 100));
-            const shufAcc = mean(["shuffle_low", "shuffle_medium", "shuffle_high"].map(c => userAcc[c]));
-            const blurAcc = mean(["blur_low", "blur_medium", "blur_high"].map(c => userAcc[c]));
-            const rts = recordedResponses.map(r => Number(r.rt_ms)).sort((a, b) => a - b);
-            const medRt = rts[Math.floor(rts.length / 2)] || 0;
+        async function pushParticipantToCloud(pid, responses, timeouts = 0) {
+            let success = false;
+            const token = encodeVL2Token(pid, responses, timeouts);
 
-            document.getElementById("stat-overall").textContent = `${allAcc.toFixed(1)}%`;
-            document.getElementById("stat-blur").textContent = `${blurAcc.toFixed(1)}%`;
-            document.getElementById("stat-shuffle").textContent = `${shufAcc.toFixed(1)}%`;
-            document.getElementById("stat-rt").textContent = `${medRt} ms`;
+            // 1. Primary Cloud Store: ntfy.sh JSON Registry
+            try {
+                const resp = await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        type: "submission_v2",
+                        participant: pid,
+                        timeouts: timeouts || 0,
+                        token: token,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                if (resp.ok) success = true;
+            } catch (_) {}
 
-            if (chartBlurInstance) { chartBlurInstance.destroy(); chartBlurInstance = null; }
-            if (chartShuffleInstance) { chartShuffleInstance.destroy(); chartShuffleInstance = null; }
+            // 2. Secondary Cloud KV Mirror: keyvalue.immanuel.co
+            try {
+                const compact = encodeCompactKVString(pid, responses, timeouts);
+                if (compact) {
+                    const kvResp = await fetch(
+                        `https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${KV_APP_KEY}/aims2026_${pid}/${compact}`,
+                        { method: "POST", body: "" }
+                    );
+                    if (kvResp.ok) success = true;
+                }
+            } catch (_) {}
 
-            const commonOpts = {
-                responsive: true,
-                scales: {
-                    y: {
-                        min: 0, max: 100,
-                        ticks: { color: "#475569", font: { family: "Inter", size: 11 } },
-                        grid: { color: "#F1F5F9" },
-                        title: { display: true, text: "10-Choice Accuracy (%)", color: "#475569", font: { family: "Inter", size: 11, weight: "500" } }
-                    },
-                    x: {
-                        ticks: { color: "#0F172A", font: { family: "Inter", size: 11 } },
-                        grid: { color: "#F8FAFC" }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: { color: "#0F172A", font: { family: "Inter", size: 11 }, boxWidth: 14 }
+            return success;
+        }
+
+        function loadLocalAdminRegistry() {
+            try {
+                const raw = localStorage.getItem(STORAGE_ADMIN_REGISTRY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === "object") {
+                        adminRegistry = parsed;
                     }
                 }
+            } catch (_) {}
+
+            // Also scan any completed participant sessions stored in this browser
+            ALL_PIDS.forEach(pid => {
+                const saved = getSavedProgress(pid);
+                if (saved && saved.recordedResponses && saved.recordedResponses.length >= 70) {
+                    registerSubmissionInAdminStore(pid, saved.recordedResponses, saved.timeouts || 0);
+                }
+            });
+        }
+
+        function registerSubmissionInAdminStore(pid, responses, timeouts = 0) {
+            if (!responses || !responses.length) return;
+            const info = getGroupInfo(pid);
+            adminRegistry[info.pid] = {
+                participant: info.pid,
+                group: info.group,
+                slice: info.slice,
+                timeouts: Number(timeouts || 0),
+                updatedAt: new Date().toISOString(),
+                responses: responses.map((r, i) => ({
+                    participant: info.pid,
+                    group: info.group,
+                    slot_in_group: info.slice,
+                    trial: Number(r.trial || i + 1),
+                    uid: Number(r.uid),
+                    condition: (r.condition || "").trim(),
+                    file: (r.file || "").trim(),
+                    correct_label: (r.correct_label || "").trim(),
+                    response: (r.response || "").trim(),
+                    correct: Number(r.correct),
+                    rt_ms: Number(r.rt_ms || 0)
+                }))
             };
-
-            const blurConds = ["intact", "blur_low", "blur_medium", "blur_high"];
-            chartBlurInstance = new Chart(document.getElementById("chart-blur"), {
-                type: "line",
-                data: {
-                    labels: ["Intact", "σ = 2", "σ = 5", "σ = 10"],
-                    datasets: [
-                        { label: `${obsName} (You)`, data: blurConds.map(c => userAcc[c]), borderColor: "#2563EB", backgroundColor: "#2563EB", borderWidth: 2.5, pointRadius: 4, tension: 0.15 },
-                        { label: "CLIP ViT-L/14", data: blurConds.map(c => MODEL_BENCHMARKS["CLIP ViT-L/14"][c]), borderColor: "#64748B", backgroundColor: "#64748B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3.5, tension: 0.15 },
-                        { label: "DINOv2 ViT-B/14", data: blurConds.map(c => MODEL_BENCHMARKS["DINOv2 ViT-B/14"][c]), borderColor: "#059669", backgroundColor: "#059669", borderWidth: 2, borderDash: [3, 3], pointRadius: 3.5, tension: 0.15 }
-                    ]
-                },
-                options: commonOpts
-            });
-
-            const shufConds = ["intact", "shuffle_low", "shuffle_medium", "shuffle_high"];
-            chartShuffleInstance = new Chart(document.getElementById("chart-shuffle"), {
-                type: "line",
-                data: {
-                    labels: ["Intact", "4 Tiles", "16 Tiles", "64 Tiles"],
-                    datasets: [
-                        { label: `${obsName} (You)`, data: shufConds.map(c => userAcc[c]), borderColor: "#2563EB", backgroundColor: "#2563EB", borderWidth: 2.5, pointRadius: 4, tension: 0.15 },
-                        { label: "CLIP ViT-L/14", data: shufConds.map(c => MODEL_BENCHMARKS["CLIP ViT-L/14"][c]), borderColor: "#64748B", backgroundColor: "#64748B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3.5, tension: 0.15 },
-                        { label: "DINOv2 ViT-B/14", data: shufConds.map(c => MODEL_BENCHMARKS["DINOv2 ViT-B/14"][c]), borderColor: "#059669", backgroundColor: "#059669", borderWidth: 2, borderDash: [3, 3], pointRadius: 3.5, tension: 0.15 }
-                    ]
-                },
-                options: commonOpts
-            });
+            try {
+                localStorage.setItem(STORAGE_ADMIN_REGISTRY, JSON.stringify(adminRegistry));
+            } catch (_) {}
         }
 
-        // 10. RESEARCHER MODAL: CSV & VL1:... TOKEN AGGREGATOR
-        function toggleAdminModal() {
-            document.getElementById("admin-modal").classList.toggle("hidden");
+        async function fetchCloudSubmissionsSilent() {
+            loadLocalAdminRegistry();
+
+            // 1. Poll ntfy.sh registry stream
+            try {
+                const resp = await fetch(`https://ntfy.sh/${NTFY_TOPIC}/json?poll=1&since=all`, { cache: "no-store" });
+                if (resp.ok) {
+                    const text = await resp.text();
+                    const lines = text.split("\n").filter(Boolean);
+                    for (const line of lines) {
+                        try {
+                            const evt = JSON.parse(line);
+                            if (evt && evt.event === "message" && evt.message) {
+                                const data = JSON.parse(evt.message);
+                                if (data && data.token && data.token.startsWith("VL1:")) {
+                                    const decoded = decodeVLToken(data.token);
+                                    if (decoded && decoded.responses.length > 0) {
+                                        registerSubmissionInAdminStore(decoded.participant, decoded.responses, decoded.timeouts);
+                                    }
+                                }
+                            }
+                        } catch (_) {}
+                    }
+                }
+            } catch (_) {}
+
+            // 2. Check secondary KV mirror for any missing slots if schedule is loaded
+            if (allTrialsCSV.length > 0) {
+                const missingPids = ALL_PIDS.filter(p => !adminRegistry[p]);
+                await Promise.all(missingPids.map(async (pid) => {
+                    try {
+                        const r = await fetch(`https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KV_APP_KEY}/aims2026_${pid}`, { cache: "no-store" });
+                        if (!r.ok) return;
+                        const val = (await r.text()).replace(/^"|"$/g, "").trim();
+                        if (val && val.length >= 210) {
+                            const decoded = decodeCompactKVString(pid, val);
+                            if (decoded && decoded.responses.length === 70) {
+                                registerSubmissionInAdminStore(pid, decoded.responses, decoded.timeouts);
+                            }
+                        }
+                    } catch (_) {}
+                }));
+            }
         }
 
-        async function collectAdminRows() {
+        // =========================================================================
+        // 7. PASSWORD-PROTECTED ADMIN / MANAGER PORTAL (PASSWORD: admin2026_Aims)
+        // =========================================================================
+        function openAdminModal() {
+            document.getElementById("admin-modal").classList.remove("hidden");
+            if (adminUnlocked) {
+                document.getElementById("admin-login-card").classList.add("hidden");
+                document.getElementById("admin-dashboard-card").classList.remove("hidden");
+                syncFromCloudAndRefreshAdmin();
+            } else {
+                document.getElementById("admin-login-card").classList.remove("hidden");
+                document.getElementById("admin-dashboard-card").classList.add("hidden");
+                document.getElementById("admin-password-input").value = "";
+                document.getElementById("admin-login-error").classList.add("hidden");
+                setTimeout(() => document.getElementById("admin-password-input").focus(), 50);
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById("admin-modal").classList.add("hidden");
+        }
+
+        function verifyAdminPassword() {
+            const val = document.getElementById("admin-password-input").value;
+            if (val === ADMIN_PASSWORD) {
+                adminUnlocked = true;
+                document.getElementById("admin-login-error").classList.add("hidden");
+                document.getElementById("admin-login-card").classList.add("hidden");
+                document.getElementById("admin-dashboard-card").classList.remove("hidden");
+                syncFromCloudAndRefreshAdmin();
+            } else {
+                document.getElementById("admin-login-error").classList.remove("hidden");
+            }
+        }
+
+        async function syncFromCloudAndRefreshAdmin() {
+            const badge = document.getElementById("admin-cloud-sync-badge");
+            badge.textContent = "Syncing cloud registry...";
+            badge.className = "mono text-xs text-blue-600";
+            await fetchCloudSubmissionsSilent();
+            const count = Object.keys(adminRegistry).length;
+            badge.textContent = `✓ Cloud Synced (${count} / 21 Candidates Completed)`;
+            badge.className = "mono text-xs text-emerald-600";
+            renderAdminAllViews();
+        }
+
+        async function handleAdminFileUpload() {
             const files = document.getElementById("admin-files").files;
-            const b64Text = document.getElementById("admin-b64-input").value.trim();
-
-            let allRows = [];
-
+            if (!files.length) return;
             for (const f of files) {
                 const text = await f.text();
                 const parsed = Papa.parse(text, { header: true, skipEmptyLines: true }).data;
-                allRows = allRows.concat(parsed);
-            }
-
-            if (b64Text) {
-                const matches = b64Text.match(/VL1:[A-Za-z0-9+/=_-]+/g) || [];
-                if (matches.length > 0) {
-                    for (const token of matches) {
-                        try {
-                            allRows = allRows.concat(decodeResultToken(token));
-                        } catch (err) {
-                            console.warn("Could not decode VL1 token:", err);
-                        }
-                    }
-                } else {
-                    try {
-                        allRows = allRows.concat(decodeResultToken(b64Text));
-                    } catch (_) {}
-                }
-            }
-
-            const map = new Map();
-            for (const r of allRows) {
-                if (!r || !r.condition || r.correct === undefined || r.correct === "") continue;
-                const pid = (r.participant || "P00").toString().trim();
-                const trial = Number(r.trial || 0);
-                map.set(`${pid}__${trial}`, {
-                    participant: pid,
-                    participant_name: (r.participant_name || "").toString().trim(),
-                    trial: trial,
-                    uid: Number(r.uid || 0),
-                    condition: r.condition.toString().trim(),
-                    file: (r.file || "").toString().trim(),
-                    correct_label: (r.correct_label || "").toString().trim(),
-                    response: (r.response || "").toString().trim(),
-                    correct: Number(r.correct),
-                    rt_ms: Number(r.rt_ms || 0)
+                const byPid = {};
+                parsed.forEach(r => {
+                    if (!r || !r.participant || !r.condition) return;
+                    const pid = r.participant.trim();
+                    if (!byPid[pid]) byPid[pid] = [];
+                    byPid[pid].push(r);
+                });
+                Object.entries(byPid).forEach(([pid, rows]) => {
+                    registerSubmissionInAdminStore(pid, rows, 0);
                 });
             }
-
-            return Array.from(map.values());
+            renderAdminAllViews();
         }
 
-        async function aggregateHumanCSVs() {
-            const merged = await collectAdminRows();
-            if (!merged.length) {
-                alert("Please select at least one responses_*.csv file or paste a VL1:... Result Code.");
+        function switchAdminTab(tab) {
+            const tabs = ["candidates", "groups", "global"];
+            tabs.forEach(t => {
+                document.getElementById(`admin-tab-${t}`).classList.toggle("hidden", t !== tab);
+                const btn = document.getElementById(`admin-tab-btn-${t}`);
+                btn.className = (t === tab)
+                    ? "px-4 py-2 rounded-lg text-xs font-semibold bg-blue-600 text-white transition"
+                    : "px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+            });
+            renderAdminAllViews();
+        }
+
+        function computeConditionStats(rows) {
+            const mean = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length) : 0;
+            const byCond = {};
+            COND_LIST.forEach(c => byCond[c] = []);
+            rows.forEach(r => {
+                if (byCond[r.condition]) byCond[r.condition].push(Number(r.correct) * 100);
+            });
+            const condAcc = {};
+            COND_LIST.forEach(c => condAcc[c] = mean(byCond[c]));
+            const overall = mean(rows.map(r => Number(r.correct) * 100));
+            const blurMean = mean(["blur_low", "blur_medium", "blur_high"].map(c => condAcc[c]));
+            const shufMean = mean(["shuffle_low", "shuffle_medium", "shuffle_high"].map(c => condAcc[c]));
+            const rts = rows.map(r => Number(r.rt_ms)).filter(v => v > 0).sort((a, b) => a - b);
+            const medRt = rts.length ? rts[Math.floor(rts.length / 2)] : 0;
+            return { overall, intact: condAcc.intact, blurMean, shufMean, medRt, condAcc };
+        }
+
+        function bootstrapCI2000(binaryScores) {
+            if (!binaryScores.length) return [0, 0];
+            const n = binaryScores.length;
+            const bootMeans = [];
+            for (let b = 0; b < 2000; b++) {
+                let sum = 0;
+                for (let i = 0; i < n; i++) {
+                    sum += binaryScores[Math.floor(Math.random() * n)];
+                }
+                bootMeans.push((sum / n) * 100);
+            }
+            bootMeans.sort((a, b) => a - b);
+            return [bootMeans[Math.floor(0.025 * 2000)], bootMeans[Math.floor(0.975 * 2000)]];
+        }
+
+        function renderAdminAllViews() {
+            renderAdminCandidatesTable();
+            renderAdminGroupsView();
+            renderAdminGlobalView();
+        }
+
+        // TAB 1: BY CANDIDATE (P01..P21)
+        function renderAdminCandidatesTable() {
+            const tbody = document.getElementById("admin-candidates-tbody");
+            tbody.innerHTML = "";
+            let completedCount = 0;
+
+            ALL_PIDS.forEach(pid => {
+                const info = getGroupInfo(pid);
+                const sub = adminRegistry[pid];
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-50";
+
+                if (sub && sub.responses && sub.responses.length > 0) {
+                    completedCount++;
+                    const st = computeConditionStats(sub.responses);
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3 font-bold text-slate-900">${info.pid}</td>
+                        <td class="py-2.5 px-3 text-slate-600">${info.groupLabel}</td>
+                        <td class="py-2.5 px-3 text-slate-500">${info.sliceLabel}</td>
+                        <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-sans font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Completed (${sub.responses.length}/70)</span></td>
+                        <td class="py-2.5 px-3 font-bold text-slate-900">${st.overall.toFixed(1)}%</td>
+                        <td class="py-2.5 px-3 text-slate-700">${st.intact.toFixed(1)}%</td>
+                        <td class="py-2.5 px-3 text-blue-600 font-semibold">${st.blurMean.toFixed(1)}%</td>
+                        <td class="py-2.5 px-3 text-emerald-600 font-semibold">${st.shufMean.toFixed(1)}%</td>
+                        <td class="py-2.5 px-3 text-slate-600">${st.medRt} ms</td>
+                        <td class="py-2.5 px-3 text-slate-500">${sub.timeouts || 0}</td>
+                        <td class="py-2.5 px-3 text-right">
+                            <button type="button" onclick="downloadCandidateCSV('${info.pid}')"
+                                class="px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white font-sans font-semibold text-[11px]">
+                                ⬇ CSV
+                            </button>
+                        </td>`;
+                } else {
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3 font-semibold text-slate-700">${info.pid}</td>
+                        <td class="py-2.5 px-3 text-slate-500">${info.groupLabel}</td>
+                        <td class="py-2.5 px-3 text-slate-400">${info.sliceLabel}</td>
+                        <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-sans font-medium bg-slate-100 text-slate-500">Awaiting Data</span></td>
+                        <td class="py-2.5 px-3 text-slate-300">—</td>
+                        <td class="py-2.5 px-3 text-slate-300">—</td>
+                        <td class="py-2.5 px-3 text-slate-300">—</td>
+                        <td class="py-2.5 px-3 text-slate-300">—</td>
+                        <td class="py-2.5 px-3 text-slate-300">—</td>
+                        <td class="py-2.5 px-3 text-slate-300">—</td>
+                        <td class="py-2.5 px-3 text-right text-slate-300">—</td>`;
+                }
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById("admin-candidates-summary").textContent =
+                `Completed Candidates: ${completedCount} of 21 (${completedCount * 70} / 1470 total trials recorded).`;
+        }
+
+        // TAB 2: BY GROUP (G1, G2, G3 & SLICES S1..S7)
+        function renderAdminGroupsView() {
+            const groupCards = document.getElementById("admin-group-cards");
+            groupCards.innerHTML = "";
+
+            const groupConfigs = [
+                { id: "G1", name: "Group 1 (P01–P07)", color: "#2563EB", pids: ALL_PIDS.slice(0, 7) },
+                { id: "G2", name: "Group 2 (P08–P14)", color: "#059669", pids: ALL_PIDS.slice(7, 14) },
+                { id: "G3", name: "Group 3 (P15–P21)", color: "#D97706", pids: ALL_PIDS.slice(14, 21) }
+            ];
+
+            const groupStatsMap = {};
+
+            groupConfigs.forEach(g => {
+                const rows = [];
+                let doneMembers = 0;
+                g.pids.forEach(p => {
+                    if (adminRegistry[p]?.responses?.length) {
+                        doneMembers++;
+                        rows.push(...adminRegistry[p].responses);
+                    }
+                });
+                const st = rows.length ? computeConditionStats(rows) : null;
+                groupStatsMap[g.id] = { rows, st, doneMembers };
+
+                groupCards.innerHTML += `
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-xs font-bold uppercase tracking-wider text-slate-800">${g.name}</div>
+                                <div class="mono text-[11px] text-slate-500">${doneMembers} / 7 Candidates (${rows.length} / 490 Stimuli)</div>
+                            </div>
+                            <button type="button" onclick="downloadGroupCSV('${g.id}')"
+                                class="px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold">
+                                ⬇ ${g.id} CSV
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 pt-1 mono">
+                            <div class="p-2 rounded bg-white border border-slate-200">
+                                <span class="block text-[10px] text-slate-400 font-sans">Overall</span>
+                                <span class="text-sm font-bold text-slate-900">${st ? st.overall.toFixed(1) + '%' : '—'}</span>
+                            </div>
+                            <div class="p-2 rounded bg-white border border-slate-200">
+                                <span class="block text-[10px] text-slate-400 font-sans">Blur</span>
+                                <span class="text-sm font-bold text-blue-600">${st ? st.blurMean.toFixed(1) + '%' : '—'}</span>
+                            </div>
+                            <div class="p-2 rounded bg-white border border-slate-200">
+                                <span class="block text-[10px] text-slate-400 font-sans">Shuffle</span>
+                                <span class="text-sm font-bold text-emerald-600">${st ? st.shufMean.toFixed(1) + '%' : '—'}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            // Slice-by-Slice (S1..S7) Table
+            const slicesTbody = document.getElementById("admin-slices-tbody");
+            slicesTbody.innerHTML = "";
+            for (let s = 1; s <= 7; s++) {
+                const pG1 = `P${String(s).padStart(2, "0")}`;
+                const pG2 = `P${String(s + 7).padStart(2, "0")}`;
+                const pG3 = `P${String(s + 14).padStart(2, "0")}`;
+                const pids = [pG1, pG2, pG3];
+
+                const cells = pids.map(p => {
+                    const sub = adminRegistry[p];
+                    if (!sub || !sub.responses.length) return `<span class="text-slate-400">${p}: —</span>`;
+                    const acc = computeConditionStats(sub.responses).overall;
+                    return `<span class="text-slate-900 font-semibold">${p}: ${acc.toFixed(1)}%</span>`;
+                });
+
+                const validAccs = pids
+                    .map(p => adminRegistry[p]?.responses?.length ? computeConditionStats(adminRegistry[p].responses).overall : null)
+                    .filter(v => v !== null);
+                const sliceMean = validAccs.length
+                    ? (validAccs.reduce((a, b) => a + b, 0) / validAccs.length).toFixed(1) + "%"
+                    : "—";
+
+                slicesTbody.innerHTML += `
+                    <tr>
+                        <td class="py-2 px-3 font-semibold text-slate-800">Slice ${s} (70 Imgs)</td>
+                        <td class="py-2 px-3">${cells[0]}</td>
+                        <td class="py-2 px-3">${cells[1]}</td>
+                        <td class="py-2 px-3">${cells[2]}</td>
+                        <td class="py-2 px-3 font-bold text-blue-600">${sliceMean}</td>
+                    </tr>`;
+            }
+
+            // Render Group Comparison Charts
+            if (chartGroupsBlur) { chartGroupsBlur.destroy(); chartGroupsBlur = null; }
+            if (chartGroupsShuffle) { chartGroupsShuffle.destroy(); chartGroupsShuffle = null; }
+
+            const blurConds = ["intact", "blur_low", "blur_medium", "blur_high"];
+            const shufConds = ["intact", "shuffle_low", "shuffle_medium", "shuffle_high"];
+
+            const buildGroupDatasets = (conds) => {
+                const ds = [];
+                groupConfigs.forEach(g => {
+                    const st = groupStatsMap[g.id].st;
+                    if (st) {
+                        ds.push({
+                            label: g.name,
+                            data: conds.map(c => Number(st.condAcc[c].toFixed(1))),
+                            borderColor: g.color,
+                            backgroundColor: g.color,
+                            borderWidth: 2.5,
+                            pointRadius: 4,
+                            tension: 0.15
+                        });
+                    }
+                });
+                ds.push({
+                    label: "CLIP ViT-L/14 (70 UIDs)",
+                    data: conds.map(c => MODEL_BENCHMARKS_70["CLIP ViT-L/14"][c]),
+                    borderColor: "#64748B",
+                    borderDash: [5, 4],
+                    borderWidth: 1.8,
+                    pointRadius: 3,
+                    tension: 0.15
+                });
+                return ds;
+            };
+
+            const opts = {
+                responsive: true,
+                scales: {
+                    y: { min: 0, max: 100, ticks: { color: "#475569" }, title: { display: true, text: "Accuracy (%)" } },
+                    x: { ticks: { color: "#0F172A" } }
+                }
+            };
+
+            chartGroupsBlur = new Chart(document.getElementById("admin-chart-groups-blur"), {
+                type: "line",
+                data: { labels: ["Intact", "σ = 2", "σ = 5", "σ = 10"], datasets: buildGroupDatasets(blurConds) },
+                options: opts
+            });
+
+            chartGroupsShuffle = new Chart(document.getElementById("admin-chart-groups-shuffle"), {
+                type: "line",
+                data: { labels: ["Intact", "4 Tiles", "16 Tiles", "64 Tiles"], datasets: buildGroupDatasets(shufConds) },
+                options: opts
+            });
+        }
+
+        // TAB 3: GLOBAL EXPERIMENT RESULTS (ALL HUMANS VS. VITS)
+        function renderAdminGlobalView() {
+            const allRows = [];
+            Object.values(adminRegistry).forEach(sub => {
+                if (sub && sub.responses) allRows.push(...sub.responses);
+            });
+
+            const tbody = document.getElementById("admin-global-tbody");
+            tbody.innerHTML = "";
+
+            const humanByCond = {};
+            COND_LIST.forEach(c => {
+                const scores = allRows.filter(r => r.condition === c).map(r => Number(r.correct));
+                const n = scores.length;
+                const acc = n ? (scores.reduce((a, b) => a + b, 0) / n) * 100 : null;
+                const [lo, hi] = n ? bootstrapCI2000(scores) : [0, 0];
+                humanByCond[c] = { n, acc, lo, hi };
+
+                const c70 = MODEL_BENCHMARKS_70["CLIP ViT-L/14"][c];
+                const c1000 = MODEL_BENCHMARKS_1000["CLIP ViT-L/14"][c];
+                const d70 = MODEL_BENCHMARKS_70["DINOv2 ViT-B/14"][c];
+                const d1000 = MODEL_BENCHMARKS_1000["DINOv2 ViT-B/14"][c];
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="py-2.5 px-3 font-semibold text-slate-900">${c}</td>
+                        <td class="py-2.5 px-3 text-slate-600">${n}</td>
+                        <td class="py-2.5 px-3 font-bold text-blue-600">${acc !== null ? acc.toFixed(2) + '%' : '—'}</td>
+                        <td class="py-2.5 px-3 text-slate-500">${acc !== null ? `[${lo.toFixed(1)}, ${hi.toFixed(1)}]` : '—'}</td>
+                        <td class="py-2.5 px-3 text-slate-700">${c70.toFixed(1)}% <span class="text-slate-400">(${c1000.toFixed(1)}%)</span></td>
+                        <td class="py-2.5 px-3 text-emerald-700">${d70.toFixed(1)}% <span class="text-slate-400">(${d1000.toFixed(1)}%)</span></td>
+                    </tr>`;
+            });
+
+            if (chartGlobalBlur) { chartGlobalBlur.destroy(); chartGlobalBlur = null; }
+            if (chartGlobalShuffle) { chartGlobalShuffle.destroy(); chartGlobalShuffle = null; }
+
+            const blurConds = ["intact", "blur_low", "blur_medium", "blur_high"];
+            const shufConds = ["intact", "shuffle_low", "shuffle_medium", "shuffle_high"];
+
+            const buildGlobalDatasets = (conds) => {
+                const ds = [];
+                if (allRows.length > 0) {
+                    ds.push({
+                        label: `Humans (N=${allRows.length} trials)`,
+                        data: conds.map(c => humanByCond[c].acc !== null ? Number(humanByCond[c].acc.toFixed(2)) : null),
+                        borderColor: "#DC2626",
+                        backgroundColor: "#DC2626",
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        tension: 0.15
+                    });
+                }
+                ds.push(
+                    {
+                        label: "CLIP ViT-L/14 (70 Human UIDs)",
+                        data: conds.map(c => MODEL_BENCHMARKS_70["CLIP ViT-L/14"][c]),
+                        borderColor: "#2563EB",
+                        backgroundColor: "#2563EB",
+                        borderWidth: 2.2,
+                        borderDash: [5, 4],
+                        pointRadius: 4,
+                        tension: 0.15
+                    },
+                    {
+                        label: "DINOv2 ViT-B/14 (70 Human UIDs)",
+                        data: conds.map(c => MODEL_BENCHMARKS_70["DINOv2 ViT-B/14"][c]),
+                        borderColor: "#059669",
+                        backgroundColor: "#059669",
+                        borderWidth: 2.2,
+                        borderDash: [3, 3],
+                        pointRadius: 4,
+                        tension: 0.15
+                    }
+                );
+                return ds;
+            };
+
+            const opts = {
+                responsive: true,
+                scales: {
+                    y: { min: 0, max: 100, ticks: { color: "#475569" }, title: { display: true, text: "10-Way Accuracy (%)" } },
+                    x: { ticks: { color: "#0F172A" } }
+                }
+            };
+
+            chartGlobalBlur = new Chart(document.getElementById("admin-chart-global-blur"), {
+                type: "line",
+                data: { labels: ["Intact", "σ = 2", "σ = 5", "σ = 10"], datasets: buildGlobalDatasets(blurConds) },
+                options: opts
+            });
+
+            chartGlobalShuffle = new Chart(document.getElementById("admin-chart-global-shuffle"), {
+                type: "line",
+                data: { labels: ["Intact", "4 Tiles", "16 Tiles", "64 Tiles"], datasets: buildGlobalDatasets(shufConds) },
+                options: opts
+            });
+        }
+
+        // =========================================================================
+        // 8. ADMIN CSV EXPORT UTILITIES (CANDIDATE, GROUP, GLOBAL)
+        // =========================================================================
+        function triggerCSVDownload(filename, rows, columns) {
+            const csv = columns ? Papa.unparse(rows, { columns }) : Papa.unparse(rows);
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function downloadCandidateCSV(pid) {
+            const sub = adminRegistry[pid];
+            if (!sub || !sub.responses.length) {
+                alert(`No recorded trials found for ${pid}.`);
                 return;
             }
-            lastAdminMergedRows = merged;
+            const cols = ["participant", "group", "slot_in_group", "trial", "uid", "condition", "file", "correct_label", "response", "correct", "rt_ms"];
+            triggerCSVDownload(`responses_${pid}.csv`, sub.responses, cols);
+        }
 
-            const byParticipant = {};
-            merged.forEach(r => {
-                const label = r.participant_name ? `${r.participant} (${r.participant_name})` : r.participant;
-                byParticipant[label] = (byParticipant[label] || 0) + 1;
-            });
-            const rosterStr = Object.entries(byParticipant).map(([k, v]) => `${k}: ${v} trials`).join(" • ");
-            document.getElementById("admin-roster").textContent =
-                `Merged ${merged.length} trials across ${Object.keys(byParticipant).length} participant(s): ${rosterStr}`;
-
-            const outRows = [];
-            for (const c of COND_LIST) {
-                const scores = merged.filter(r => r.condition === c).map(r => Number(r.correct));
-                if (!scores.length) continue;
-                const acc = (scores.reduce((a, b) => a + b, 0) / scores.length) * 100;
-
-                const bootMeans = [];
-                for (let b = 0; b < 2000; b++) {
-                    let sum = 0;
-                    for (let i = 0; i < scores.length; i++) {
-                        sum += scores[Math.floor(Math.random() * scores.length)];
-                    }
-                    bootMeans.push((sum / scores.length) * 100);
+        function downloadGroupCSV(groupId) {
+            const rows = [];
+            Object.values(adminRegistry).forEach(sub => {
+                if (sub && sub.group === groupId && sub.responses) {
+                    rows.push(...sub.responses);
                 }
-                bootMeans.sort((a, b) => a - b);
-                const ci_low = bootMeans[Math.floor(0.025 * 2000)];
-                const ci_high = bootMeans[Math.floor(0.975 * 2000)];
+            });
+            if (!rows.length) {
+                alert(`No responses recorded yet for ${groupId}.`);
+                return;
+            }
+            const cols = ["participant", "group", "slot_in_group", "trial", "uid", "condition", "file", "correct_label", "response", "correct", "rt_ms"];
+            triggerCSVDownload(`group_${groupId}_responses.csv`, rows, cols);
+        }
 
+        function downloadAllGroupsComparisonCSV() {
+            const outRows = [];
+            COND_LIST.forEach(c => {
+                const row = { condition: c };
+                ["G1", "G2", "G3"].forEach(gid => {
+                    const scores = [];
+                    Object.values(adminRegistry).forEach(sub => {
+                        if (sub && sub.group === gid && sub.responses) {
+                            sub.responses.filter(r => r.condition === c).forEach(r => scores.push(Number(r.correct)));
+                        }
+                    });
+                    if (scores.length) {
+                        const acc = (scores.reduce((a, b) => a + b, 0) / scores.length) * 100;
+                        const [lo, hi] = bootstrapCI2000(scores);
+                        row[`${gid}_n`] = scores.length;
+                        row[`${gid}_accuracy`] = acc.toFixed(2);
+                        row[`${gid}_ci_low`] = lo.toFixed(2);
+                        row[`${gid}_ci_high`] = hi.toFixed(2);
+                    } else {
+                        row[`${gid}_n`] = 0;
+                        row[`${gid}_accuracy`] = "";
+                        row[`${gid}_ci_low`] = "";
+                        row[`${gid}_ci_high`] = "";
+                    }
+                });
+                outRows.push(row);
+            });
+            triggerCSVDownload("all_groups_comparison.csv", outRows);
+        }
+
+        function downloadGlobalHumanResultsCSV() {
+            const allRows = [];
+            Object.values(adminRegistry).forEach(sub => {
+                if (sub && sub.responses) allRows.push(...sub.responses);
+            });
+            if (!allRows.length) {
+                alert("No completed participant responses available yet.");
+                return;
+            }
+            const outRows = [];
+            COND_LIST.forEach(c => {
+                const scores = allRows.filter(r => r.condition === c).map(r => Number(r.correct));
+                if (!scores.length) return;
+                const acc = (scores.reduce((a, b) => a + b, 0) / scores.length) * 100;
+                const [lo, hi] = bootstrapCI2000(scores);
                 outRows.push({
                     condition: c,
                     accuracy: acc.toFixed(2),
-                    ci_low: ci_low.toFixed(2),
-                    ci_high: ci_high.toFixed(2)
+                    ci_low: lo.toFixed(2),
+                    ci_high: hi.toFixed(2)
                 });
-            }
-
-            const csv = Papa.unparse(outRows);
-            document.getElementById("admin-output").textContent = csv;
-
-            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "human_results.csv";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            });
+            triggerCSVDownload("human_results.csv", outRows, ["condition", "accuracy", "ci_low", "ci_high"]);
         }
 
-        async function downloadMergedRawCSV() {
-            const merged = lastAdminMergedRows.length ? lastAdminMergedRows : await collectAdminRows();
-            if (!merged.length) {
-                alert("No participant data loaded yet.");
+        function downloadMergedRawCSV() {
+            const allRows = [];
+            ALL_PIDS.forEach(pid => {
+                if (adminRegistry[pid]?.responses?.length) {
+                    allRows.push(...adminRegistry[pid].responses);
+                }
+            });
+            if (!allRows.length) {
+                alert("No participant responses recorded yet.");
                 return;
             }
-            const csv = Papa.unparse(merged);
-            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "all_human_responses.csv";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            const cols = ["participant", "group", "slot_in_group", "trial", "uid", "condition", "file", "correct_label", "response", "correct", "rt_ms"];
+            triggerCSVDownload("all_human_responses.csv", allRows, cols);
         }
     </script>
 </body>
