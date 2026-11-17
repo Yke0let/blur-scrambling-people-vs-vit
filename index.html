@@ -77,16 +77,16 @@
 
     <!-- ==================== ACADEMIC TOP HEADER & 5-STEP STEPPER ==================== -->
     <header class="w-full bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div class="flex items-center gap-2.5">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5">
+            <div class="flex items-center gap-2.5 shrink-0">
                 <div class="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0"></div>
-                <span class="font-semibold text-slate-900 text-sm sm:text-base tracking-tight">
+                <span class="font-semibold text-slate-900 text-sm sm:text-base tracking-tight whitespace-nowrap">
                     Visual Perception Study <span class="text-slate-400 font-normal">— Human vs. Vision Models</span>
                 </span>
             </div>
 
             <!-- 5-Step Progress Stepper -->
-            <nav aria-label="Study progress" class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-0.5 text-xs">
+            <nav aria-label="Study progress" class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-0.5 text-xs shrink-0">
                 <div id="stepper-1" class="step-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap">
                     <span class="mono text-[11px]">1.</span><span>Overview &amp; ID</span>
                 </div>
@@ -111,211 +111,264 @@
     </header>
 
     <!-- ==================== MAIN STUDY CONTAINER ==================== -->
-    <main class="flex-1 w-full flex items-center justify-center px-4 py-8 sm:py-10">
+    <main class="flex-1 w-full flex items-center justify-center px-4 py-6 sm:py-8">
 
         <!-- =========================================================================
-             STEP 1: COMPLETE PROJECT DESCRIPTION, ANONYMOUS ID & CONSENT (#step-welcome)
+             STEP 1: 2-COLUMN SPLIT ACADEMIC OVERVIEW & ONBOARDING (#step-welcome)
              ========================================================================= -->
-        <section id="step-welcome" class="w-full max-w-4xl academic-card p-6 sm:p-10 space-y-8">
-            <!-- Header & Title -->
-            <div class="space-y-3 border-b border-slate-200 pb-6">
-                <div class="flex flex-wrap items-center gap-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                        Psychophysics &amp; Computer Vision Study
-                    </span>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
-                        Strictly Anonymous Protocol • ~8–10 Minutes
-                    </span>
-                </div>
-                <h1 class="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-                    Blur and Scrambling: People vs. Vision Models
-                </h1>
-                <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
-                    <strong>Research Team:</strong> Uriel-Darlin Azemfack-Himele, Fanès Houeha, Halik Mamam, and Franck Tchangani.
-                </p>
-            </div>
+        <section id="step-welcome" class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-            <!-- Comprehensive Scientific Overview Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-700 leading-relaxed">
-                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-blue-700">
-                        1. Research Question &amp; Scientific Background
-                    </h2>
-                    <p>
-                        This study investigates a fundamental question in biological and artificial vision:
-                        <strong>Which types of visual degradation break human recognition and modern Vision Transformers together, and which break only one of them?</strong>
-                    </p>
-                    <p class="text-xs text-slate-600">
-                        We compare human observers against two state-of-the-art pretrained Vision Transformer models—<strong>CLIP ViT-L/14</strong> and <strong>DINOv2 ViT-B/14</strong>—when classifying brief grayscale line drawings from the <em>Google Quick, Draw!</em> dataset across 10 everyday object categories.
-                    </p>
-                </div>
+            <!-- LEFT COLUMN (7/12): SCIENTIFIC OVERVIEW & VISUAL DEGRADATION PREVIEW -->
+            <div class="lg:col-span-7 academic-card p-6 sm:p-8 space-y-6">
+                <!-- Study Header & Author Pills -->
+                <div class="space-y-3 border-b border-slate-100 pb-5">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                            Psychophysics &amp; Computer Vision Research
+                        </span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600">
+                            Quick, Draw! Benchmark
+                        </span>
+                    </div>
 
-                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-blue-700">
-                        2. Visual Degradations Tested
-                    </h2>
-                    <ul class="space-y-1.5 text-xs sm:text-sm text-slate-600 list-disc pl-4">
-                        <li>
-                            <strong class="text-slate-900">Intact Baseline:</strong> Uncorrupted black-on-white line drawings (`224×224` resolution).
-                        </li>
-                        <li>
-                            <strong class="text-slate-900">Gaussian Blur ($\sigma \in \{2, 5, 10\}$ px):</strong> Progressively removes fine high-frequency stroke edges while preserving coarse spatial layout.
-                        </li>
-                        <li>
-                            <strong class="text-slate-900">Offset Tile Scrambling ($4, 16, 64$ tiles):</strong> Cuts the drawing into a grid shifted by $+7\text{ px}$ (half of a $14\text{ px}$ ViT patch) and randomly permutes all tiles so local stroke parts remain visible while global object configuration is disrupted.
-                        </li>
-                    </ul>
-                </div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-tight">
+                        Blur and Scrambling: People vs. Vision Models
+                    </h1>
 
-                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-blue-700">
-                        3. Experimental Procedure (70 Trials)
-                    </h2>
-                    <p class="text-xs sm:text-sm text-slate-600">
-                        You will first complete <strong>2 intact warm-up trials</strong>, followed by <strong>70 main trials</strong>. On every trial:
-                    </p>
-                    <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4">
-                        <li>A central fixation cross (`+`) appears for <strong>0.6 seconds</strong>.</li>
-                        <li>A line drawing is displayed for <strong>exactly 1.5 seconds</strong>.</li>
-                        <li>A brief visual noise mask appears for <strong>0.4 seconds</strong> to clear retinal afterimages.</li>
-                        <li>You select which of the <strong>10 categories</strong> matches the drawing (within 15 seconds; any unanswered drawing is automatically re-queued at the end of your session).</li>
-                    </ol>
-                </div>
-
-                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-blue-700">
-                        4. Strict Anonymity &amp; Data Protection
-                    </h2>
-                    <p class="text-xs sm:text-sm text-slate-600">
-                        <strong>No personal name, email, or identifying information is collected.</strong> You are automatically assigned an anonymous Participant Number (<code class="mono text-slate-800">P01</code>–<code class="mono text-slate-800">P21</code>, organized into 3 balanced groups of 7 participants covering all 490 experimental stimuli).
-                    </p>
-                    <p class="text-xs text-slate-600">
-                        At the end of the 70 trials, your anonymous category responses and reaction times are automatically transmitted to the research database.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Saved Progress Resume Banner -->
-            <div id="resume-banner" class="hidden rounded-xl p-4 bg-blue-50/90 border border-blue-200 space-y-3">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="space-y-0.5">
-                        <div id="resume-title" class="text-xs font-semibold text-blue-900 uppercase tracking-wide">
-                            Saved Session Found
-                        </div>
-                        <p id="resume-subtitle" class="text-xs text-slate-700 leading-relaxed"></p>
+                    <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+                        <span class="text-xs font-semibold text-slate-500 mr-1">Research Team:</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">Uriel-Darlin Azemfack-Himele</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">Fanès Houeha</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">Halik Mamam</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">Franck Tchangani</span>
                     </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <button id="btn-resume-session" type="button" onclick="resumeSavedExperiment()"
-                        class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition">
-                        Resume Experiment →
-                    </button>
-                    <button type="button" onclick="resetCurrentParticipantProgress()"
-                        class="px-3 py-2 rounded-lg bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 text-xs font-medium transition">
-                        Reset &amp; Start Over
-                    </button>
+
+                <!-- Visual Degradation Preview Strip (3 Live 112x112 Mini Previews) -->
+                <div class="space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">
+                            Visual Conditions Investigated
+                        </h2>
+                        <span class="text-xs text-slate-500">10 everyday object categories</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3">
+                        <!-- Preview 1: Intact Baseline -->
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-2">
+                            <canvas id="preview-canvas-intact" width="112" height="112"
+                                class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 shadow-2xs"></canvas>
+                            <div class="space-y-0.5">
+                                <div class="text-xs font-semibold text-slate-900">1. Intact Baseline</div>
+                                <div class="text-[11px] text-slate-500 leading-tight">Original clean line drawing</div>
+                            </div>
+                        </div>
+
+                        <!-- Preview 2: Gaussian Blur -->
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-2">
+                            <canvas id="preview-canvas-blur" width="112" height="112"
+                                class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 shadow-2xs"></canvas>
+                            <div class="space-y-0.5">
+                                <div class="text-xs font-semibold text-slate-900">2. Gaussian Blur</div>
+                                <div class="text-[11px] text-slate-500 leading-tight">Softened edges (&sigma; = 2, 5, 10 px)</div>
+                            </div>
+                        </div>
+
+                        <!-- Preview 3: Tile Scrambling -->
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-2">
+                            <canvas id="preview-canvas-shuffle" width="112" height="112"
+                                class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 shadow-2xs"></canvas>
+                            <div class="space-y-0.5">
+                                <div class="text-xs font-semibold text-slate-900">3. Tile Scrambling</div>
+                                <div class="text-[11px] text-slate-500 leading-tight">Shuffled grid (4, 16, 64 tiles)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research Question & Experimental Procedure Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center gap-2 text-blue-700">
+                            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <h3 class="text-xs font-bold uppercase tracking-wider">Research Question</h3>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Which visual degradations break human recognition and modern Vision Transformers (<strong class="text-slate-800">CLIP ViT-L/14</strong> &amp; <strong class="text-slate-800">DINOv2 ViT-B/14</strong>) together, and which break only one of them?
+                        </p>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Gaussian blur tests reliance on fine stroke edges, whereas offset tile scrambling (+7 px grid shift across 14 px ViT patches) tests global shape integration.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center gap-2 text-blue-700">
+                            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            <h3 class="text-xs font-bold uppercase tracking-wider">Experimental Procedure</h3>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            You will complete <strong class="text-slate-800">2 intact warm-up trials</strong> followed by <strong class="text-slate-800">70 main trials</strong>:
+                        </p>
+                        <div class="space-y-1 text-xs text-slate-700 pt-0.5">
+                            <div class="flex items-center justify-between py-1 px-2 rounded bg-white border border-slate-200/80">
+                                <span>1. Central Fixation Cross</span>
+                                <span class="mono text-[11px] font-semibold text-blue-600">0.6s</span>
+                            </div>
+                            <div class="flex items-center justify-between py-1 px-2 rounded bg-white border border-slate-200/80">
+                                <span>2. Line Drawing Exposure</span>
+                                <span class="mono text-[11px] font-semibold text-blue-600">1.5s</span>
+                            </div>
+                            <div class="flex items-center justify-between py-1 px-2 rounded bg-white border border-slate-200/80">
+                                <span>3. Backward Visual Mask</span>
+                                <span class="mono text-[11px] font-semibold text-blue-600">0.4s</span>
+                            </div>
+                            <div class="flex items-center justify-between py-1 px-2 rounded bg-white border border-slate-200/80">
+                                <span>4. Category Selection</span>
+                                <span class="mono text-[11px] font-semibold text-slate-600">10 Choices</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Anonymous Participant ID Assignment Card & Informed Consent -->
-            <div class="p-5 rounded-xl bg-white border border-slate-200 space-y-5">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                    <div class="space-y-1">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                            Your Automatically Assigned Anonymous ID
+            <!-- RIGHT COLUMN (5/12): STICKY PARTICIPANT ONBOARDING CARD -->
+            <div class="lg:col-span-5 academic-card p-6 sm:p-8 space-y-5 lg:sticky lg:top-20">
+                <!-- Prominent Assigned Anonymous ID Card -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                            Anonymous Participant ID
                         </span>
+                        <span id="source-status" class="mono text-[11px] font-medium text-emerald-600">
+                            Schedule ready ✓
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
-                            <span id="assigned-id-badge" class="mono text-2xl font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3.5 py-1 rounded-lg">
-                                #P01
+                            <span id="assigned-id-badge" class="mono text-2xl sm:text-3xl font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3.5 py-1.5 rounded-xl">
+                                P01
                             </span>
                             <div>
-                                <div id="assigned-group-label" class="text-sm font-semibold text-slate-900">
-                                    Group 1 (Slice 1 of 7)
+                                <div id="assigned-group-label" class="text-xs font-semibold text-slate-800">
+                                    Anonymous Session Assigned
                                 </div>
-                                <div id="source-status" class="mono text-xs text-emerald-600">
-                                    Stimuli schedule ready ✓
+                                <div class="text-[11px] text-slate-500">
+                                    No personal name or email collected
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Discreet manual selector if coordinator assigned a specific ID -->
-                    <div class="space-y-1">
-                        <label for="participant-select" class="block text-[11px] font-medium text-slate-500">
-                            Assigned a specific ID by researcher?
+                    <!-- Subtle Supervisor Slot Selector -->
+                    <div class="pt-2 border-t border-slate-200/80 flex items-center justify-between gap-2">
+                        <label for="participant-select" class="text-[11px] text-slate-500">
+                            Assigned a specific ID by supervisor?
                         </label>
                         <select id="participant-select"
-                            class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:border-blue-600 focus:outline-none">
-                            <optgroup label="Group 1 (P01–P07 • 490 Stimuli)">
-                                <option value="P01">P01 — Group 1 (Slice 1)</option>
-                                <option value="P02">P02 — Group 1 (Slice 2)</option>
-                                <option value="P03">P03 — Group 1 (Slice 3)</option>
-                                <option value="P04">P04 — Group 1 (Slice 4)</option>
-                                <option value="P05">P05 — Group 1 (Slice 5)</option>
-                                <option value="P06">P06 — Group 1 (Slice 6)</option>
-                                <option value="P07">P07 — Group 1 (Slice 7)</option>
-                            </optgroup>
-                            <optgroup label="Group 2 (P08–P14 • 490 Stimuli)">
-                                <option value="P08">P08 — Group 2 (Slice 1)</option>
-                                <option value="P09">P09 — Group 2 (Slice 2)</option>
-                                <option value="P10">P10 — Group 2 (Slice 3)</option>
-                                <option value="P11">P11 — Group 2 (Slice 4)</option>
-                                <option value="P12">P12 — Group 2 (Slice 5)</option>
-                                <option value="P13">P13 — Group 2 (Slice 6)</option>
-                                <option value="P14">P14 — Group 2 (Slice 7)</option>
-                            </optgroup>
-                            <optgroup label="Group 3 (P15–P21 • 490 Stimuli)">
-                                <option value="P15">P15 — Group 3 (Slice 1)</option>
-                                <option value="P16">P16 — Group 3 (Slice 2)</option>
-                                <option value="P17">P17 — Group 3 (Slice 3)</option>
-                                <option value="P18">P18 — Group 3 (Slice 4)</option>
-                                <option value="P19">P19 — Group 3 (Slice 5)</option>
-                                <option value="P20">P20 — Group 3 (Slice 6)</option>
-                                <option value="P21">P21 — Group 3 (Slice 7)</option>
-                            </optgroup>
+                            class="rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold mono text-slate-800 focus:border-blue-600 focus:outline-none">
+                            <option value="P01">ID: P01</option>
+                            <option value="P02">ID: P02</option>
+                            <option value="P03">ID: P03</option>
+                            <option value="P04">ID: P04</option>
+                            <option value="P05">ID: P05</option>
+                            <option value="P06">ID: P06</option>
+                            <option value="P07">ID: P07</option>
+                            <option value="P08">ID: P08</option>
+                            <option value="P09">ID: P09</option>
+                            <option value="P10">ID: P10</option>
+                            <option value="P11">ID: P11</option>
+                            <option value="P12">ID: P12</option>
+                            <option value="P13">ID: P13</option>
+                            <option value="P14">ID: P14</option>
+                            <option value="P15">ID: P15</option>
+                            <option value="P16">ID: P16</option>
+                            <option value="P17">ID: P17</option>
+                            <option value="P18">ID: P18</option>
+                            <option value="P19">ID: P19</option>
+                            <option value="P20">ID: P20</option>
+                            <option value="P21">ID: P21</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Informed Consent Checkbox -->
-                <label for="consent-checkbox"
-                    class="flex items-start gap-3 p-4 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer select-none hover:border-slate-300 transition">
-                    <input type="checkbox" id="consent-checkbox"
-                        class="mt-0.5 w-4 h-4 accent-blue-600 rounded border-slate-300 shrink-0" />
-                    <span class="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                        <strong class="text-slate-900">Informed Consent:</strong> I have read the project description above. I understand that my participation is voluntary and completely anonymous, that only my category choices and reaction times will be recorded under my anonymous Participant ID, and that I may stop at any time.
-                    </span>
-                </label>
-                <p id="consent-validation-msg" class="hidden text-xs font-medium text-rose-600">
-                    Please check the Informed Consent box above to continue.
-                </p>
+                <!-- 3 Quick Study Metrics in a Row -->
+                <div class="grid grid-cols-3 gap-2.5 text-center">
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <div class="mono text-sm font-bold text-slate-900">70 Trials</div>
+                        <div class="text-[11px] text-slate-500">~8–10 mins</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <div class="mono text-sm font-bold text-blue-600">1.5s Exposure</div>
+                        <div class="text-[11px] text-slate-500">+ 0.4s mask</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <div class="mono text-sm font-bold text-emerald-700">100% Anonymous</div>
+                        <div class="text-[11px] text-slate-500">Auto-synced</div>
+                    </div>
+                </div>
 
-                <!-- Primary Action Button -->
+                <!-- Compact Saved Session Resume Box (Shown only if in-progress data exists) -->
+                <div id="resume-banner" class="hidden rounded-xl p-3.5 bg-blue-50/90 border border-blue-200 space-y-2.5">
+                    <div class="space-y-0.5">
+                        <div id="resume-title" class="text-xs font-bold text-blue-900 uppercase tracking-wide">
+                            Saved Session Found
+                        </div>
+                        <p id="resume-subtitle" class="text-xs text-slate-700 leading-snug"></p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="btn-resume-session" type="button" onclick="resumeSavedExperiment()"
+                            class="flex-1 py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition">
+                            Resume Session →
+                        </button>
+                        <button type="button" onclick="resetCurrentParticipantProgress()"
+                            class="py-2 px-3 rounded-lg bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 text-xs font-medium transition">
+                            Start Over
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Informed Consent Checkbox -->
+                <div class="space-y-2">
+                    <label for="consent-checkbox"
+                        class="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer select-none hover:border-slate-300 transition">
+                        <input type="checkbox" id="consent-checkbox"
+                            class="mt-0.5 w-4 h-4 accent-blue-600 rounded border-slate-300 shrink-0" />
+                        <span class="text-xs text-slate-700 leading-relaxed">
+                            <strong class="text-slate-900">Informed Consent:</strong> I have read the study overview. I understand that participation is voluntary and strictly anonymous, and that I may pause or stop at any time.
+                        </span>
+                    </label>
+                    <p id="consent-validation-msg" class="hidden text-xs font-medium text-rose-600">
+                        Please check the Informed Consent box above to continue.
+                    </p>
+                </div>
+
+                <!-- Large Primary Action Button -->
                 <button id="btn-continue-instructions" type="button" onclick="goToInstructionsStep()"
                     class="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm sm:text-base shadow-sm transition">
                     Continue to Instructions →
                 </button>
-            </div>
 
-            <!-- Discreet Offline Fallback (Plan B) -->
-            <details class="text-xs text-slate-400">
-                <summary class="cursor-pointer hover:text-slate-600 select-none">
-                    Offline Lab Mode (Manual File Loader)
-                </summary>
-                <div class="mt-2 p-3 rounded-lg bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-slate-600">
-                    <span>Load local <code class="mono">human_trials.csv</code> and <code class="mono">stimuli_human/</code> folder:</span>
-                    <div class="flex gap-2">
-                        <label class="cursor-pointer px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium">
-                            + CSV
-                            <input type="file" id="local-csv-input" accept=".csv" class="hidden" />
-                        </label>
-                        <label class="cursor-pointer px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium">
-                            + PNG Folder
-                            <input type="file" id="local-folder-input" webkitdirectory directory multiple class="hidden" />
-                        </label>
+                <!-- Discreet Offline Fallback (Plan B) -->
+                <details class="text-[11px] text-slate-400 pt-1">
+                    <summary class="cursor-pointer hover:text-slate-600 select-none">
+                        Offline Lab Mode (Manual File Loader)
+                    </summary>
+                    <div class="mt-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-slate-600">
+                        <span>Load local schedule &amp; stimuli:</span>
+                        <div class="flex gap-1.5">
+                            <label class="cursor-pointer px-2 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium">
+                                + CSV
+                                <input type="file" id="local-csv-input" accept=".csv" class="hidden" />
+                            </label>
+                            <label class="cursor-pointer px-2 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium">
+                                + PNG Folder
+                                <input type="file" id="local-folder-input" webkitdirectory directory multiple class="hidden" />
+                            </label>
+                        </div>
                     </div>
-                </div>
-            </details>
+                </details>
+            </div>
         </section>
 
         <!-- =========================================================================
@@ -783,7 +836,7 @@
             <div id="admin-tab-global" class="hidden space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <div>
-                        <h4 class="text-sm font-bold text-slate-900">Global Aggregated Human Benchmark (`human_results.csv`)</h4>
+                        <h4 class="text-sm font-bold text-slate-900">Global Aggregated Human Benchmark (<code class="mono">human_results.csv</code>)</h4>
                         <p id="admin-global-subtitle" class="text-xs text-slate-600">
                             2000-resample percentile bootstrap 95% confidence intervals across all completed human trials vs. CLIP ViT-L/14 and DINOv2 ViT-B/14.
                         </p>
@@ -949,6 +1002,7 @@
         // 2. INITIALIZATION, AUTO-ID ASSIGNMENT & CLOUD REGISTRY SYNC
         // =========================================================================
         window.addEventListener("DOMContentLoaded", async () => {
+            renderStep1VisualPreviews();
             renderCategoryGrids();
             loadLocalAdminRegistry();
 
@@ -1044,9 +1098,88 @@
 
         function updateAssignedIdDisplay(pid) {
             const info = getGroupInfo(pid);
-            document.getElementById("assigned-id-badge").textContent = `#${info.pid}`;
+            document.getElementById("assigned-id-badge").textContent = info.pid;
             document.getElementById("assigned-group-label").textContent =
-                `${info.groupLabel} (${info.sliceLabel} of 7 • 70 Drawings)`;
+                `Anonymous Session (${info.pid})`;
+        }
+
+        // Render the 3 mini 112x112 visual preview cards on Step 1 (Intact, Blur, Tile Scrambling)
+        function renderStep1VisualPreviews() {
+            const cIntact = document.getElementById("preview-canvas-intact");
+            const cBlur = document.getElementById("preview-canvas-blur");
+            const cShuffle = document.getElementById("preview-canvas-shuffle");
+            if (!cIntact || !cBlur || !cShuffle) return;
+
+            const drawAirplaneSketch = (ctx) => {
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, 112, 112);
+                ctx.strokeStyle = "#0F172A";
+                ctx.lineWidth = 2.6;
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+
+                // Fuselage
+                ctx.beginPath();
+                ctx.moveTo(18, 62);
+                ctx.quadraticCurveTo(58, 40, 96, 46);
+                ctx.quadraticCurveTo(92, 58, 18, 66);
+                ctx.closePath();
+                ctx.stroke();
+
+                // Upper & lower swept wings
+                ctx.beginPath();
+                ctx.moveTo(48, 53);
+                ctx.lineTo(36, 20);
+                ctx.lineTo(54, 22);
+                ctx.lineTo(68, 50);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(52, 60);
+                ctx.lineTo(42, 92);
+                ctx.lineTo(58, 90);
+                ctx.lineTo(70, 58);
+                ctx.stroke();
+
+                // Tail fin
+                ctx.beginPath();
+                ctx.moveTo(20, 60);
+                ctx.lineTo(14, 42);
+                ctx.lineTo(28, 48);
+                ctx.stroke();
+            };
+
+            // 1. Intact Baseline
+            const ctx1 = cIntact.getContext("2d");
+            drawAirplaneSketch(ctx1);
+
+            // 2. Gaussian Blur Preview
+            const ctx2 = cBlur.getContext("2d");
+            ctx2.fillStyle = "#FFFFFF";
+            ctx2.fillRect(0, 0, 112, 112);
+            ctx2.save();
+            ctx2.filter = "blur(2.4px)";
+            ctx2.drawImage(cIntact, 0, 0);
+            ctx2.restore();
+
+            // 3. Tile Scrambling Preview (2x2 offset derangement + subtle grid lines)
+            const ctx3 = cShuffle.getContext("2d");
+            ctx3.fillStyle = "#FFFFFF";
+            ctx3.fillRect(0, 0, 112, 112);
+            const perm = [2, 3, 0, 1];
+            for (let dst = 0; dst < 4; dst++) {
+                const src = perm[dst];
+                const sx = (src % 2) * 56, sy = Math.floor(src / 2) * 56;
+                const dx = (dst % 2) * 56, dy = Math.floor(dst / 2) * 56;
+                ctx3.drawImage(cIntact, sx, sy, 56, 56, dx, dy, 56, 56);
+            }
+            ctx3.strokeStyle = "rgba(37, 99, 235, 0.35)";
+            ctx3.lineWidth = 1;
+            ctx3.setLineDash([3, 3]);
+            ctx3.beginPath();
+            ctx3.moveTo(56, 0); ctx3.lineTo(56, 112);
+            ctx3.moveTo(0, 56); ctx3.lineTo(112, 56);
+            ctx3.stroke();
         }
 
         function showStep(stepNumber) {
