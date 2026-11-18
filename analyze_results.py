@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 
 BASE_SEED = 1234
 N_BOOT = 2000
-NTFY_TOPIC = "aims2026_visual_perception_v2_registry"
+NTFY_TOPIC = "aims2026_visual_perception_v3_registry"
 
 CATEGORIES = [
     "airplane", "bicycle", "car", "cat", "chair",
@@ -107,7 +107,7 @@ def decode_vl1_token(token_str: str) -> pd.DataFrame:
 
 
 def sync_cloud_submissions_to_logs(logs_dir: Path) -> int:
-    """Fetch any cloud-recorded submissions from ntfy.sh and write `responses_PXX.csv` into `logs_dir`."""
+    """Fetch any cloud-recorded submissions from ntfy.sh and write `responses_PXX.csv` into `logs_dir`, respecting purge tombstones."""
     logs_dir.mkdir(parents=True, exist_ok=True)
     saved_count = 0
     try:
@@ -115,6 +115,8 @@ def sync_cloud_submissions_to_logs(logs_dir: Path) -> int:
         resp = requests.get(url, timeout=8)
         if not resp.ok:
             return 0
+
+        events: list[tuple[dict, int]] = []
         for line in resp.text.splitlines():
             if not line.strip():
                 continue
@@ -123,16 +125,42 @@ def sync_cloud_submissions_to_logs(logs_dir: Path) -> int:
                 if evt.get("event") != "message" or not evt.get("message"):
                     continue
                 msg = json.loads(evt["message"])
-                token = msg.get("token", "")
-                if token.startswith("VL1:"):
-                    df = decode_vl1_token(token)
-                    if not df.empty:
-                        pid = str(df["participant"].iloc[0])
-                        out_file = logs_dir / f"responses_{pid}.csv"
-                        df.to_csv(out_file, index=False)
-                        saved_count += 1
+                evt_time_ms = int(msg.get("tsMs") or (int(evt.get("time", 0)) * 1000))
+                events.append((msg, evt_time_ms))
             except Exception:
                 continue
+
+        # Pass 1: Determine purge cutoff timestamps
+        last_purge_ts = 0
+        deleted_pids: dict[str, int] = {}
+        for msg, ts_ms in events:
+            mtype = msg.get("type", "")
+            if mtype == "factory_purge" and ts_ms > last_purge_ts:
+                last_purge_ts = ts_ms
+            elif mtype == "delete_pid" and msg.get("participant"):
+                pid = str(msg["participant"]).strip().upper()
+                if ts_ms > deleted_pids.get(pid, 0):
+                    deleted_pids[pid] = ts_ms
+
+        # Pass 2: Write only valid submissions strictly newer than the cutoff
+        valid_by_pid: dict[str, pd.DataFrame] = {}
+        for msg, ts_ms in events:
+            token = msg.get("token", "")
+            if token.startswith("VL1:"):
+                try:
+                    df = decode_vl1_token(token)
+                    if not df.empty:
+                        pid = str(df["participant"].iloc[0]).strip().upper()
+                        cutoff = max(last_purge_ts, deleted_pids.get(pid, 0))
+                        if ts_ms > cutoff and pid not in valid_by_pid:
+                            valid_by_pid[pid] = df
+                except Exception:
+                    continue
+
+        for pid, df in valid_by_pid.items():
+            out_file = logs_dir / f"responses_{pid}.csv"
+            df.to_csv(out_file, index=False)
+            saved_count += 1
     except Exception:
         return 0
     if saved_count > 0:
