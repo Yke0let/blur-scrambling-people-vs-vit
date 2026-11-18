@@ -271,7 +271,7 @@
                             Enter the ID assigned by your supervisor:
                         </label>
                         <input type="text" id="participant-select" value=""
-                            placeholder="e.g., P01 to P21" autocomplete="off" spellcheck="false" maxlength="6"
+                            placeholder="e.g., P34, P78" autocomplete="off" spellcheck="false" maxlength="6"
                             class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold mono text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15 transition" />
                         <p id="pid-validation-msg" class="hidden text-xs font-medium text-rose-600 leading-snug"></p>
                     </div>
@@ -1136,7 +1136,7 @@
                 badgeEl.className = "mono text-2xl sm:text-3xl font-bold text-rose-600 bg-rose-50 border border-rose-200 px-4 py-1.5 rounded-xl";
                 labelEl.textContent = "Invalid Participant ID";
                 labelEl.className = "text-sm font-semibold text-rose-700";
-                msgEl.textContent = "Invalid ID. Please enter an assigned ID between P01 and P21.";
+                msgEl.textContent = "Invalid Participant ID. Please check the ID assigned by your supervisor.";
                 msgEl.classList.remove("hidden");
                 pidInput.classList.add("border-rose-500");
                 pidInput.classList.remove("border-emerald-500");
@@ -1354,7 +1354,7 @@
             const el = document.getElementById("source-status");
             const pngCount = Object.keys(localFilesMap).length;
             if (csvSourceMode === "hosted") {
-                el.textContent = "Stimuli schedule ready (21 slots) ✓";
+                el.textContent = "Stimuli schedule ready ✓";
                 el.className = "mono text-xs text-emerald-600";
             } else if (csvSourceMode === "local") {
                 el.textContent = pngCount > 0 ? `Local CSV & ${pngCount} PNGs ready ✓` : `Local CSV loaded (${allTrialsCSV.length} rows)`;
