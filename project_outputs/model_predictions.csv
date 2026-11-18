@@ -1933,7 +1933,7 @@ CLIP ViT-L/14,blur_low,930,9,9
 CLIP ViT-L/14,blur_low,931,9,9
 CLIP ViT-L/14,blur_low,932,9,9
 CLIP ViT-L/14,blur_low,933,9,9
-CLIP ViT-L/14,blur_low,934,9,6
+CLIP ViT-L/14,blur_low,934,9,0
 CLIP ViT-L/14,blur_low,935,9,9
 CLIP ViT-L/14,blur_low,936,9,9
 CLIP ViT-L/14,blur_low,937,9,9
@@ -3344,7 +3344,7 @@ CLIP ViT-L/14,blur_high,341,3,3
 CLIP ViT-L/14,blur_high,342,3,8
 CLIP ViT-L/14,blur_high,343,3,8
 CLIP ViT-L/14,blur_high,344,3,3
-CLIP ViT-L/14,blur_high,345,3,3
+CLIP ViT-L/14,blur_high,345,3,5
 CLIP ViT-L/14,blur_high,346,3,3
 CLIP ViT-L/14,blur_high,347,3,8
 CLIP ViT-L/14,blur_high,348,3,3
@@ -3703,7 +3703,7 @@ CLIP ViT-L/14,blur_high,700,7,8
 CLIP ViT-L/14,blur_high,701,7,5
 CLIP ViT-L/14,blur_high,702,7,5
 CLIP ViT-L/14,blur_high,703,7,7
-CLIP ViT-L/14,blur_high,704,7,8
+CLIP ViT-L/14,blur_high,704,7,5
 CLIP ViT-L/14,blur_high,705,7,5
 CLIP ViT-L/14,blur_high,706,7,8
 CLIP ViT-L/14,blur_high,707,7,8
@@ -4352,7 +4352,7 @@ CLIP ViT-L/14,shuffle_low,349,3,3
 CLIP ViT-L/14,shuffle_low,350,3,3
 CLIP ViT-L/14,shuffle_low,351,3,3
 CLIP ViT-L/14,shuffle_low,352,3,3
-CLIP ViT-L/14,shuffle_low,353,3,9
+CLIP ViT-L/14,shuffle_low,353,3,1
 CLIP ViT-L/14,shuffle_low,354,3,3
 CLIP ViT-L/14,shuffle_low,355,3,1
 CLIP ViT-L/14,shuffle_low,356,3,3
@@ -4365,7 +4365,7 @@ CLIP ViT-L/14,shuffle_low,362,3,3
 CLIP ViT-L/14,shuffle_low,363,3,0
 CLIP ViT-L/14,shuffle_low,364,3,0
 CLIP ViT-L/14,shuffle_low,365,3,3
-CLIP ViT-L/14,shuffle_low,366,3,4
+CLIP ViT-L/14,shuffle_low,366,3,6
 CLIP ViT-L/14,shuffle_low,367,3,8
 CLIP ViT-L/14,shuffle_low,368,3,0
 CLIP ViT-L/14,shuffle_low,369,3,3
@@ -5765,7 +5765,7 @@ CLIP ViT-L/14,shuffle_medium,762,7,4
 CLIP ViT-L/14,shuffle_medium,763,7,4
 CLIP ViT-L/14,shuffle_medium,764,7,4
 CLIP ViT-L/14,shuffle_medium,765,7,8
-CLIP ViT-L/14,shuffle_medium,766,7,7
+CLIP ViT-L/14,shuffle_medium,766,7,4
 CLIP ViT-L/14,shuffle_medium,767,7,4
 CLIP ViT-L/14,shuffle_medium,768,7,0
 CLIP ViT-L/14,shuffle_medium,769,7,4
@@ -6162,7 +6162,7 @@ CLIP ViT-L/14,shuffle_high,159,1,4
 CLIP ViT-L/14,shuffle_high,160,1,6
 CLIP ViT-L/14,shuffle_high,161,1,4
 CLIP ViT-L/14,shuffle_high,162,1,8
-CLIP ViT-L/14,shuffle_high,163,1,6
+CLIP ViT-L/14,shuffle_high,163,1,8
 CLIP ViT-L/14,shuffle_high,164,1,8
 CLIP ViT-L/14,shuffle_high,165,1,4
 CLIP ViT-L/14,shuffle_high,166,1,4
@@ -6919,7 +6919,7 @@ CLIP ViT-L/14,shuffle_high,916,9,4
 CLIP ViT-L/14,shuffle_high,917,9,9
 CLIP ViT-L/14,shuffle_high,918,9,4
 CLIP ViT-L/14,shuffle_high,919,9,4
-CLIP ViT-L/14,shuffle_high,920,9,0
+CLIP ViT-L/14,shuffle_high,920,9,4
 CLIP ViT-L/14,shuffle_high,921,9,4
 CLIP ViT-L/14,shuffle_high,922,9,6
 CLIP ViT-L/14,shuffle_high,923,9,4
@@ -10914,7 +10914,7 @@ DINOv2 ViT-B/14,blur_high,911,9,9
 DINOv2 ViT-B/14,blur_high,912,9,9
 DINOv2 ViT-B/14,blur_high,913,9,9
 DINOv2 ViT-B/14,blur_high,914,9,9
-DINOv2 ViT-B/14,blur_high,915,9,0
+DINOv2 ViT-B/14,blur_high,915,9,2
 DINOv2 ViT-B/14,blur_high,916,9,9
 DINOv2 ViT-B/14,blur_high,917,9,9
 DINOv2 ViT-B/14,blur_high,918,9,9
@@ -12649,7 +12649,7 @@ DINOv2 ViT-B/14,shuffle_medium,646,6,4
 DINOv2 ViT-B/14,shuffle_medium,647,6,4
 DINOv2 ViT-B/14,shuffle_medium,648,6,9
 DINOv2 ViT-B/14,shuffle_medium,649,6,8
-DINOv2 ViT-B/14,shuffle_medium,650,6,3
+DINOv2 ViT-B/14,shuffle_medium,650,6,8
 DINOv2 ViT-B/14,shuffle_medium,651,6,9
 DINOv2 ViT-B/14,shuffle_medium,652,6,8
 DINOv2 ViT-B/14,shuffle_medium,653,6,9

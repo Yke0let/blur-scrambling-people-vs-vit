@@ -1,0 +1,8 @@
+group,condition,n_trials,accuracy,ci_low,ci_high
+G3,intact,70,91.4286,84.2857,97.1429
+G3,blur_low,70,92.8571,85.7143,98.5714
+G3,blur_medium,70,81.4286,71.4286,90.0
+G3,blur_high,70,81.4286,71.4286,90.0
+G3,shuffle_low,70,60.0,48.5714,72.8571
+G3,shuffle_medium,70,25.7143,15.7143,35.7143
+G3,shuffle_high,70,21.4286,11.4286,31.4286

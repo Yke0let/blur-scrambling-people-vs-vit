@@ -502,6 +502,238 @@ def plot_comparison_figure(
     print(f"[Figure] Saved figure -> '{out_path}'")
 
 
+def plot_main_figure(
+    full_df: pd.DataFrame,
+    human_df: pd.DataFrame | None,
+    out_path: Path,
+) -> None:
+    """Plot clean two-panel main figure (Blur | Tile Shuffle) with CLIP ViT-L/14, DINOv2 ViT-B/14, and Humans."""
+    levels = ["low", "medium", "high"]
+    xlab = {
+        "blur": ["intact"] + [f"sigma={BLUR_SIGMAS[l]}" for l in levels],
+        "shuffle": ["intact"] + [f"{SHUFFLE_GRIDS[l]**2} tiles" for l in levels],
+    }
+    style = {
+        "CLIP ViT-L/14": ("tab:blue", "o"),
+        "DINOv2 ViT-B/14": ("tab:green", "s"),
+    }
+
+    fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.4), sharey=True)
+    for ax, fam in zip(axes, ["blur", "shuffle"]):
+        conds = ["intact"] + [f"{fam}_{l}" for l in levels]
+        xs = np.arange(len(conds))
+
+        for name, (col, mk) in style.items():
+            d = full_df[full_df["model"] == name].set_index("condition").loc[conds]
+            ax.errorbar(
+                xs,
+                d["accuracy"],
+                yerr=[d["accuracy"] - d["ci_low"], d["ci_high"] - d["accuracy"]],
+                color=col,
+                marker=mk,
+                linewidth=2.0,
+                capsize=3,
+                label=name,
+            )
+
+        if human_df is not None and not human_df.empty:
+            h = human_df.set_index("condition").reindex(conds)
+            valid = h["accuracy"].notna()
+            if valid.any():
+                ax.errorbar(
+                    xs[valid],
+                    h.loc[valid, "accuracy"],
+                    yerr=[
+                        h.loc[valid, "accuracy"] - h.loc[valid, "ci_low"],
+                        h.loc[valid, "ci_high"] - h.loc[valid, "accuracy"],
+                    ],
+                    color="tab:red",
+                    marker="^",
+                    markersize=7,
+                    linewidth=2.3,
+                    ls="--",
+                    capsize=3,
+                    label="Humans (N=21)",
+                )
+
+        ax.axhline(10, color="grey", ls=":", label="Chance (10%)")
+        ax.set_xticks(xs)
+        ax.set_xticklabels(xlab[fam])
+        ax.set_ylim(0, 104)
+        ax.set_title("Blur" if fam == "blur" else "Tile shuffle (7 px offset grid)")
+        ax.set_xlabel("Damage level")
+        ax.grid(alpha=0.3)
+
+    axes[0].set_ylabel("10-way accuracy (%)")
+    axes[0].legend(loc="lower left", fontsize=8.5)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=200)
+    plt.close(fig)
+    print(f"[Figure] Saved main figure -> '{out_path}'")
+
+
+def plot_group_comparison_figure(
+    subset_df: pd.DataFrame,
+    group_df: pd.DataFrame | None,
+    out_path: Path,
+) -> None:
+    """Plot Group 1 (P01-P07), Group 2 (P08-P14), and Group 3 (P15-P21) vs. CLIP ViT-L/14 and DINOv2 ViT-B/14."""
+    if group_df is None or group_df.empty:
+        return
+    levels = ["low", "medium", "high"]
+    xlab = {
+        "blur": ["intact"] + [f"sigma={BLUR_SIGMAS[l]}" for l in levels],
+        "shuffle": ["intact"] + [f"{SHUFFLE_GRIDS[l]**2} tiles" for l in levels],
+    }
+    grp_style = {
+        "G1": ("#2563EB", "o", "Group 1 (P01-P07)"),
+        "G2": ("#059669", "s", "Group 2 (P08-P14)"),
+        "G3": ("#D97706", "^", "Group 3 (P15-P21)"),
+    }
+    model_style = {
+        "CLIP ViT-L/14": ("#64748B", "v", "--"),
+        "DINOv2 ViT-B/14": ("#7C3AED", "D", ":"),
+    }
+
+    fig, axes = plt.subplots(1, 2, figsize=(11.5, 4.6), sharey=True)
+    for ax, fam in zip(axes, ["blur", "shuffle"]):
+        conds = ["intact"] + [f"{fam}_{l}" for l in levels]
+        xs = np.arange(len(conds))
+
+        for idx_g, (gid, (col, mk, lbl)) in enumerate(grp_style.items()):
+            gdf = group_df[group_df["group"] == gid].set_index("condition").reindex(conds)
+            valid = gdf["accuracy"].notna()
+            if valid.any():
+                offset = (idx_g - 1) * 0.04
+                ax.errorbar(
+                    xs[valid] + offset,
+                    gdf.loc[valid, "accuracy"],
+                    yerr=[
+                        gdf.loc[valid, "accuracy"] - gdf.loc[valid, "ci_low"],
+                        gdf.loc[valid, "ci_high"] - gdf.loc[valid, "accuracy"],
+                    ],
+                    color=col,
+                    marker=mk,
+                    linewidth=2.0,
+                    capsize=3,
+                    label=lbl,
+                )
+
+        for mname, (col, mk, ls) in model_style.items():
+            d_sub = subset_df[subset_df["model"] == mname].set_index("condition").loc[conds]
+            ax.plot(
+                xs,
+                d_sub["accuracy"],
+                color=col,
+                marker=mk,
+                ls=ls,
+                linewidth=1.8,
+                alpha=0.85,
+                label=f"{mname} (70 UIDs)",
+            )
+
+        ax.axhline(10, color="grey", ls=":", label="Chance (10%)")
+        ax.set_xticks(xs)
+        ax.set_xticklabels(xlab[fam])
+        ax.set_ylim(0, 104)
+        ax.set_title("Group Comparison — Blur" if fam == "blur" else "Group Comparison — Tile Shuffle (7 px offset)")
+        ax.set_xlabel("Damage level")
+        ax.grid(alpha=0.3)
+
+    axes[0].set_ylabel("10-way accuracy (%)")
+    axes[0].legend(loc="lower left", fontsize=8)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=200)
+    plt.close(fig)
+    print(f"[Figure] Saved group comparison figure -> '{out_path}'")
+
+
+def plot_diagnostics_figure(
+    raw_human_df: pd.DataFrame | None,
+    manifest_csv: Path,
+    model_predictions_csv: Path,
+    out_path: Path,
+) -> None:
+    """Plot (A) Human reaction time (rt_ms) by condition and (B) shuffle_high accuracy split by ink_tile_frac."""
+    if raw_human_df is None or raw_human_df.empty or not manifest_csv.exists():
+        return
+
+    manifest = pd.read_csv(manifest_csv)
+    preds = pd.read_csv(model_predictions_csv)
+
+    fig, axes = plt.subplots(1, 2, figsize=(11.8, 4.6))
+
+    # Panel A: Human Median Reaction Time (ms) + IQR across 7 conditions
+    ax_rt = axes[0]
+    meds, q25s, q75s = [], [], []
+    for cond in COND_NAMES:
+        rts = pd.to_numeric(raw_human_df.loc[raw_human_df["condition"] == cond, "rt_ms"], errors="coerce").dropna()
+        meds.append(float(rts.median()) if not rts.empty else 0.0)
+        q25s.append(float(rts.quantile(0.25)) if not rts.empty else 0.0)
+        q75s.append(float(rts.quantile(0.75)) if not rts.empty else 0.0)
+
+    xs = np.arange(len(COND_NAMES))
+    bar_colors = ["#334155", "#3B82F6", "#2563EB", "#1D4ED8", "#10B981", "#059669", "#047857"]
+    ax_rt.bar(xs, meds, color=bar_colors, alpha=0.88, width=0.58)
+    ax_rt.errorbar(
+        xs,
+        meds,
+        yerr=[np.array(meds) - np.array(q25s), np.array(q75s) - np.array(meds)],
+        fmt="none",
+        ecolor="#0F172A",
+        capsize=4,
+        linewidth=1.5,
+        label="IQR (25th-75th pct)",
+    )
+    ax_rt.set_xticks(xs)
+    ax_rt.set_xticklabels(COND_NAMES, rotation=28, ha="right", fontsize=8.5)
+    ax_rt.set_ylabel("Median Reaction Time (ms)")
+    ax_rt.set_title("A. Human Reaction Time by Condition (Median ± IQR)")
+    ax_rt.grid(axis="y", alpha=0.3)
+    ax_rt.legend(loc="upper left", fontsize=8)
+
+    # Panel B: shuffle_high accuracy split by below vs. above median ink_tile_frac
+    ax_ink = axes[1]
+    mh = manifest[manifest["condition"] == "shuffle_high"].set_index("uid")["ink_tile_frac"]
+    med_ink = float(mh.median())
+
+    sh_preds = preds[preds["condition"] == "shuffle_high"].copy()
+    sh_preds["correct"] = (sh_preds["label"] == sh_preds["pred"]).astype(float)
+    sh_preds["low_ink"] = sh_preds["uid"].map(lambda u: mh.get(int(u), med_ink) <= med_ink)
+
+    sh_human = raw_human_df[raw_human_df["condition"] == "shuffle_high"].copy()
+    sh_human["low_ink"] = sh_human["uid"].map(lambda u: mh.get(int(u), med_ink) <= med_ink)
+
+    observers = ["CLIP ViT-L/14", "DINOv2 ViT-B/14", "Humans (N=21)"]
+    low_accs, high_accs = [], []
+    for obs in observers:
+        if obs.startswith("Humans"):
+            low_accs.append(float(sh_human[sh_human["low_ink"]]["correct"].mean() * 100.0))
+            high_accs.append(float(sh_human[~sh_human["low_ink"]]["correct"].mean() * 100.0))
+        else:
+            m_sub = sh_preds[sh_preds["model"] == obs]
+            low_accs.append(float(m_sub[m_sub["low_ink"]]["correct"].mean() * 100.0))
+            high_accs.append(float(m_sub[~m_sub["low_ink"]]["correct"].mean() * 100.0))
+
+    x_obs = np.arange(len(observers))
+    w = 0.34
+    ax_ink.bar(x_obs - w / 2, low_accs, width=w, color="#64748B", label=f"Few Ink Tiles (≤ {med_ink:.2f})")
+    ax_ink.bar(x_obs + w / 2, high_accs, width=w, color="#DC2626", label=f"Many Ink Tiles (> {med_ink:.2f})")
+    ax_ink.axhline(10, color="grey", ls=":", label="Chance (10%)")
+    ax_ink.set_xticks(x_obs)
+    ax_ink.set_xticklabels(observers, fontsize=9)
+    ax_ink.set_ylim(0, 35)
+    ax_ink.set_ylabel("shuffle_high (64 tiles) Accuracy (%)")
+    ax_ink.set_title("B. Hardest Shuffle (64 Tiles) Split by Ink-Tile Fraction")
+    ax_ink.grid(axis="y", alpha=0.3)
+    ax_ink.legend(loc="upper right", fontsize=8)
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=200)
+    plt.close(fig)
+    print(f"[Figure] Saved diagnostics figure -> '{out_path}'")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Aggregate 21-participant human logs and evaluate ViTs on 70 human_uids.")
     parser.add_argument("--human-logs", type=Path, default=Path("human_logs"), help="Directory of participant CSVs")
@@ -550,7 +782,15 @@ def main() -> None:
 
     plot_comparison_figure(full_df, subset_df, human_df, args.out_figure)
     if human_df is not None or args.update_main_figure:
-        plot_comparison_figure(full_df, subset_df, human_df, Path("main_figure.png"))
+        plot_main_figure(full_df, human_df, Path("main_figure.png"))
+        plot_group_comparison_figure(subset_df, group_df, Path("group_comparison_figure.png"))
+        plot_diagnostics_figure(raw_human_df, Path("stimuli_manifest.csv"), args.model_predictions, Path("diagnostics_figure.png"))
+        out_dir = Path("project_outputs")
+        if out_dir.exists():
+            plot_main_figure(full_df, human_df, out_dir / "main_figure.png")
+            plot_comparison_figure(full_df, subset_df, human_df, out_dir / "comparison_figure.png")
+            plot_group_comparison_figure(subset_df, group_df, out_dir / "group_comparison_figure.png")
+            plot_diagnostics_figure(raw_human_df, Path("stimuli_manifest.csv"), args.model_predictions, out_dir / "diagnostics_figure.png")
 
 
 if __name__ == "__main__":

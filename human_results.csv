@@ -1,0 +1,8 @@
+condition,accuracy,ci_low,ci_high
+intact,88.0952,83.7976,92.381
+blur_low,89.0476,84.7619,93.3333
+blur_medium,82.381,77.1429,87.1429
+blur_high,82.381,77.1429,87.619
+shuffle_low,47.1429,40.4762,53.8095
+shuffle_medium,22.381,16.6667,27.619
+shuffle_high,15.2381,10.4762,20.4762
