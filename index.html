@@ -245,7 +245,7 @@
                             Anonymous Participant ID
                         </span>
                         <span id="source-status" class="mono text-xs font-medium text-emerald-600">
-                            Schedule ready ✓
+                            Stimuli schedule ready (21 slots) ✓
                         </span>
                     </div>
 
@@ -692,7 +692,7 @@
                             Cloud Sync Ready
                         </span>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mt-1">
+                    <h3 id="admin-dashboard-title" class="text-xl font-bold text-slate-900 mt-1">
                         Experiment Telemetry &amp; Results (21 Candidates • 3 Groups × 7 Slices)
                     </h3>
                 </div>
@@ -727,6 +727,92 @@
                         class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
                         3. Global Experiment Results (Humans vs. ViTs)
                     </button>
+                </div>
+            </div>
+
+            <!-- PARTICIPANT CAPACITY & SLOT ALLOCATION PANEL -->
+            <div class="p-4 sm:p-5 rounded-xl bg-blue-50/60 border border-blue-200 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-900">
+                            Participant Capacity &amp; Slot Allocation
+                        </span>
+                        <p class="text-xs text-slate-600 mt-0.5">
+                            Scale the study beyond 21 participants. Additional slots automatically cycle across Groups 1–3 and Stimulus Slices 1–7 with unique non-colliding IDs outside 01–21.
+                        </p>
+                    </div>
+                    <span id="admin-capacity-badge" class="mono text-xs font-bold text-blue-800 bg-white border border-blue-200 px-3 py-1 rounded-lg shrink-0">
+                        Total Allocated Capacity: 21 Slots
+                    </span>
+                </div>
+
+                <!-- Allocation Controls & Roster Export Actions -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" onclick="adminAddParticipantSlots(1)"
+                            class="px-3 py-1.5 rounded-lg bg-white hover:bg-blue-100 text-blue-700 border border-blue-300 text-xs font-semibold transition">
+                            +1 Slot
+                        </button>
+                        <button type="button" onclick="adminAddParticipantSlots(3)"
+                            class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-2xs transition">
+                            +3 Slots (1 per Group)
+                        </button>
+                        <button type="button" onclick="adminAddParticipantSlots(21)"
+                            class="px-3 py-1.5 rounded-lg bg-white hover:bg-blue-100 text-blue-700 border border-blue-300 text-xs font-semibold transition">
+                            +21 Slots (Full 3×7 Cycle)
+                        </button>
+
+                        <div class="flex items-center gap-1.5 pl-1 sm:border-l sm:border-blue-200">
+                            <label for="admin-capacity-input" class="text-xs font-semibold text-slate-700">
+                                Total Slots:
+                            </label>
+                            <input type="number" id="admin-capacity-input" min="21" max="300" value="21"
+                                class="w-20 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold mono text-slate-900 focus:border-blue-600 focus:outline-none" />
+                            <button type="button" onclick="adminSetTotalCapacityFromInput()"
+                                class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition">
+                                Set Total Capacity
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="btn-copy-roster-ids" type="button" onclick="adminCopyRosterIDs()"
+                            class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold transition">
+                            📋 Copy IDs
+                        </button>
+                        <button type="button" onclick="adminExportRosterCSV()"
+                            class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold transition">
+                            ⬇ Export Roster
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Supervisor ID Roster / Directory Table -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                            Supervisor ID Roster / Directory
+                        </h4>
+                        <span id="admin-roster-summary" class="mono text-[11px] text-slate-500">
+                            21 Allocated Slots (21 Available • 0 Completed)
+                        </span>
+                    </div>
+                    <div class="max-h-56 overflow-y-auto border border-blue-200 rounded-xl bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="sticky top-0 bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
+                                <tr>
+                                    <th class="py-2 px-3">Slot #</th>
+                                    <th class="py-2 px-3">Assigned Participant ID</th>
+                                    <th class="py-2 px-3">Group Assignment</th>
+                                    <th class="py-2 px-3">Stimulus Slice</th>
+                                    <th class="py-2 px-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-roster-tbody" class="divide-y divide-slate-100 mono">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -948,19 +1034,149 @@
             "shuffle_low", "shuffle_medium", "shuffle_high"
         ];
 
-        const ALL_PIDS = Array.from({ length: 21 }, (_, i) => `P${String(i + 1).padStart(2, "0")}`);
+        const DEFAULT_BASE_SLOTS = 21;
+        const MAX_ALLOCATABLE_SLOTS = 300;
+
+        // Dynamic Slot Allocation State (Default = 21 slots: P01..P21; Slots > 21 get unique IDs outside 01..21)
+        let allocatedSlotCapacity = DEFAULT_BASE_SLOTS;
+        let slotAllocationUpdatedAtMs = 0;
+        let customSlotPids = {}; // optional slotNum -> custom PID override
+        let allocatedSlots = []; // Array of { slot, pid, group, groupLabel, slice, sliceLabel, basePid, isExtra }
+        let allocatedSlotsByPid = {}; // pid -> slotEntry
+        let ALL_PIDS = []; // Active allocated PIDs in slot order 1..N
+
+        // Precompute a deterministic collision-free catalog of 300 slots so every station maps slot <-> PID identically
+        const FULL_SLOT_CATALOG = [];
+        const FULL_SLOT_CATALOG_BY_PID = {};
+        (function initFullSlotCatalog() {
+            const used = new Set();
+            for (let slotNum = 1; slotNum <= MAX_ALLOCATABLE_SLOTS; slotNum++) {
+                let pid, groupIdx, sliceIdx, basePid, isExtra;
+                if (slotNum <= DEFAULT_BASE_SLOTS) {
+                    pid = `P${String(slotNum).padStart(2, "0")}`;
+                    groupIdx = Math.floor((slotNum - 1) / 7) + 1;
+                    sliceIdx = ((slotNum - 1) % 7) + 1;
+                    basePid = pid;
+                    isExtra = false;
+                } else {
+                    const extraIdx = slotNum - (DEFAULT_BASE_SLOTS + 1); // 0, 1, 2, ...
+                    // Balanced cycling across Group 1, Group 2, Group 3 and Stimulus Slices 1..7
+                    groupIdx = (extraIdx % 3) + 1;
+                    sliceIdx = (Math.floor(extraIdx / 3) % 7) + 1;
+                    const baseSlotNum = (groupIdx - 1) * 7 + sliceIdx; // 1..21
+                    basePid = `P${String(baseSlotNum).padStart(2, "0")}`;
+                    isExtra = true;
+
+                    // Deterministic non-colliding IDs strictly outside 01..21 (e.g., P34, P51, P68, P85, P24, ...)
+                    let num = (extraIdx < 78)
+                        ? (22 + ((extraIdx * 17 + 12) % 78))
+                        : (100 + (((extraIdx - 78) * 37 + 19) % 900));
+                    let candidate = `P${String(num).padStart(2, "0")}`;
+                    while (used.has(candidate)) {
+                        num = (num >= 999) ? 22 : (num + 1);
+                        if (num < 22) num = 22;
+                        candidate = `P${String(num).padStart(2, "0")}`;
+                    }
+                    pid = candidate;
+                }
+                used.add(pid);
+                const entry = {
+                    slot: slotNum,
+                    pid,
+                    group: `G${groupIdx}`,
+                    groupLabel: `Group ${groupIdx}`,
+                    slice: sliceIdx,
+                    sliceLabel: `Slice ${sliceIdx}`,
+                    basePid,
+                    isExtra
+                };
+                FULL_SLOT_CATALOG.push(entry);
+                FULL_SLOT_CATALOG_BY_PID[pid] = entry;
+            }
+        })();
+
+        function rebuildAllocatedSlots(capacity = allocatedSlotCapacity, customMap = customSlotPids) {
+            const cap = Math.max(DEFAULT_BASE_SLOTS, Math.min(MAX_ALLOCATABLE_SLOTS, Math.round(Number(capacity) || DEFAULT_BASE_SLOTS)));
+            allocatedSlotCapacity = cap;
+            customSlotPids = customMap && typeof customMap === "object" ? { ...customMap } : {};
+
+            const used = new Set();
+            allocatedSlots = [];
+            allocatedSlotsByPid = {};
+
+            for (let s = 1; s <= cap; s++) {
+                const baseEntry = FULL_SLOT_CATALOG[s - 1];
+                let pid = baseEntry.pid;
+                if (s > DEFAULT_BASE_SLOTS && customSlotPids[s]) {
+                    const candidate = String(customSlotPids[s]).trim().toUpperCase();
+                    if (/^P\d{2,4}$/.test(candidate) && !used.has(candidate)) {
+                        const n = parseInt(candidate.slice(1), 10);
+                        if (n >= 22) pid = candidate;
+                    }
+                }
+                if (used.has(pid)) {
+                    // Fallback collision guard
+                    let n = 22;
+                    while (used.has(`P${String(n).padStart(2, "0")}`)) n++;
+                    pid = `P${String(n).padStart(2, "0")}`;
+                }
+                used.add(pid);
+                const entry = { ...baseEntry, pid };
+                allocatedSlots.push(entry);
+                allocatedSlotsByPid[pid] = entry;
+            }
+            ALL_PIDS = allocatedSlots.map(e => e.pid);
+        }
+
+        // Initialize default 21 slots immediately
+        rebuildAllocatedSlots(DEFAULT_BASE_SLOTS, {});
 
         function getGroupInfo(pid) {
-            const num = parseInt((pid || "P01").replace("P", ""), 10) || 1;
-            const groupIdx = Math.floor((num - 1) / 7) + 1;
-            const sliceIdx = ((num - 1) % 7) + 1;
+            const cleaned = (pid || "P01").trim().toUpperCase();
+            if (allocatedSlotsByPid[cleaned]) {
+                return allocatedSlotsByPid[cleaned];
+            }
+            if (FULL_SLOT_CATALOG_BY_PID[cleaned]) {
+                return FULL_SLOT_CATALOG_BY_PID[cleaned];
+            }
+            const num = parseInt(cleaned.replace(/^P0*/, ""), 10) || 1;
+            const normCode = `P${String(num).padStart(2, "0")}`;
+            if (allocatedSlotsByPid[normCode]) {
+                return allocatedSlotsByPid[normCode];
+            }
+            if (FULL_SLOT_CATALOG_BY_PID[normCode]) {
+                return FULL_SLOT_CATALOG_BY_PID[normCode];
+            }
+            // Fallback modulo mapping on the 21 base schedules
+            const baseIdx0 = ((num - 1) % 21 + 21) % 21;
+            const groupIdx = (baseIdx0 % 3) + 1;
+            const sliceIdx = (Math.floor(baseIdx0 / 3) % 7) + 1;
+            const baseSlotNum = (groupIdx - 1) * 7 + sliceIdx;
             return {
-                pid: `P${String(num).padStart(2, "0")}`,
+                slot: num,
+                pid: normCode,
                 group: `G${groupIdx}`,
                 groupLabel: `Group ${groupIdx}`,
                 slice: sliceIdx,
-                sliceLabel: `Slice ${sliceIdx}`
+                sliceLabel: `Slice ${sliceIdx}`,
+                basePid: `P${String(baseSlotNum).padStart(2, "0")}`,
+                isExtra: num > 21
             };
+        }
+
+        function getScheduleForParticipant(pid) {
+            const info = getGroupInfo(pid);
+            if (!allTrialsCSV || !allTrialsCSV.length) return [];
+            let rows = allTrialsCSV.filter(r => r.participant === info.pid);
+            if (!rows.length && info.basePid) {
+                rows = allTrialsCSV.filter(r => r.participant === info.basePid);
+            }
+            return rows.map(r => ({
+                ...r,
+                participant: info.pid,
+                group: info.group,
+                slot_in_group: info.slice
+            }));
         }
 
         // Model Reference Accuracies on the 70 human_uids (from model_results_human_subset.csv) and full N=1000
@@ -980,7 +1196,7 @@
         const TIME_MASK_MS = 400;            // 0.4 seconds backward mask
         const TIME_ANSWER_LIMIT_MS = 15000;  // Hidden 15-second answer timer (re-queues trial on timeout)
 
-        // Cloud & Local Storage Configuration (v3 Clean Slate + Persistent Tombstones)
+        // Cloud & Local Storage Configuration (v3 Clean Slate + Persistent Tombstones + Dynamic Slot Allocation)
         const ADMIN_PASSWORD = "admin2026_Aims";
         const NTFY_TOPIC = "aims2026_visual_perception_v3_registry";
         const KV_APP_KEY = "7rd2rmj7";
@@ -990,6 +1206,7 @@
         const STORAGE_ADMIN_REGISTRY = "blur_scrambling_admin_registry_v3";
         const STORAGE_LAST_PURGE_TS = "blur_scrambling_last_purge_ts_v3";
         const STORAGE_DELETED_PIDS = "blur_scrambling_deleted_pids_v3";
+        const STORAGE_SLOT_ROSTER = "blur_scrambling_slot_roster_v3";
 
         // Runtime State
         let currentStep = 1;
@@ -1062,14 +1279,38 @@
             } catch (_) {}
         }
 
+        function persistSlotRosterLocally() {
+            try {
+                localStorage.setItem(STORAGE_SLOT_ROSTER, JSON.stringify({
+                    capacity: allocatedSlotCapacity,
+                    updatedAtMs: slotAllocationUpdatedAtMs,
+                    customPids: customSlotPids
+                }));
+            } catch (_) {}
+        }
+
+        function loadLocalSlotRoster() {
+            try {
+                const raw = localStorage.getItem(STORAGE_SLOT_ROSTER);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === "object" && Number(parsed.capacity) >= DEFAULT_BASE_SLOTS) {
+                    slotAllocationUpdatedAtMs = Number(parsed.updatedAtMs || 0);
+                    rebuildAllocatedSlots(Number(parsed.capacity), parsed.customPids || {});
+                }
+            } catch (_) {}
+        }
+
         // =========================================================================
         // 2. INITIALIZATION, MANUAL ID VALIDATION & ANTI-OVERWRITE PROTECTION
         // =========================================================================
         window.addEventListener("DOMContentLoaded", async () => {
             purgeLegacyStorage();
+            loadLocalSlotRoster();
             renderStep1VisualPreviews();
             renderCategoryGrids();
             loadLocalAdminRegistry();
+            updateSourceStatus();
 
             const pidInput = document.getElementById("participant-select");
             // Ensure input starts empty and badge displays "---"
@@ -1081,6 +1322,18 @@
                 validateParticipantSetup();
                 if (norm && !isSlotCompleted(norm)) {
                     checkSingleSlotCloudCompletion(norm);
+                } else if (!norm) {
+                    // If user typed a valid extra catalog ID (e.g. P34) allocated on another station, check remote capacity
+                    const candidate = normalizeParticipantId(pidInput.value, true);
+                    if (candidate && FULL_SLOT_CATALOG_BY_PID[candidate]) {
+                        syncRemoteSlotCapacitySilent().then(() => {
+                            const reNorm = normalizeParticipantId(pidInput.value);
+                            validateParticipantSetup();
+                            if (reNorm && !isSlotCompleted(reNorm)) {
+                                checkSingleSlotCloudCompletion(reNorm);
+                            }
+                        });
+                    }
                 }
             });
 
@@ -1104,6 +1357,7 @@
                 tryAutoFetchCSV(),
                 fetchCloudSubmissionsSilent()
             ]);
+            updateSourceStatus();
             validateParticipantSetup();
 
             // Offline CSV / PNG folder inputs
@@ -1142,15 +1396,22 @@
             });
         });
 
-        // Normalize user input: trim, uppercase, convert "p1" / "p01" -> "P01", validate against P01..P21
-        function normalizeParticipantId(raw) {
+        // Normalize user input: trim, uppercase, convert "p1" / "p01" -> "P01", "p34" -> "P34", validate against active allocated slots
+        function normalizeParticipantId(raw, allowAnyCatalogSlot = false) {
             const cleaned = (raw || "").trim().toUpperCase();
             if (!cleaned) return "";
-            const match = cleaned.match(/^P0*([1-9]|1[0-9]|2[01])$/);
+            const match = cleaned.match(/^P0*([1-9][0-9]{0,3})$/);
             if (!match) return null;
             const num = parseInt(match[1], 10);
-            if (num < 1 || num > 21) return null;
-            return `P${String(num).padStart(2, "0")}`;
+            if (num < 1 || num > 9999) return null;
+            const candidatePid = `P${String(num).padStart(2, "0")}`;
+            if (allocatedSlotsByPid[candidatePid]) {
+                return candidatePid;
+            }
+            if (allowAnyCatalogSlot && FULL_SLOT_CATALOG_BY_PID[candidatePid]) {
+                return candidatePid;
+            }
+            return null;
         }
 
         function getCurrentParticipantId() {
@@ -1159,7 +1420,7 @@
         }
 
         function isSlotCompleted(pid) {
-            if (!pid || !ALL_PIDS.includes(pid)) return false;
+            if (!pid || !allocatedSlotsByPid[pid]) return false;
             const cutoff = getCutoffTimestampForPid(pid);
             if (adminRegistry[pid] && Array.isArray(adminRegistry[pid].responses) && adminRegistry[pid].responses.length >= 70) {
                 if (Number(adminRegistry[pid].tsMs || 0) > cutoff) {
@@ -1173,8 +1434,26 @@
             return false;
         }
 
+        async function syncRemoteSlotCapacitySilent() {
+            try {
+                const r = await fetch(`https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KV_APP_KEY}/${KV_PREFIX}slot_capacity`, { cache: "no-store" });
+                if (!r.ok) return;
+                const val = (await r.text()).replace(/^"|"$/g, "").trim();
+                if (!val || !val.includes("_")) return;
+                const [capStr, ts36] = val.split("_");
+                const remoteCap = parseInt(capStr, 10) || DEFAULT_BASE_SLOTS;
+                const remoteTs = parseInt(ts36, 36) || 0;
+                if (remoteCap >= DEFAULT_BASE_SLOTS && remoteTs >= slotAllocationUpdatedAtMs) {
+                    slotAllocationUpdatedAtMs = remoteTs;
+                    rebuildAllocatedSlots(remoteCap, customSlotPids);
+                    persistSlotRosterLocally();
+                    updateSourceStatus();
+                }
+            } catch (_) {}
+        }
+
         async function checkSingleSlotCloudCompletion(pid) {
-            if (!pid || !ALL_PIDS.includes(pid) || isSlotCompleted(pid)) return;
+            if (!pid || !allocatedSlotsByPid[pid] || isSlotCompleted(pid)) return;
             try {
                 const r = await fetch(`https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KV_APP_KEY}/${KV_PREFIX}${pid}`, { cache: "no-store" });
                 if (!r.ok) return;
@@ -1446,11 +1725,14 @@
         function updateSourceStatus() {
             const el = document.getElementById("source-status");
             const pngCount = Object.keys(localFilesMap).length;
+            const slotCount = ALL_PIDS.length || DEFAULT_BASE_SLOTS;
             if (csvSourceMode === "hosted") {
-                el.textContent = "Stimuli schedule ready ✓";
+                el.textContent = `Stimuli schedule ready (${slotCount} slots) ✓`;
                 el.className = "mono text-xs text-emerald-600";
             } else if (csvSourceMode === "local") {
-                el.textContent = pngCount > 0 ? `Local CSV & ${pngCount} PNGs ready ✓` : `Local CSV loaded (${allTrialsCSV.length} rows)`;
+                el.textContent = pngCount > 0
+                    ? `Local CSV & ${pngCount} PNGs ready (${slotCount} slots) ✓`
+                    : `Local CSV loaded (${slotCount} slots) ✓`;
                 el.className = "mono text-xs text-emerald-600";
             } else {
                 el.textContent = "Offline mode (load CSV below)";
@@ -1689,7 +1971,7 @@
                 return;
             }
 
-            const baseSchedule = allTrialsCSV.filter(r => r.participant === pid).map(r => ({ ...r }));
+            const baseSchedule = getScheduleForParticipant(pid);
             if (baseSchedule.length === 0) {
                 alert(`No trials found for ${pid} in human_trials.csv.`);
                 return;
@@ -2133,7 +2415,7 @@
             const byUid = {};
             responses.forEach(r => { byUid[Number(r.uid)] = r; });
 
-            const schedule = allTrialsCSV.filter(r => r.participant === pid).sort((a, b) => Number(a.uid) - Number(b.uid));
+            const schedule = getScheduleForParticipant(pid).sort((a, b) => Number(a.uid) - Number(b.uid));
             if (schedule.length !== 70) return null;
 
             let respDigits = "";
@@ -2153,7 +2435,8 @@
             const parts = kvStr.replace(/^"|"$/g, "").split("_");
             if (parts.length < 2 || parts[0].length !== 70 || parts[1].length !== 140) return null;
 
-            const schedule = allTrialsCSV.filter(r => r.participant === pid).sort((a, b) => Number(a.uid) - Number(b.uid));
+            const baseRows = getScheduleForParticipant(pid);
+            const schedule = baseRows.slice().sort((a, b) => Number(a.uid) - Number(b.uid));
             if (schedule.length !== 70) return null;
 
             const catIds = CATEGORIES.map(c => c.id);
@@ -2174,7 +2457,7 @@
                 };
             }
 
-            const trialOrder = allTrialsCSV.filter(r => r.participant === pid).sort((a, b) => Number(a.trial) - Number(b.trial));
+            const trialOrder = baseRows.slice().sort((a, b) => Number(a.trial) - Number(b.trial));
             const responses = trialOrder.map((t, idx) => {
                 const ans = byUidResp[Number(t.uid)];
                 return {
@@ -2284,6 +2567,7 @@
         }
 
         function loadLocalAdminRegistry() {
+            loadLocalSlotRoster();
             try {
                 const rawPurgeTs = localStorage.getItem(STORAGE_LAST_PURGE_TS);
                 if (rawPurgeTs) {
@@ -2319,6 +2603,19 @@
 
             prunePurgedRecordsFromMemoryAndStorage();
 
+            // Auto-expand capacity if a valid existing submission in adminRegistry belongs to a higher slot
+            let maxSlotNeeded = allocatedSlotCapacity;
+            Object.keys(adminRegistry).forEach(pid => {
+                const info = getGroupInfo(pid);
+                if (info && info.slot > maxSlotNeeded && info.slot <= MAX_ALLOCATABLE_SLOTS) {
+                    maxSlotNeeded = info.slot;
+                }
+            });
+            if (maxSlotNeeded > allocatedSlotCapacity) {
+                rebuildAllocatedSlots(maxSlotNeeded, customSlotPids);
+                persistSlotRosterLocally();
+            }
+
             // Also scan any completed participant sessions stored in this browser that are newer than the purge cutoff
             ALL_PIDS.forEach(pid => {
                 const saved = getSavedProgress(pid);
@@ -2349,6 +2646,13 @@
                 }
             }
 
+            // Auto-expand slot capacity if a valid submission arrives for a slot > current capacity
+            if (info.slot > allocatedSlotCapacity && info.slot <= MAX_ALLOCATABLE_SLOTS) {
+                rebuildAllocatedSlots(info.slot, customSlotPids);
+                persistSlotRosterLocally();
+                updateSourceStatus();
+            }
+
             adminRegistry[info.pid] = {
                 participant: info.pid,
                 group: info.group,
@@ -2376,9 +2680,132 @@
             return true;
         }
 
+        // Dynamic Slot Allocation Actions (Admin Mode)
+        async function setAllocatedSlotCapacity(targetCapacity, syncRemote = true) {
+            if (!adminUnlocked) return;
+            const desired = Math.round(Number(targetCapacity) || DEFAULT_BASE_SLOTS);
+            if (desired < DEFAULT_BASE_SLOTS || desired > MAX_ALLOCATABLE_SLOTS) {
+                alert(`Total participant capacity must be between ${DEFAULT_BASE_SLOTS} and ${MAX_ALLOCATABLE_SLOTS} slots.`);
+                const inp = document.getElementById("admin-capacity-input");
+                if (inp) inp.value = allocatedSlotCapacity;
+                return;
+            }
+
+            // Prevent reducing capacity below a slot that currently holds completed responses
+            let maxCompletedSlot = DEFAULT_BASE_SLOTS;
+            allocatedSlots.forEach(s => {
+                if (adminRegistry[s.pid]?.responses?.length && s.slot > maxCompletedSlot) {
+                    maxCompletedSlot = s.slot;
+                }
+            });
+            if (desired < maxCompletedSlot) {
+                const lockedPid = FULL_SLOT_CATALOG[maxCompletedSlot - 1]?.pid || `Slot #${maxCompletedSlot}`;
+                alert(`Cannot reduce capacity below ${maxCompletedSlot} because Slot #${maxCompletedSlot} (${lockedPid}) already has completed trial data. Reset that participant ID first if you wish to reduce capacity.`);
+                const inp = document.getElementById("admin-capacity-input");
+                if (inp) inp.value = allocatedSlotCapacity;
+                return;
+            }
+
+            const nowMs = Date.now();
+            slotAllocationUpdatedAtMs = nowMs;
+            rebuildAllocatedSlots(desired, customSlotPids);
+            persistSlotRosterLocally();
+            updateSourceStatus();
+            renderAdminAllViews();
+            validateParticipantSetup();
+
+            if (!syncRemote) return;
+
+            const badge = document.getElementById("admin-cloud-sync-badge");
+            if (badge) {
+                badge.textContent = `Syncing capacity (${allocatedSlotCapacity} slots) to cloud...`;
+                badge.className = "mono text-xs text-blue-600";
+            }
+
+            const kvVal = `${allocatedSlotCapacity}_${nowMs.toString(36)}`;
+            await Promise.all([
+                fetch(`https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${KV_APP_KEY}/${KV_PREFIX}slot_capacity/${kvVal}`, {
+                    method: "POST", body: ""
+                }).catch(() => {}),
+                fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        type: "slot_allocation",
+                        capacity: allocatedSlotCapacity,
+                        customPids: customSlotPids,
+                        tsMs: nowMs,
+                        timestamp: new Date(nowMs).toISOString()
+                    })
+                }).catch(() => {})
+            ]);
+
+            if (badge) {
+                const count = Object.keys(adminRegistry).length;
+                badge.textContent = `✓ Capacity Updated: ${allocatedSlotCapacity} Slots (${count} / ${allocatedSlotCapacity} Completed)`;
+                badge.className = "mono text-xs text-emerald-600";
+            }
+        }
+
+        async function adminAddParticipantSlots(delta) {
+            if (!adminUnlocked) return;
+            const addCount = Math.max(1, Math.round(Number(delta) || 1));
+            await setAllocatedSlotCapacity(allocatedSlotCapacity + addCount, true);
+        }
+
+        async function adminSetTotalCapacityFromInput() {
+            if (!adminUnlocked) return;
+            const inp = document.getElementById("admin-capacity-input");
+            const val = parseInt(inp ? inp.value : "", 10);
+            if (isNaN(val) || val < DEFAULT_BASE_SLOTS) {
+                alert(`Total participant capacity must be at least ${DEFAULT_BASE_SLOTS} slots (3 groups × 7 stimulus slices).`);
+                if (inp) inp.value = allocatedSlotCapacity;
+                return;
+            }
+            await setAllocatedSlotCapacity(val, true);
+        }
+
+        async function adminCopyRosterIDs() {
+            const lines = [
+                "Slot #\tParticipant ID\tGroup Assignment\tStimulus Slice\tStatus",
+                ...allocatedSlots.map(s => {
+                    const status = isSlotCompleted(s.pid) ? "Completed" : "Available";
+                    return `Slot #${s.slot}\t${s.pid}\t${s.groupLabel}\t${s.sliceLabel}\t${status}`;
+                })
+            ];
+            const text = lines.join("\n");
+            const btn = document.getElementById("btn-copy-roster-ids");
+            try {
+                await navigator.clipboard.writeText(text);
+                if (btn) {
+                    const prev = btn.textContent;
+                    btn.textContent = "✓ Copied Roster IDs!";
+                    setTimeout(() => { btn.textContent = prev; }, 1800);
+                }
+            } catch (_) {
+                prompt("Copy the Supervisor Participant ID Roster below:", text);
+            }
+        }
+
+        function adminExportRosterCSV() {
+            const rows = allocatedSlots.map(s => ({
+                slot_number: s.slot,
+                participant_id: s.pid,
+                group: s.group,
+                group_label: s.groupLabel,
+                stimulus_slice: s.sliceLabel,
+                base_schedule_id: s.basePid,
+                status: isSlotCompleted(s.pid) ? "Completed" : "Available"
+            }));
+            triggerCSVDownload(
+                "supervisor_participant_roster.csv",
+                rows,
+                ["slot_number", "participant_id", "group", "group_label", "stimulus_slice", "base_schedule_id", "status"]
+            );
+        }
+
         async function adminResetCandidateSlot(pid, skipConfirm = false) {
             if (!adminUnlocked) return;
-            const normPid = normalizeParticipantId(pid);
+            const normPid = normalizeParticipantId(pid, true);
             if (!normPid) return;
             if (!skipConfirm) {
                 if (!confirm(`Permanently delete collected trials for Participant ID ${normPid} and unlock slot ${normPid} so it can be taken again?`)) {
@@ -2430,7 +2857,7 @@
 
             if (badge) {
                 const count = Object.keys(adminRegistry).length;
-                badge.textContent = `✓ Slot ${normPid} Reset & Unlocked (${count} / 21 Candidates Completed)`;
+                badge.textContent = `✓ Slot ${normPid} Reset & Unlocked (${count} / ${ALL_PIDS.length} Candidates Completed)`;
                 badge.className = "mono text-xs text-emerald-600";
             }
         }
@@ -2441,7 +2868,7 @@
             const raw = (inputEl ? inputEl.value : "").trim();
             const normPid = normalizeParticipantId(raw);
             if (!normPid) {
-                alert("Invalid Participant ID. Please enter a valid Participant ID (e.g., P01 to P21) to reset.");
+                alert("Invalid Participant ID. Please enter an allocated Participant ID from the Supervisor Roster to reset.");
                 return;
             }
             await adminResetCandidateSlot(normPid, false);
@@ -2452,7 +2879,7 @@
             if (!adminUnlocked) return;
             const confirmation = prompt(
                 "FACTORY RESET — PURGE ALL COLLECTED DATA\n\n" +
-                "This will permanently delete all collected participant sessions, trials, scores, and ID locks across the entire study (resetting all groups to 0 / 7 Candidates).\n\n" +
+                "This will permanently delete all collected participant sessions, trials, scores, and ID locks across the entire study (resetting all groups to 0 completed candidates).\n\n" +
                 "Type RESET in uppercase to confirm:"
             );
             if (confirmation === null) return;
@@ -2482,6 +2909,7 @@
                 localStorage.setItem(STORAGE_ADMIN_REGISTRY, "{}");
             } catch (_) {}
             persistTombstonesLocally();
+            persistSlotRosterLocally();
             try {
                 sessionStorage.clear();
             } catch (_) {}
@@ -2530,7 +2958,7 @@
             await Promise.all(remoteOps);
 
             if (badge) {
-                badge.textContent = "✓ Factory Reset Complete (0 / 21 Candidates Completed)";
+                badge.textContent = `✓ Factory Reset Complete (0 / ${ALL_PIDS.length} Candidates Completed)`;
                 badge.className = "mono text-xs text-emerald-600";
             }
             updateAdminPurgeStatusBadge();
@@ -2541,20 +2969,25 @@
         async function fetchCloudSubmissionsSilent() {
             loadLocalAdminRegistry();
 
-            // 0. Check remote last_purge_ts on keyvalue.immanuel.co
-            try {
-                const rPurge = await fetch(`https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KV_APP_KEY}/${KV_PREFIX}last_purge_ts`, { cache: "no-store" });
-                if (rPurge.ok) {
-                    const val = Number((await rPurge.text()).replace(/^"|"$/g, "").trim() || 0);
-                    if (val > lastPurgeTimestamp) {
-                        lastPurgeTimestamp = val;
-                        persistTombstonesLocally();
-                        prunePurgedRecordsFromMemoryAndStorage();
-                    }
-                }
-            } catch (_) {}
+            // 0. Check remote last_purge_ts and remote slot_capacity on keyvalue.immanuel.co
+            await Promise.all([
+                (async () => {
+                    try {
+                        const rPurge = await fetch(`https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KV_APP_KEY}/${KV_PREFIX}last_purge_ts`, { cache: "no-store" });
+                        if (rPurge.ok) {
+                            const val = Number((await rPurge.text()).replace(/^"|"$/g, "").trim() || 0);
+                            if (val > lastPurgeTimestamp) {
+                                lastPurgeTimestamp = val;
+                                persistTombstonesLocally();
+                                prunePurgedRecordsFromMemoryAndStorage();
+                            }
+                        }
+                    } catch (_) {}
+                })(),
+                syncRemoteSlotCapacitySilent()
+            ]);
 
-            // 1. Poll ntfy.sh registry stream (Two-pass: process purge/delete tombstones first, then valid submissions)
+            // 1. Poll ntfy.sh registry stream (Two-pass: process purge/delete tombstones & slot_allocation first, then valid submissions)
             try {
                 const resp = await fetch(`https://ntfy.sh/${NTFY_TOPIC}/json?poll=1&since=all`, { cache: "no-store" });
                 if (resp.ok) {
@@ -2574,22 +3007,33 @@
                         } catch (_) {}
                     }
 
-                    // Pass 1: Update tombstones (factory_purge & delete_pid)
+                    // Pass 1: Update tombstones (factory_purge & delete_pid) and slot_allocation capacity
                     let tombstoneUpdated = false;
+                    let rosterUpdated = false;
                     for (const { data, evtTimeSec } of parsedEvents) {
                         const evtTsMs = Number(data.tsMs || (data.timestamp ? Date.parse(data.timestamp) : 0) || (evtTimeSec * 1000) || 0);
                         if (data.type === "factory_purge" && evtTsMs > lastPurgeTimestamp) {
                             lastPurgeTimestamp = evtTsMs;
                             tombstoneUpdated = true;
                         } else if (data.type === "delete_pid" && data.participant) {
-                            const normPid = normalizeParticipantId(data.participant);
+                            const normPid = normalizeParticipantId(data.participant, true);
                             if (normPid && evtTsMs > Number(deletedParticipantTimestamps[normPid] || 0)) {
                                 deletedParticipantTimestamps[normPid] = evtTsMs;
                                 tombstoneUpdated = true;
                             }
+                        } else if (data.type === "slot_allocation" && Number(data.capacity) >= DEFAULT_BASE_SLOTS) {
+                            if (evtTsMs >= slotAllocationUpdatedAtMs) {
+                                slotAllocationUpdatedAtMs = evtTsMs;
+                                rebuildAllocatedSlots(Number(data.capacity), data.customPids || customSlotPids);
+                                rosterUpdated = true;
+                            }
                         }
                     }
 
+                    if (rosterUpdated) {
+                        persistSlotRosterLocally();
+                        updateSourceStatus();
+                    }
                     if (tombstoneUpdated) {
                         persistTombstonesLocally();
                         prunePurgedRecordsFromMemoryAndStorage();
@@ -2641,6 +3085,7 @@
 
             prunePurgedRecordsFromMemoryAndStorage();
             updateAdminPurgeStatusBadge();
+            updateSourceStatus();
         }
 
         // =========================================================================
@@ -2684,7 +3129,7 @@
             badge.className = "mono text-xs text-blue-600";
             await fetchCloudSubmissionsSilent();
             const count = Object.keys(adminRegistry).length;
-            badge.textContent = `✓ Cloud Synced (${count} / 21 Candidates Completed)`;
+            badge.textContent = `✓ Cloud Synced (${count} / ${ALL_PIDS.length} Candidates Completed)`;
             badge.className = "mono text-xs text-emerald-600";
             updateAdminPurgeStatusBadge();
             renderAdminAllViews();
@@ -2760,19 +3205,83 @@
         }
 
         function renderAdminAllViews() {
+            renderAdminRosterDirectory();
             renderAdminCandidatesTable();
             renderAdminGroupsView();
             renderAdminGlobalView();
         }
 
-        // TAB 1: BY CANDIDATE (P01..P21)
+        // SUPERVISOR ID ROSTER / DIRECTORY & CAPACITY BADGES
+        function renderAdminRosterDirectory() {
+            const totalSlots = allocatedSlots.length;
+            const g1Total = allocatedSlots.filter(s => s.group === "G1").length;
+            const g2Total = allocatedSlots.filter(s => s.group === "G2").length;
+            const g3Total = allocatedSlots.filter(s => s.group === "G3").length;
+
+            const titleEl = document.getElementById("admin-dashboard-title");
+            if (titleEl) {
+                titleEl.textContent = `Experiment Telemetry & Results (${totalSlots} Allocated Slots • 3 Groups × 7 Slices)`;
+            }
+
+            const tab1Btn = document.getElementById("admin-tab-btn-candidates");
+            if (tab1Btn) {
+                tab1Btn.textContent = `1. By Candidate (${totalSlots} Slots)`;
+            }
+
+            const capBadge = document.getElementById("admin-capacity-badge");
+            if (capBadge) {
+                capBadge.textContent = `Total Allocated Capacity: ${totalSlots} Slots (G1: ${g1Total} • G2: ${g2Total} • G3: ${g3Total})`;
+            }
+
+            const capInput = document.getElementById("admin-capacity-input");
+            if (capInput && document.activeElement !== capInput) {
+                capInput.value = totalSlots;
+            }
+
+            const rosterTbody = document.getElementById("admin-roster-tbody");
+            if (!rosterTbody) return;
+            rosterTbody.innerHTML = "";
+
+            let completedCount = 0;
+            allocatedSlots.forEach(s => {
+                const done = isSlotCompleted(s.pid);
+                if (done) completedCount++;
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-50";
+                const idBadgeClass = s.isExtra
+                    ? "px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-700 border border-blue-200"
+                    : "px-2 py-0.5 rounded font-bold bg-slate-100 text-slate-900 border border-slate-200";
+                const statusBadge = done
+                    ? `<span class="px-2 py-0.5 rounded-full text-[11px] font-sans font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Completed</span>`
+                    : `<span class="px-2 py-0.5 rounded-full text-[11px] font-sans font-semibold bg-blue-50 text-blue-700 border border-blue-200">Available</span>`;
+
+                tr.innerHTML = `
+                    <td class="py-1.5 px-3 font-semibold text-slate-600">#${s.slot}</td>
+                    <td class="py-1.5 px-3">
+                        <span class="${idBadgeClass}">${s.pid}</span>
+                        ${s.isExtra ? `<span class="ml-1.5 text-[10px] font-sans text-blue-600 font-medium">Extra Slot</span>` : ""}
+                    </td>
+                    <td class="py-1.5 px-3 text-slate-700 font-sans font-medium">${s.groupLabel}</td>
+                    <td class="py-1.5 px-3 text-slate-600 font-sans">${s.sliceLabel} <span class="mono text-[10px] text-slate-400">(Schedule ${s.basePid})</span></td>
+                    <td class="py-1.5 px-3">${statusBadge}</td>
+                `;
+                rosterTbody.appendChild(tr);
+            });
+
+            const summaryEl = document.getElementById("admin-roster-summary");
+            if (summaryEl) {
+                summaryEl.textContent = `${totalSlots} Allocated Slots (${totalSlots - completedCount} Available • ${completedCount} Completed)`;
+            }
+        }
+
+        // TAB 1: BY CANDIDATE (ALL ALLOCATED SLOTS 1..N)
         function renderAdminCandidatesTable() {
             const tbody = document.getElementById("admin-candidates-tbody");
             tbody.innerHTML = "";
             let completedCount = 0;
 
-            ALL_PIDS.forEach(pid => {
-                const info = getGroupInfo(pid);
+            allocatedSlots.forEach(info => {
+                const pid = info.pid;
                 const sub = adminRegistry[pid];
                 const tr = document.createElement("tr");
                 tr.className = "hover:bg-slate-50";
@@ -2781,7 +3290,7 @@
                     completedCount++;
                     const st = computeConditionStats(sub.responses);
                     tr.innerHTML = `
-                        <td class="py-2.5 px-3 font-bold text-slate-900">${info.pid}</td>
+                        <td class="py-2.5 px-3 font-bold text-slate-900"><span class="text-slate-400 font-normal mr-1">#${info.slot}</span>${info.pid}</td>
                         <td class="py-2.5 px-3 text-slate-600">${info.groupLabel}</td>
                         <td class="py-2.5 px-3 text-slate-500">${info.sliceLabel}</td>
                         <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-sans font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Completed (${sub.responses.length}/70)</span></td>
@@ -2804,7 +3313,7 @@
                         </td>`;
                 } else {
                     tr.innerHTML = `
-                        <td class="py-2.5 px-3 font-semibold text-slate-700">${info.pid}</td>
+                        <td class="py-2.5 px-3 font-semibold text-slate-700"><span class="text-slate-400 font-normal mr-1">#${info.slot}</span>${info.pid}</td>
                         <td class="py-2.5 px-3 text-slate-500">${info.groupLabel}</td>
                         <td class="py-2.5 px-3 text-slate-400">${info.sliceLabel}</td>
                         <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-sans font-medium bg-slate-100 text-slate-500">Awaiting Data</span></td>
@@ -2819,19 +3328,29 @@
                 tbody.appendChild(tr);
             });
 
+            const totalSlots = allocatedSlots.length;
             document.getElementById("admin-candidates-summary").textContent =
-                `Completed Candidates: ${completedCount} of 21 (${completedCount * 70} / 1470 total trials recorded).`;
+                `Completed Candidates: ${completedCount} of ${totalSlots} (${completedCount * 70} / ${totalSlots * 70} total trials recorded).`;
         }
 
-        // TAB 2: BY GROUP (G1, G2, G3 & SLICES S1..S7)
+        // TAB 2: BY GROUP (G1, G2, G3 & SLICES S1..S7 — DYNAMICALLY SCALED FOR ANY CAPACITY)
         function renderAdminGroupsView() {
             const groupCards = document.getElementById("admin-group-cards");
             groupCards.innerHTML = "";
 
+            const buildGroupConfig = (gid, label, color) => {
+                const slots = allocatedSlots.filter(s => s.group === gid);
+                const pids = slots.map(s => s.pid);
+                const title = slots.length === 7
+                    ? `${label} (${pids[0]}–${pids[6]})`
+                    : `${label} (${slots.length} Allocated Slots)`;
+                return { id: gid, name: title, shortName: label, color, pids, allocatedCount: slots.length };
+            };
+
             const groupConfigs = [
-                { id: "G1", name: "Group 1 (P01–P07)", color: "#2563EB", pids: ALL_PIDS.slice(0, 7) },
-                { id: "G2", name: "Group 2 (P08–P14)", color: "#059669", pids: ALL_PIDS.slice(7, 14) },
-                { id: "G3", name: "Group 3 (P15–P21)", color: "#D97706", pids: ALL_PIDS.slice(14, 21) }
+                buildGroupConfig("G1", "Group 1", "#2563EB"),
+                buildGroupConfig("G2", "Group 2", "#059669"),
+                buildGroupConfig("G3", "Group 3", "#D97706")
             ];
 
             const groupStatsMap = {};
@@ -2846,14 +3365,15 @@
                     }
                 });
                 const st = rows.length ? computeConditionStats(rows) : null;
-                groupStatsMap[g.id] = { rows, st, doneMembers };
+                const allocatedStimuli = g.allocatedCount * 70;
+                groupStatsMap[g.id] = { rows, st, doneMembers, allocatedCount: g.allocatedCount };
 
                 groupCards.innerHTML += `
                     <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
                         <div class="flex items-center justify-between">
                             <div>
                                 <div class="text-xs font-bold uppercase tracking-wider text-slate-800">${g.name}</div>
-                                <div class="mono text-[11px] text-slate-500">${doneMembers} / 7 Candidates (${rows.length} / 490 Stimuli)</div>
+                                <div class="mono text-[11px] text-slate-500">${doneMembers} / ${g.allocatedCount} Candidates (${rows.length} / ${allocatedStimuli} Stimuli)</div>
                             </div>
                             <button type="button" onclick="downloadGroupCSV('${g.id}')"
                                 class="px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold">
@@ -2877,27 +3397,33 @@
                     </div>`;
             });
 
-            // Slice-by-Slice (S1..S7) Table
+            // Slice-by-Slice (S1..S7) Table (Supports multiple participants sharing the same slice within a group)
             const slicesTbody = document.getElementById("admin-slices-tbody");
             slicesTbody.innerHTML = "";
             for (let s = 1; s <= 7; s++) {
-                const pG1 = `P${String(s).padStart(2, "0")}`;
-                const pG2 = `P${String(s + 7).padStart(2, "0")}`;
-                const pG3 = `P${String(s + 14).padStart(2, "0")}`;
-                const pids = [pG1, pG2, pG3];
-
-                const cells = pids.map(p => {
-                    const sub = adminRegistry[p];
-                    if (!sub || !sub.responses.length) return `<span class="text-slate-400">${p}: —</span>`;
-                    const acc = computeConditionStats(sub.responses).overall;
-                    return `<span class="text-slate-900 font-semibold">${p}: ${acc.toFixed(1)}%</span>`;
+                const sliceValidAccs = [];
+                const cells = ["G1", "G2", "G3"].map(gid => {
+                    const groupSlicePids = allocatedSlots.filter(sl => sl.group === gid && sl.slice === s).map(sl => sl.pid);
+                    const cellAccs = [];
+                    const parts = groupSlicePids.map(p => {
+                        const sub = adminRegistry[p];
+                        if (!sub || !sub.responses.length) {
+                            return `<span class="text-slate-400">${p}: —</span>`;
+                        }
+                        const acc = computeConditionStats(sub.responses).overall;
+                        cellAccs.push(acc);
+                        sliceValidAccs.push(acc);
+                        return `<span class="text-slate-900 font-semibold">${p}: ${acc.toFixed(1)}%</span>`;
+                    });
+                    if (cellAccs.length > 1) {
+                        const cellMean = (cellAccs.reduce((a, b) => a + b, 0) / cellAccs.length).toFixed(1);
+                        parts.push(`<span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-bold">Mean: ${cellMean}%</span>`);
+                    }
+                    return parts.join(" <span class=\"text-slate-300\">•</span> ");
                 });
 
-                const validAccs = pids
-                    .map(p => adminRegistry[p]?.responses?.length ? computeConditionStats(adminRegistry[p].responses).overall : null)
-                    .filter(v => v !== null);
-                const sliceMean = validAccs.length
-                    ? (validAccs.reduce((a, b) => a + b, 0) / validAccs.length).toFixed(1) + "%"
+                const sliceMean = sliceValidAccs.length
+                    ? (sliceValidAccs.reduce((a, b) => a + b, 0) / sliceValidAccs.length).toFixed(1) + "%"
                     : "—";
 
                 slicesTbody.innerHTML += `
@@ -2923,7 +3449,7 @@
                     const st = groupStatsMap[g.id].st;
                     if (st) {
                         ds.push({
-                            label: g.name,
+                            label: `${g.shortName} (${groupStatsMap[g.id].doneMembers}/${g.allocatedCount})`,
                             data: conds.map(c => Number(st.condAcc[c].toFixed(1))),
                             borderColor: g.color,
                             backgroundColor: g.color,

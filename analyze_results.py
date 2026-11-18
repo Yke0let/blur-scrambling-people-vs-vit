@@ -53,12 +53,50 @@ MODEL_NAMES = ["CLIP ViT-L/14", "DINOv2 ViT-B/14"]
 GROUPS = ["G1", "G2", "G3"]
 
 
+def _build_slot_catalog(max_slots: int = 300) -> dict[str, tuple[str, int]]:
+    """Build the deterministic PID -> (group, slice) catalog matching index.html (slots 1..max_slots)."""
+    used: set[str] = set()
+    catalog: dict[str, tuple[str, int]] = {}
+    for slot_num in range(1, max_slots + 1):
+        if slot_num <= 21:
+            pid = f"P{slot_num:02d}"
+            grp_idx = ((slot_num - 1) // 7) + 1
+            slice_idx = ((slot_num - 1) % 7) + 1
+        else:
+            extra_idx = slot_num - 22
+            grp_idx = (extra_idx % 3) + 1
+            slice_idx = ((extra_idx // 3) % 7) + 1
+            if extra_idx < 78:
+                num = 22 + ((extra_idx * 17 + 12) % 78)
+            else:
+                num = 100 + (((extra_idx - 78) * 37 + 19) % 900)
+            pid = f"P{num:02d}"
+            while pid in used:
+                num = 22 if num >= 999 else (num + 1)
+                if num < 22:
+                    num = 22
+                pid = f"P{num:02d}"
+        used.add(pid)
+        catalog[pid] = (f"G{grp_idx}", slice_idx)
+    return catalog
+
+
+SLOT_CATALOG_BY_PID = _build_slot_catalog(300)
+
+
 def infer_group_and_slice(pid: str) -> tuple[str, int]:
-    """Map P01..P21 to ('G1'..'G3', 1..7)."""
-    m = re.search(r"(\d+)", str(pid))
+    """Map any allocated Participant ID (P01..P21 and extra allocated slots >21) to ('G1'..'G3', 1..7)."""
+    cleaned = str(pid).strip().upper()
+    if cleaned in SLOT_CATALOG_BY_PID:
+        return SLOT_CATALOG_BY_PID[cleaned]
+    m = re.search(r"(\d+)", cleaned)
     num = int(m.group(1)) if m else 1
-    grp_idx = ((num - 1) // 7) + 1
-    slot_idx = ((num - 1) % 7) + 1
+    norm = f"P{num:02d}"
+    if norm in SLOT_CATALOG_BY_PID:
+        return SLOT_CATALOG_BY_PID[norm]
+    base_idx = (num - 1) % 21
+    grp_idx = (base_idx % 3) + 1
+    slot_idx = ((base_idx // 3) % 7) + 1
     return f"G{grp_idx}", slot_idx
 
 
