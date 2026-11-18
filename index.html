@@ -119,112 +119,117 @@
         <section id="step-welcome" class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
             <!-- LEFT COLUMN (7/12): SCIENTIFIC OVERVIEW & VISUAL DEGRADATION PREVIEW -->
-            <div class="lg:col-span-7 academic-card p-6 sm:p-8 space-y-6">
-                <!-- Study Header & Author Pills -->
-                <div class="space-y-3 border-b border-slate-100 pb-5">
+            <div class="lg:col-span-7 academic-card p-6 sm:p-9 space-y-7">
+                <!-- Study Header, Monumental Title & Highlighted Research Team Box -->
+                <div class="space-y-4 border-b border-slate-200 pb-6">
                     <div class="flex flex-wrap items-center gap-2">
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
                             Psychophysics &amp; Computer Vision Research
                         </span>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600">
+                        <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">
                             Quick, Draw! Benchmark
                         </span>
                     </div>
 
-                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-tight">
+                    <h1 class="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-slate-900 tracking-tight leading-[1.12]">
                         Blur and Scrambling: People vs. Vision Models
                     </h1>
 
-                    <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
-                        <span class="text-xs font-semibold text-slate-500 mr-1">Research Team:</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">Uriel-Darlin Azemfack-Himele</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">Fanès Houeha</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">Halik Mamam</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">Franck Tchangani</span>
+                    <!-- Prominent Research Team Container -->
+                    <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-200 border-l-4 border-l-blue-600 space-y-2.5">
+                        <div class="text-xs font-bold uppercase tracking-wider text-blue-900">
+                            Research Team
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-slate-900 border border-blue-200 shadow-2xs">Uriel-Darlin Azemfack-Himele</span>
+                            <span class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-slate-900 border border-blue-200 shadow-2xs">Fanès Houeha</span>
+                            <span class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-slate-900 border border-blue-200 shadow-2xs">Halik Mamam</span>
+                            <span class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-slate-900 border border-blue-200 shadow-2xs">Franck Tchangani</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Visual Degradation Preview Strip (3 Live 112x112 Mini Previews) -->
-                <div class="space-y-2.5">
+                <!-- Visual Degradation Preview Strip (3 Enlarged 140x140 Previews) -->
+                <div class="space-y-3.5">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-800">
                             Visual Conditions Investigated
                         </h2>
-                        <span class="text-xs text-slate-500">10 everyday object categories</span>
+                        <span class="text-xs sm:text-sm font-medium text-slate-500">10 everyday object categories</span>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <!-- Preview 1: Intact Baseline -->
-                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-2">
-                            <canvas id="preview-canvas-intact" width="112" height="112"
-                                class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 shadow-2xs"></canvas>
-                            <div class="space-y-0.5">
-                                <div class="text-xs font-semibold text-slate-900">1. Intact Baseline</div>
-                                <div class="text-[11px] text-slate-500 leading-tight">Original clean line drawing</div>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-3">
+                            <canvas id="preview-canvas-intact" width="140" height="140"
+                                class="w-28 h-28 sm:w-32 sm:h-32 rounded-xl bg-white border border-slate-200 shadow-xs"></canvas>
+                            <div class="space-y-1">
+                                <div class="text-sm font-bold text-slate-900">1. Intact Baseline</div>
+                                <div class="text-xs sm:text-sm text-slate-600 leading-snug">Original clean line drawing</div>
                             </div>
                         </div>
 
                         <!-- Preview 2: Gaussian Blur -->
-                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-2">
-                            <canvas id="preview-canvas-blur" width="112" height="112"
-                                class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 shadow-2xs"></canvas>
-                            <div class="space-y-0.5">
-                                <div class="text-xs font-semibold text-slate-900">2. Gaussian Blur</div>
-                                <div class="text-[11px] text-slate-500 leading-tight">Softened edges (&sigma; = 2, 5, 10 px)</div>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-3">
+                            <canvas id="preview-canvas-blur" width="140" height="140"
+                                class="w-28 h-28 sm:w-32 sm:h-32 rounded-xl bg-white border border-slate-200 shadow-xs"></canvas>
+                            <div class="space-y-1">
+                                <div class="text-sm font-bold text-slate-900">2. Gaussian Blur</div>
+                                <div class="text-xs sm:text-sm text-slate-600 leading-snug">Softened edges (&sigma; = 2, 5, 10 px)</div>
                             </div>
                         </div>
 
                         <!-- Preview 3: Tile Scrambling -->
-                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-2">
-                            <canvas id="preview-canvas-shuffle" width="112" height="112"
-                                class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-slate-200 shadow-2xs"></canvas>
-                            <div class="space-y-0.5">
-                                <div class="text-xs font-semibold text-slate-900">3. Tile Scrambling</div>
-                                <div class="text-[11px] text-slate-500 leading-tight">Shuffled grid (4, 16, 64 tiles)</div>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center space-y-3">
+                            <canvas id="preview-canvas-shuffle" width="140" height="140"
+                                class="w-28 h-28 sm:w-32 sm:h-32 rounded-xl bg-white border border-slate-200 shadow-xs"></canvas>
+                            <div class="space-y-1">
+                                <div class="text-sm font-bold text-slate-900">3. Tile Scrambling</div>
+                                <div class="text-xs sm:text-sm text-slate-600 leading-snug">Shuffled grid (4, 16, 64 tiles)</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Research Question & Experimental Procedure Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
                         <div class="flex items-center gap-2 text-blue-700">
-                            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                            <h3 class="text-xs font-bold uppercase tracking-wider">Research Question</h3>
+                            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <h3 class="text-sm font-bold uppercase tracking-wider">Research Question</h3>
                         </div>
-                        <p class="text-xs text-slate-600 leading-relaxed">
-                            Which visual degradations break human recognition and modern Vision Transformers (<strong class="text-slate-800">CLIP ViT-L/14</strong> &amp; <strong class="text-slate-800">DINOv2 ViT-B/14</strong>) together, and which break only one of them?
+                        <p class="text-sm text-slate-700 leading-relaxed">
+                            Which visual degradations break human recognition and modern Vision Transformers (<strong class="text-slate-900">CLIP ViT-L/14</strong> &amp; <strong class="text-slate-900">DINOv2 ViT-B/14</strong>) together, and which break only one of them?
                         </p>
-                        <p class="text-xs text-slate-600 leading-relaxed">
+                        <p class="text-sm text-slate-600 leading-relaxed">
                             Gaussian blur tests reliance on fine stroke edges, whereas offset tile scrambling (+7 px grid shift across 14 px ViT patches) tests global shape integration.
                         </p>
                     </div>
 
-                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
                         <div class="flex items-center gap-2 text-blue-700">
-                            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                            <h3 class="text-xs font-bold uppercase tracking-wider">Experimental Procedure</h3>
+                            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            <h3 class="text-sm font-bold uppercase tracking-wider">Experimental Procedure</h3>
                         </div>
-                        <p class="text-xs text-slate-600 leading-relaxed">
-                            You will complete <strong class="text-slate-800">2 intact warm-up trials</strong> followed by <strong class="text-slate-800">70 main trials</strong>:
+                        <p class="text-sm text-slate-700 leading-relaxed">
+                            You will complete <strong class="text-slate-900">2 intact warm-up trials</strong> followed by <strong class="text-slate-900">70 main trials</strong>:
                         </p>
-                        <div class="space-y-1 text-xs text-slate-700 pt-0.5">
-                            <div class="flex items-center justify-between py-1 px-2 rounded bg-white border border-slate-200/80">
-                                <span>1. Central Fixation Cross</span>
-                                <span class="mono text-[11px] font-semibold text-blue-600">0.6s</span>
+                        <div class="space-y-1.5 text-xs sm:text-sm text-slate-700 pt-0.5">
+                            <div class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-white border border-slate-200/90">
+                                <span class="font-medium">1. Central Fixation Cross</span>
+                                <span class="mono text-xs font-bold text-blue-600">0.6s</span>
                             </div>
-                            <div class="flex items-center justify-between py-1 px-2 rounded bg-white border border-slate-200/80">
-                                <span>2. Line Drawing Exposure</span>
-                                <span class="mono text-[11px] font-semibold text-blue-600">1.5s</span>
+                            <div class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-white border border-slate-200/90">
+                                <span class="font-medium">2. Line Drawing Exposure</span>
+                                <span class="mono text-xs font-bold text-blue-600">1.5s</span>
                             </div>
-                            <div class="flex items-center justify-between py-1 px-2 rounded bg-white border border-slate-200/80">
-                                <span>3. Backward Visual Mask</span>
-                                <span class="mono text-[11px] font-semibold text-blue-600">0.4s</span>
+                            <div class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-white border border-slate-200/90">
+                                <span class="font-medium">3. Backward Visual Mask</span>
+                                <span class="mono text-xs font-bold text-blue-600">0.4s</span>
                             </div>
-                            <div class="flex items-center justify-between py-1 px-2 rounded bg-white border border-slate-200/80">
-                                <span>4. Category Selection</span>
-                                <span class="mono text-[11px] font-semibold text-slate-600">10 Choices</span>
+                            <div class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-white border border-slate-200/90">
+                                <span class="font-medium">4. Category Selection</span>
+                                <span class="mono text-xs font-bold text-slate-700">10 Choices</span>
                             </div>
                         </div>
                     </div>
@@ -233,62 +238,42 @@
 
             <!-- RIGHT COLUMN (5/12): STICKY PARTICIPANT ONBOARDING CARD -->
             <div class="lg:col-span-5 academic-card p-6 sm:p-8 space-y-5 lg:sticky lg:top-20">
-                <!-- Prominent Assigned Anonymous ID Card -->
-                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                <!-- Prominent Assigned Anonymous ID Card (Manual Text Input + Anti-Overwrite Lock) -->
+                <div class="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">
                             Anonymous Participant ID
                         </span>
-                        <span id="source-status" class="mono text-[11px] font-medium text-emerald-600">
+                        <span id="source-status" class="mono text-xs font-medium text-emerald-600">
                             Schedule ready ✓
                         </span>
                     </div>
 
                     <div class="flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <span id="assigned-id-badge" class="mono text-2xl sm:text-3xl font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3.5 py-1.5 rounded-xl">
-                                P01
+                        <div class="flex items-center gap-3.5">
+                            <span id="assigned-id-badge" class="mono text-2xl sm:text-3xl font-bold text-slate-500 bg-slate-100 border border-slate-300 px-4 py-1.5 rounded-xl">
+                                ---
                             </span>
                             <div>
-                                <div id="assigned-group-label" class="text-xs font-semibold text-slate-800">
-                                    Anonymous Session Assigned
+                                <div id="assigned-group-label" class="text-sm font-semibold text-slate-700">
+                                    Waiting for Participant ID...
                                 </div>
-                                <div class="text-[11px] text-slate-500">
+                                <div class="text-xs text-slate-500">
                                     No personal name or email collected
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Subtle Supervisor Slot Selector -->
-                    <div class="pt-2 border-t border-slate-200/80 flex items-center justify-between gap-2">
-                        <label for="participant-select" class="text-[11px] text-slate-500">
-                            Assigned a specific ID by supervisor?
+                    <!-- Manual Supervisor ID Text Input -->
+                    <div class="pt-3 border-t border-slate-200/80 space-y-2">
+                        <label for="participant-select" class="block text-xs font-semibold text-slate-700">
+                            Enter the ID assigned by your supervisor:
                         </label>
-                        <select id="participant-select"
-                            class="rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold mono text-slate-800 focus:border-blue-600 focus:outline-none">
-                            <option value="P01">ID: P01</option>
-                            <option value="P02">ID: P02</option>
-                            <option value="P03">ID: P03</option>
-                            <option value="P04">ID: P04</option>
-                            <option value="P05">ID: P05</option>
-                            <option value="P06">ID: P06</option>
-                            <option value="P07">ID: P07</option>
-                            <option value="P08">ID: P08</option>
-                            <option value="P09">ID: P09</option>
-                            <option value="P10">ID: P10</option>
-                            <option value="P11">ID: P11</option>
-                            <option value="P12">ID: P12</option>
-                            <option value="P13">ID: P13</option>
-                            <option value="P14">ID: P14</option>
-                            <option value="P15">ID: P15</option>
-                            <option value="P16">ID: P16</option>
-                            <option value="P17">ID: P17</option>
-                            <option value="P18">ID: P18</option>
-                            <option value="P19">ID: P19</option>
-                            <option value="P20">ID: P20</option>
-                            <option value="P21">ID: P21</option>
-                        </select>
+                        <input type="text" id="participant-select" value=""
+                            placeholder="e.g., P01 to P21" autocomplete="off" spellcheck="false" maxlength="6"
+                            class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold mono text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15 transition" />
+                        <p id="pid-validation-msg" class="hidden text-xs font-medium text-rose-600 leading-snug"></p>
                     </div>
                 </div>
 
@@ -343,9 +328,9 @@
                     </p>
                 </div>
 
-                <!-- Large Primary Action Button -->
-                <button id="btn-continue-instructions" type="button" onclick="goToInstructionsStep()"
-                    class="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm sm:text-base shadow-sm transition">
+                <!-- Large Primary Action Button (Disabled until Valid ID + Not Completed + Consent Checked) -->
+                <button id="btn-continue-instructions" type="button" onclick="goToInstructionsStep()" disabled
+                    class="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed text-white font-semibold text-sm sm:text-base shadow-sm transition">
                     Continue to Instructions →
                 </button>
 
@@ -439,7 +424,7 @@
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-700">
                         The 10 Possible Categories (Memorize them before starting)
                     </h3>
-                    <span class="text-xs text-slate-500">English (Français)</span>
+                    <span class="text-xs text-slate-500">Keyboard Shortcuts [1–9, 0]</span>
                 </div>
                 <div id="welcome-categories" class="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     <!-- Populated by JS -->
@@ -999,30 +984,47 @@
         let chartGlobalShuffle = null;
 
         // =========================================================================
-        // 2. INITIALIZATION, AUTO-ID ASSIGNMENT & CLOUD REGISTRY SYNC
+        // 2. INITIALIZATION, MANUAL ID VALIDATION & ANTI-OVERWRITE PROTECTION
         // =========================================================================
         window.addEventListener("DOMContentLoaded", async () => {
             renderStep1VisualPreviews();
             renderCategoryGrids();
             loadLocalAdminRegistry();
 
-            const pidSelect = document.getElementById("participant-select");
-            pidSelect.addEventListener("change", () => {
-                const pid = pidSelect.value;
-                try { localStorage.setItem(STORAGE_ASSIGNED_PID, pid); } catch (_) {}
-                updateAssignedIdDisplay(pid);
-                refreshResumeBanner();
+            const pidInput = document.getElementById("participant-select");
+            // Ensure input starts empty and badge displays "---"
+            pidInput.value = "";
+            validateParticipantSetup();
+
+            pidInput.addEventListener("input", () => {
+                const norm = normalizeParticipantId(pidInput.value);
+                validateParticipantSetup();
+                if (norm && !isSlotCompleted(norm)) {
+                    checkSingleSlotCloudCompletion(norm);
+                }
+            });
+
+            pidInput.addEventListener("blur", () => {
+                const norm = normalizeParticipantId(pidInput.value);
+                if (norm) {
+                    pidInput.value = norm;
+                }
+                validateParticipantSetup();
             });
 
             document.getElementById("consent-checkbox").addEventListener("change", (e) => {
                 if (e.target.checked) {
                     document.getElementById("consent-validation-msg").classList.add("hidden");
                 }
+                validateParticipantSetup();
             });
 
-            // Initialize participant ID (URL ?p=PXX > saved local slot > random available slot from cloud)
-            await assignInitialParticipantSlot();
-            await tryAutoFetchCSV();
+            // Sync cloud registry and CSV schedule in background
+            await Promise.all([
+                tryAutoFetchCSV(),
+                fetchCloudSubmissionsSilent()
+            ]);
+            validateParticipantSetup();
 
             // Offline CSV / PNG folder inputs
             document.getElementById("local-csv-input").addEventListener("change", (e) => {
@@ -1034,7 +1036,7 @@
                         allTrialsCSV = sanitizeCSVRows(res.data);
                         csvSourceMode = "local";
                         updateSourceStatus();
-                        refreshResumeBanner();
+                        validateParticipantSetup();
                     }
                 });
             });
@@ -1060,92 +1062,167 @@
             });
         });
 
-        async function assignInitialParticipantSlot() {
-            const pidSelect = document.getElementById("participant-select");
-            const params = new URLSearchParams(window.location.search);
-            const urlP = (params.get("p") || params.get("participant") || "").toUpperCase().trim();
+        // Normalize user input: trim, uppercase, convert "p1" / "p01" -> "P01", validate against P01..P21
+        function normalizeParticipantId(raw) {
+            const cleaned = (raw || "").trim().toUpperCase();
+            if (!cleaned) return "";
+            const match = cleaned.match(/^P0*([1-9]|1[0-9]|2[01])$/);
+            if (!match) return null;
+            const num = parseInt(match[1], 10);
+            if (num < 1 || num > 21) return null;
+            return `P${String(num).padStart(2, "0")}`;
+        }
 
-            if (ALL_PIDS.includes(urlP)) {
-                pidSelect.value = urlP;
-                updateAssignedIdDisplay(urlP);
-                refreshResumeBanner();
-                return;
+        function getCurrentParticipantId() {
+            const el = document.getElementById("participant-select");
+            return normalizeParticipantId(el ? el.value : "") || "";
+        }
+
+        function isSlotCompleted(pid) {
+            if (!pid || !ALL_PIDS.includes(pid)) return false;
+            if (adminRegistry[pid] && Array.isArray(adminRegistry[pid].responses) && adminRegistry[pid].responses.length >= 70) {
+                return true;
             }
+            const saved = getSavedProgress(pid);
+            if (saved && (saved.completed || (Array.isArray(saved.recordedResponses) && saved.recordedResponses.length >= 70))) {
+                return true;
+            }
+            return false;
+        }
 
-            // Check if this browser already has an assigned or in-progress slot
+        async function checkSingleSlotCloudCompletion(pid) {
+            if (!pid || !ALL_PIDS.includes(pid) || isSlotCompleted(pid)) return;
             try {
-                const existingPid = localStorage.getItem(STORAGE_ASSIGNED_PID);
-                if (existingPid && ALL_PIDS.includes(existingPid)) {
-                    pidSelect.value = existingPid;
-                    updateAssignedIdDisplay(existingPid);
-                    refreshResumeBanner();
-                    return;
+                const r = await fetch(`https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KV_APP_KEY}/aims2026_${pid}`, { cache: "no-store" });
+                if (!r.ok) return;
+                const val = (await r.text()).replace(/^"|"$/g, "").trim();
+                if (val && val.length >= 210 && allTrialsCSV.length > 0) {
+                    const decoded = decodeCompactKVString(pid, val);
+                    if (decoded && decoded.responses.length >= 70) {
+                        registerSubmissionInAdminStore(pid, decoded.responses, decoded.timeouts, false);
+                        validateParticipantSetup();
+                    }
                 }
             } catch (_) {}
-
-            // Fetch cloud registry silently to pick an unassigned slot
-            await fetchCloudSubmissionsSilent();
-            const completedPids = new Set(Object.keys(adminRegistry));
-            const available = ALL_PIDS.filter(p => !completedPids.has(p));
-            const pool = available.length > 0 ? available : ALL_PIDS;
-            const chosen = pool[Math.floor(Math.random() * pool.length)];
-
-            pidSelect.value = chosen;
-            try { localStorage.setItem(STORAGE_ASSIGNED_PID, chosen); } catch (_) {}
-            updateAssignedIdDisplay(chosen);
-            refreshResumeBanner();
         }
 
-        function updateAssignedIdDisplay(pid) {
-            const info = getGroupInfo(pid);
-            document.getElementById("assigned-id-badge").textContent = info.pid;
-            document.getElementById("assigned-group-label").textContent =
-                `Anonymous Session (${info.pid})`;
+        function validateParticipantSetup() {
+            const pidInput = document.getElementById("participant-select");
+            const rawVal = (pidInput ? pidInput.value : "").trim();
+            const normPid = normalizeParticipantId(rawVal);
+            const badgeEl = document.getElementById("assigned-id-badge");
+            const labelEl = document.getElementById("assigned-group-label");
+            const msgEl = document.getElementById("pid-validation-msg");
+            const continueBtn = document.getElementById("btn-continue-instructions");
+            const consentChecked = document.getElementById("consent-checkbox").checked;
+
+            // Case 1: Empty input (initial state)
+            if (rawVal === "") {
+                badgeEl.textContent = "---";
+                badgeEl.className = "mono text-2xl sm:text-3xl font-bold text-slate-500 bg-slate-100 border border-slate-300 px-4 py-1.5 rounded-xl";
+                labelEl.textContent = "Waiting for Participant ID...";
+                labelEl.className = "text-sm font-semibold text-slate-700";
+                msgEl.classList.add("hidden");
+                msgEl.textContent = "";
+                pidInput.classList.remove("border-rose-500", "border-emerald-500");
+                document.getElementById("resume-banner").classList.add("hidden");
+                continueBtn.disabled = true;
+                return false;
+            }
+
+            // Case 2: Invalid ID format or out of range P01-P21
+            if (!normPid) {
+                badgeEl.textContent = "---";
+                badgeEl.className = "mono text-2xl sm:text-3xl font-bold text-rose-600 bg-rose-50 border border-rose-200 px-4 py-1.5 rounded-xl";
+                labelEl.textContent = "Invalid Participant ID";
+                labelEl.className = "text-sm font-semibold text-rose-700";
+                msgEl.textContent = "Invalid ID. Please enter an assigned ID between P01 and P21.";
+                msgEl.classList.remove("hidden");
+                pidInput.classList.add("border-rose-500");
+                pidInput.classList.remove("border-emerald-500");
+                document.getElementById("resume-banner").classList.add("hidden");
+                continueBtn.disabled = true;
+                return false;
+            }
+
+            // Case 3: Valid ID (P01-P21) but already completed (Anti-Overwrite Lock)
+            if (isSlotCompleted(normPid)) {
+                badgeEl.textContent = normPid;
+                badgeEl.className = "mono text-2xl sm:text-3xl font-bold text-rose-700 bg-rose-50 border border-rose-300 px-4 py-1.5 rounded-xl";
+                labelEl.textContent = `Slot ${normPid} already completed (Locked)`;
+                labelEl.className = "text-sm font-bold text-rose-700";
+                msgEl.textContent = `Participant ID ${normPid} has already completed this experiment. Please verify your assigned ID with your supervisor.`;
+                msgEl.classList.remove("hidden");
+                pidInput.classList.add("border-rose-500");
+                pidInput.classList.remove("border-emerald-500");
+                document.getElementById("resume-banner").classList.add("hidden");
+                continueBtn.disabled = true;
+                return false;
+            }
+
+            // Case 4: Valid ID (P01-P21) and available / in-progress
+            badgeEl.textContent = normPid;
+            badgeEl.className = "mono text-2xl sm:text-3xl font-bold text-blue-700 bg-blue-50 border border-blue-200 px-4 py-1.5 rounded-xl";
+            labelEl.textContent = `Anonymous Session (${normPid})`;
+            labelEl.className = "text-sm font-semibold text-slate-900";
+            msgEl.classList.add("hidden");
+            msgEl.textContent = "";
+            pidInput.classList.remove("border-rose-500");
+            pidInput.classList.add("border-emerald-500");
+
+            try { localStorage.setItem(STORAGE_ASSIGNED_PID, normPid); } catch (_) {}
+            refreshResumeBanner(normPid);
+
+            continueBtn.disabled = !consentChecked;
+            return consentChecked;
         }
 
-        // Render the 3 mini 112x112 visual preview cards on Step 1 (Intact, Blur, Tile Scrambling)
+        // Render the 3 enlarged 140x140 visual preview cards on Step 1 (Intact, Blur, Tile Scrambling)
         function renderStep1VisualPreviews() {
             const cIntact = document.getElementById("preview-canvas-intact");
             const cBlur = document.getElementById("preview-canvas-blur");
             const cShuffle = document.getElementById("preview-canvas-shuffle");
             if (!cIntact || !cBlur || !cShuffle) return;
 
+            const size = 140;
+            const half = size / 2;
+
             const drawAirplaneSketch = (ctx) => {
                 ctx.fillStyle = "#FFFFFF";
-                ctx.fillRect(0, 0, 112, 112);
+                ctx.fillRect(0, 0, size, size);
                 ctx.strokeStyle = "#0F172A";
-                ctx.lineWidth = 2.6;
+                ctx.lineWidth = 3.2;
                 ctx.lineCap = "round";
                 ctx.lineJoin = "round";
 
                 // Fuselage
                 ctx.beginPath();
-                ctx.moveTo(18, 62);
-                ctx.quadraticCurveTo(58, 40, 96, 46);
-                ctx.quadraticCurveTo(92, 58, 18, 66);
+                ctx.moveTo(22, 78);
+                ctx.quadraticCurveTo(72, 50, 120, 58);
+                ctx.quadraticCurveTo(115, 73, 22, 83);
                 ctx.closePath();
                 ctx.stroke();
 
                 // Upper & lower swept wings
                 ctx.beginPath();
-                ctx.moveTo(48, 53);
-                ctx.lineTo(36, 20);
-                ctx.lineTo(54, 22);
-                ctx.lineTo(68, 50);
+                ctx.moveTo(60, 66);
+                ctx.lineTo(45, 25);
+                ctx.lineTo(68, 28);
+                ctx.lineTo(85, 62);
                 ctx.stroke();
 
                 ctx.beginPath();
-                ctx.moveTo(52, 60);
-                ctx.lineTo(42, 92);
-                ctx.lineTo(58, 90);
-                ctx.lineTo(70, 58);
+                ctx.moveTo(65, 75);
+                ctx.lineTo(52, 115);
+                ctx.lineTo(73, 112);
+                ctx.lineTo(88, 73);
                 ctx.stroke();
 
                 // Tail fin
                 ctx.beginPath();
-                ctx.moveTo(20, 60);
-                ctx.lineTo(14, 42);
-                ctx.lineTo(28, 48);
+                ctx.moveTo(25, 75);
+                ctx.lineTo(18, 52);
+                ctx.lineTo(35, 60);
                 ctx.stroke();
             };
 
@@ -1156,29 +1233,29 @@
             // 2. Gaussian Blur Preview
             const ctx2 = cBlur.getContext("2d");
             ctx2.fillStyle = "#FFFFFF";
-            ctx2.fillRect(0, 0, 112, 112);
+            ctx2.fillRect(0, 0, size, size);
             ctx2.save();
-            ctx2.filter = "blur(2.4px)";
+            ctx2.filter = "blur(2.8px)";
             ctx2.drawImage(cIntact, 0, 0);
             ctx2.restore();
 
             // 3. Tile Scrambling Preview (2x2 offset derangement + subtle grid lines)
             const ctx3 = cShuffle.getContext("2d");
             ctx3.fillStyle = "#FFFFFF";
-            ctx3.fillRect(0, 0, 112, 112);
+            ctx3.fillRect(0, 0, size, size);
             const perm = [2, 3, 0, 1];
             for (let dst = 0; dst < 4; dst++) {
                 const src = perm[dst];
-                const sx = (src % 2) * 56, sy = Math.floor(src / 2) * 56;
-                const dx = (dst % 2) * 56, dy = Math.floor(dst / 2) * 56;
-                ctx3.drawImage(cIntact, sx, sy, 56, 56, dx, dy, 56, 56);
+                const sx = (src % 2) * half, sy = Math.floor(src / 2) * half;
+                const dx = (dst % 2) * half, dy = Math.floor(dst / 2) * half;
+                ctx3.drawImage(cIntact, sx, sy, half, half, dx, dy, half, half);
             }
-            ctx3.strokeStyle = "rgba(37, 99, 235, 0.35)";
-            ctx3.lineWidth = 1;
-            ctx3.setLineDash([3, 3]);
+            ctx3.strokeStyle = "rgba(37, 99, 235, 0.38)";
+            ctx3.lineWidth = 1.2;
+            ctx3.setLineDash([4, 3]);
             ctx3.beginPath();
-            ctx3.moveTo(56, 0); ctx3.lineTo(56, 112);
-            ctx3.moveTo(0, 56); ctx3.lineTo(112, 56);
+            ctx3.moveTo(half, 0); ctx3.lineTo(half, size);
+            ctx3.moveTo(0, half); ctx3.lineTo(size, half);
             ctx3.stroke();
         }
 
@@ -1226,7 +1303,7 @@
                         <svg class="w-5 h-5 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
                         <div class="leading-tight">
                             <div class="text-xs font-semibold text-slate-900">${c.label}</div>
-                            <div class="text-[11px] text-slate-500">(${c.fr})</div>
+                            <div class="mono text-[10px] text-slate-500">Key [${c.key}]</div>
                         </div>
                     </div>`;
 
@@ -1234,9 +1311,8 @@
                     <button id="${prefix}-key-${c.id}" type="button" onclick="submitResponse('${c.id}')"
                         class="response-btn relative flex flex-col items-center justify-center p-3.5 text-center select-none">
                         <span class="absolute top-1.5 right-1.5 mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">[${c.key}]</span>
-                        <svg class="w-6 h-6 text-slate-700 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
+                        <svg class="w-6 h-6 text-slate-700 mb-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${c.svg}</svg>
                         <span class="text-xs font-semibold text-slate-900">${c.label}</span>
-                        <span class="text-[11px] text-slate-500">${c.fr}</span>
                     </button>`;
 
                 pracGrid.innerHTML += buttonCard("prac");
@@ -1300,7 +1376,7 @@
                         allTrialsCSV = sanitizeCSVRows(res.data);
                         csvSourceMode = "hosted";
                         updateSourceStatus();
-                        refreshResumeBanner();
+                        validateParticipantSetup();
                     }
                 });
             } catch (_) {
@@ -1310,6 +1386,7 @@
         }
 
         function getSavedProgress(pid) {
+            if (!pid) return null;
             try {
                 const raw = localStorage.getItem(STORAGE_PREFIX + pid);
                 if (!raw) return null;
@@ -1322,6 +1399,7 @@
         }
 
         function saveParticipantProgress(pid, trialIdx, responses, activeQueue, timeoutsCount, completed) {
+            if (!pid) return;
             try {
                 localStorage.setItem(STORAGE_PREFIX + pid, JSON.stringify({
                     participant: pid,
@@ -1336,15 +1414,20 @@
         }
 
         function clearParticipantProgress(pid) {
+            if (!pid) return;
             try {
                 localStorage.removeItem(STORAGE_PREFIX + pid);
             } catch (_) {}
         }
 
-        function refreshResumeBanner() {
-            const pid = document.getElementById("participant-select").value;
-            const saved = getSavedProgress(pid);
+        function refreshResumeBanner(pidOverride) {
+            const pid = pidOverride || getCurrentParticipantId();
             const banner = document.getElementById("resume-banner");
+            if (!pid || isSlotCompleted(pid)) {
+                banner.classList.add("hidden");
+                return;
+            }
+            const saved = getSavedProgress(pid);
             const title = document.getElementById("resume-title");
             const subtitle = document.getElementById("resume-subtitle");
             const resumeBtn = document.getElementById("btn-resume-session");
@@ -1362,26 +1445,47 @@
         }
 
         function resetCurrentParticipantProgress() {
-            const pid = document.getElementById("participant-select").value;
+            const pid = getCurrentParticipantId();
+            if (!pid) return;
             if (!confirm(`Clear saved in-progress session for ${pid} and start over?`)) return;
             clearParticipantProgress(pid);
-            refreshResumeBanner();
+            validateParticipantSetup();
         }
 
         // =========================================================================
         // 4. STEP 1 -> STEP 2 -> STEP 3 (PRACTICE: 2 INTACT IMAGES ONLY, NO REPEAT)
         // =========================================================================
         function goToInstructionsStep() {
+            const pidInput = document.getElementById("participant-select");
+            const normPid = normalizeParticipantId(pidInput.value);
+            if (!normPid) {
+                validateParticipantSetup();
+                pidInput.focus();
+                return;
+            }
+            pidInput.value = normPid;
+            if (isSlotCompleted(normPid)) {
+                validateParticipantSetup();
+                return;
+            }
             if (!document.getElementById("consent-checkbox").checked) {
                 document.getElementById("consent-validation-msg").classList.remove("hidden");
+                validateParticipantSetup();
                 return;
             }
             showStep(2);
         }
 
         async function resumeSavedExperiment() {
+            const pid = getCurrentParticipantId();
+            if (!pid || isSlotCompleted(pid)) {
+                validateParticipantSetup();
+                return;
+            }
+            document.getElementById("participant-select").value = pid;
             document.getElementById("consent-checkbox").checked = true;
             document.getElementById("consent-validation-msg").classList.add("hidden");
+            validateParticipantSetup();
             await startExperiment();
         }
 
@@ -1467,9 +1571,16 @@
         // 5. STEP 4: MAIN EXPERIMENT (1.5s EXPOSURE + HIDDEN 15s RE-QUEUE TIMER)
         // =========================================================================
         async function startExperiment() {
+            const pid = getCurrentParticipantId();
+            if (!pid || isSlotCompleted(pid)) {
+                showStep(1);
+                validateParticipantSetup();
+                return;
+            }
             if (!document.getElementById("consent-checkbox").checked) {
                 showStep(1);
                 document.getElementById("consent-validation-msg").classList.remove("hidden");
+                validateParticipantSetup();
                 return;
             }
             if (allTrialsCSV.length === 0) {
@@ -1478,7 +1589,6 @@
                 return;
             }
 
-            const pid = document.getElementById("participant-select").value;
             const baseSchedule = allTrialsCSV.filter(r => r.participant === pid).map(r => ({ ...r }));
             if (baseSchedule.length === 0) {
                 alert(`No trials found for ${pid} in human_trials.csv.`);
@@ -1758,8 +1868,8 @@
                 const btn = document.getElementById("practice-next-btn");
 
                 const feedbackMsg = ok
-                    ? `<span class="text-emerald-700 font-semibold">✓ Correct!</span> That intact drawing was a <strong>${correctCat.label} (${correctCat.fr})</strong>.`
-                    : `<span class="text-amber-700 font-semibold">Note:</span> You selected ${chosenCat.label}; the intact drawing was a <strong>${correctCat.label} (${correctCat.fr})</strong>.`;
+                    ? `<span class="text-emerald-700 font-semibold">✓ Correct!</span> That intact drawing was a <strong>${correctCat.label}</strong>.`
+                    : `<span class="text-amber-700 font-semibold">Note:</span> You selected ${chosenCat.label}; the intact drawing was a <strong>${correctCat.label}</strong>.`;
 
                 if (practiceIdx + 1 < practiceTrials.length) {
                     txt.innerHTML = `${feedbackMsg} Ready for the 2nd intact practice trial.`;
@@ -1806,19 +1916,27 @@
         // =========================================================================
         async function finishExperiment() {
             clearTrialTimers();
-            const pid = recordedResponses[0]?.participant || document.getElementById("participant-select").value;
+            const pid = recordedResponses[0]?.participant || getCurrentParticipantId();
             const info = getGroupInfo(pid);
 
             document.getElementById("completion-id-label").textContent =
                 `ID: ${info.pid} • ${info.groupLabel}`;
             const statusEl = document.getElementById("cloud-sync-status");
-            statusEl.textContent = "Transmitting your anonymous responses to the research database...";
-            statusEl.className = "font-semibold text-blue-700";
 
             showStep(5);
 
+            // Anti-overwrite safeguard: refuse to overwrite an already completed slot in adminRegistry
+            if (adminRegistry[info.pid] && Array.isArray(adminRegistry[info.pid].responses) && adminRegistry[info.pid].responses.length >= 70) {
+                statusEl.textContent = `Slot ${info.pid} already has a locked submission on record. Existing results were preserved.`;
+                statusEl.className = "font-semibold text-amber-700";
+                return;
+            }
+
+            statusEl.textContent = "Transmitting your anonymous responses to the research database...";
+            statusEl.className = "font-semibold text-blue-700";
+
             // Save into local admin registry & push automatically to dual cloud stores
-            registerSubmissionInAdminStore(info.pid, recordedResponses, requeuedTimeoutsCount);
+            registerSubmissionInAdminStore(info.pid, recordedResponses, requeuedTimeoutsCount, false);
             const pushedOk = await pushParticipantToCloud(info.pid, recordedResponses, requeuedTimeoutsCount);
 
             if (pushedOk) {
@@ -2033,9 +2151,13 @@
             });
         }
 
-        function registerSubmissionInAdminStore(pid, responses, timeouts = 0) {
-            if (!responses || !responses.length) return;
+        function registerSubmissionInAdminStore(pid, responses, timeouts = 0, allowOverwrite = false) {
+            if (!responses || !responses.length) return false;
             const info = getGroupInfo(pid);
+            // Anti-overwrite safeguard: do not overwrite an already completed 70-trial slot unless explicitly allowed by Admin
+            if (!allowOverwrite && adminRegistry[info.pid] && Array.isArray(adminRegistry[info.pid].responses) && adminRegistry[info.pid].responses.length >= 70) {
+                return false;
+            }
             adminRegistry[info.pid] = {
                 participant: info.pid,
                 group: info.group,
@@ -2059,6 +2181,19 @@
             try {
                 localStorage.setItem(STORAGE_ADMIN_REGISTRY, JSON.stringify(adminRegistry));
             } catch (_) {}
+            return true;
+        }
+
+        function adminResetCandidateSlot(pid) {
+            if (!adminUnlocked) return;
+            if (!confirm(`Unlock and reset completed results for slot ${pid}? This will allow ${pid} to be taken again.`)) return;
+            delete adminRegistry[pid];
+            try {
+                localStorage.setItem(STORAGE_ADMIN_REGISTRY, JSON.stringify(adminRegistry));
+            } catch (_) {}
+            clearParticipantProgress(pid);
+            renderAdminAllViews();
+            validateParticipantSetup();
         }
 
         async function fetchCloudSubmissionsSilent() {
@@ -2248,10 +2383,15 @@
                         <td class="py-2.5 px-3 text-emerald-600 font-semibold">${st.shufMean.toFixed(1)}%</td>
                         <td class="py-2.5 px-3 text-slate-600">${st.medRt} ms</td>
                         <td class="py-2.5 px-3 text-slate-500">${sub.timeouts || 0}</td>
-                        <td class="py-2.5 px-3 text-right">
+                        <td class="py-2.5 px-3 text-right space-x-1">
                             <button type="button" onclick="downloadCandidateCSV('${info.pid}')"
                                 class="px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white font-sans font-semibold text-[11px]">
                                 ⬇ CSV
+                            </button>
+                            <button type="button" onclick="adminResetCandidateSlot('${info.pid}')"
+                                class="px-2 py-1 rounded bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-700 border border-slate-200 font-sans font-medium text-[11px]"
+                                title="Supervisor Reset: Unlock this slot">
+                                Reset
                             </button>
                         </td>`;
                 } else {
@@ -2385,15 +2525,30 @@
                         });
                     }
                 });
-                ds.push({
-                    label: "CLIP ViT-L/14 (70 UIDs)",
-                    data: conds.map(c => MODEL_BENCHMARKS_70["CLIP ViT-L/14"][c]),
-                    borderColor: "#64748B",
-                    borderDash: [5, 4],
-                    borderWidth: 1.8,
-                    pointRadius: 3,
-                    tension: 0.15
-                });
+                ds.push(
+                    {
+                        label: "CLIP ViT-L/14 (70 UIDs)",
+                        data: conds.map(c => MODEL_BENCHMARKS_70["CLIP ViT-L/14"][c]),
+                        borderColor: "#64748B",
+                        backgroundColor: "#64748B",
+                        borderDash: [6, 4],
+                        borderWidth: 2,
+                        pointStyle: "triangle",
+                        pointRadius: 4,
+                        tension: 0.15
+                    },
+                    {
+                        label: "DINOv2 ViT-B/14 (70 UIDs)",
+                        data: conds.map(c => MODEL_BENCHMARKS_70["DINOv2 ViT-B/14"][c]),
+                        borderColor: "#7C3AED",
+                        backgroundColor: "#7C3AED",
+                        borderDash: [3, 3],
+                        borderWidth: 2.2,
+                        pointStyle: "rectRot",
+                        pointRadius: 4,
+                        tension: 0.15
+                    }
+                );
                 return ds;
             };
 
