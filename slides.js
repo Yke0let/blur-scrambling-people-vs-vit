@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Blur and Scrambling: People vs. Vision Models — Interactive Slide Engine
+   Blur and Scrambling: People vs. Vision Models — 17-Slide Interactive Engine
    100% real verified metrics from human_results.csv, comparison_results.csv,
    human_results_by_group.csv, all_human_responses.csv, model_predictions.csv
    ========================================================================== */
@@ -14,9 +14,9 @@
     condsShuf: ['intact', 'shuffle_low', 'shuffle_medium', 'shuffle_high'],
     labelsShuf: ['Intact', '4 tiles (2×2)', '16 tiles (4×4)', '64 tiles (8×8)'],
     allConds: ['intact', 'blur_low', 'blur_medium', 'blur_high', 'shuffle_low', 'shuffle_medium', 'shuffle_high'],
-    allCondLabels: ['Intact', 'Blur σ=2', 'Blur σ=5', 'Blur σ=10', 'Shuffle 4', 'Shuffle 16', 'Shuffle 64'],
+    allCondLabels: ['Intact', 'Blur σ=2', 'Blur σ=5', 'Blur σ=10', '4 tiles', '16 tiles', '64 tiles'],
 
-    // Matched 70 human_uids (results_h) & Pooled Humans (N=21, 1470 trials)
+    // Matched 70 human_uids & Pooled Humans (N=21, 1470 trials)
     human: {
       intact:         { acc: 88.10, lo: 83.80, hi: 92.38 },
       blur_low:       { acc: 89.05, lo: 84.76, hi: 93.33 },
@@ -43,24 +43,6 @@
       shuffle_low:    { acc: 67.14, lo: 55.71, hi: 78.57 },
       shuffle_medium: { acc: 15.71, lo: 7.14,  hi: 24.29 },
       shuffle_high:   { acc: 10.00, lo: 4.25,  hi: 17.14 }
-    },
-    clip1000: {
-      intact:         { acc: 97.7, lo: 96.7, hi: 98.6 },
-      blur_low:       { acc: 91.9, lo: 90.1, hi: 93.6 },
-      blur_medium:    { acc: 84.5, lo: 82.3, hi: 86.8 },
-      blur_high:      { acc: 50.8, lo: 47.6, hi: 53.8 },
-      shuffle_low:    { acc: 63.5, lo: 60.7, hi: 66.5 },
-      shuffle_medium: { acc: 23.8, lo: 21.2, hi: 26.4 },
-      shuffle_high:   { acc: 15.5, lo: 13.2, hi: 17.7 }
-    },
-    dino1000: {
-      intact:         { acc: 97.5, lo: 96.5, hi: 98.4 },
-      blur_low:       { acc: 97.5, lo: 96.5, hi: 98.4 },
-      blur_medium:    { acc: 76.5, lo: 73.9, hi: 79.1 },
-      blur_high:      { acc: 58.2, lo: 55.1, hi: 61.1 },
-      shuffle_low:    { acc: 76.8, lo: 74.2, hi: 79.5 },
-      shuffle_medium: { acc: 21.2, lo: 18.7, hi: 23.8 },
-      shuffle_high:   { acc: 10.4, lo: 8.6,  hi: 12.3 }
     },
 
     // 3 Independent Human Replication Groups (7 participants / 490 trials each)
@@ -99,9 +81,9 @@
 
     // Ink-Tile Fraction Split on shuffle_high (64 tiles; median = 0.438)
     inkSplit: {
-      labels: ['CLIP ViT-L/14 (N=1000)', 'DINOv2 ViT-B/14 (N=1000)', 'Humans (N=21)'],
-      fewInk:  [21.1, 15.1, 13.7],
-      manyInk: [9.8,  5.6,  16.7]
+      labels: ['CLIP (N=1000)', 'DINOv2 (N=1000)', 'Humans (N=21)'],
+      lowInk:  [21.1, 15.1, 13.7],
+      highInk: [9.8,  5.6,  16.7]
     }
   };
 
@@ -117,7 +99,7 @@
         const meta = chart.getDatasetMeta(dsIdx);
         if (meta.hidden) return;
         ctx.strokeStyle = ds.errorBarColor || ds.borderColor || '#0f172a';
-        ctx.lineWidth = ds.errorBarWidth || 1.7;
+        ctx.lineWidth = ds.errorBarWidth || 1.8;
         meta.data.forEach((pt, i) => {
           const lo = ds.ciLow[i];
           const hi = ds.ciHigh[i];
@@ -128,10 +110,10 @@
           ctx.beginPath();
           ctx.moveTo(x, yLo);
           ctx.lineTo(x, yHi);
-          ctx.moveTo(x - 4, yLo);
-          ctx.lineTo(x + 4, yLo);
-          ctx.moveTo(x - 4, yHi);
-          ctx.lineTo(x + 4, yHi);
+          ctx.moveTo(x - 4.5, yLo);
+          ctx.lineTo(x + 4.5, yLo);
+          ctx.moveTo(x - 4.5, yHi);
+          ctx.lineTo(x + 4.5, yHi);
           ctx.stroke();
         });
       });
@@ -150,7 +132,7 @@
       const align = cfg.align || 'left';
       ctx.save();
       ctx.strokeStyle = '#94a3b8';
-      ctx.lineWidth = 1.4;
+      ctx.lineWidth = 1.5;
       ctx.setLineDash([5, 5]);
       ctx.beginPath();
       ctx.moveTo(chartArea.left, yPos);
@@ -158,15 +140,15 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      ctx.font = '700 10.5px Inter, sans-serif';
+      ctx.font = '700 11.5px Inter, sans-serif';
       const textW = ctx.measureText(label).width;
-      const padX = 6;
-      const pillH = 16;
+      const padX = 7;
+      const pillH = 19;
       const pillW = textW + padX * 2;
       const pillX = align === 'right' ? (chartArea.right - pillW - 6) : (chartArea.left + 8);
       const pillY = yPos - pillH - 4;
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
       ctx.strokeStyle = '#cbd5e1';
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -178,7 +160,7 @@
       ctx.fill();
       ctx.stroke();
 
-      ctx.fillStyle = '#475569';
+      ctx.fillStyle = '#334155';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       ctx.fillText(label, pillX + padX, pillY + pillH / 2 + 0.5);
@@ -189,7 +171,8 @@
   if (typeof Chart !== 'undefined') {
     Chart.register(errorBarsPlugin, chanceLinePlugin);
     Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif";
-    Chart.defaults.color = '#334155';
+    Chart.defaults.font.size = 13;
+    Chart.defaults.color = '#1e293b';
   }
 
   // ---------------- CHART MANAGEMENT ----------------
@@ -216,9 +199,9 @@
   }
 
   const chartInitializers = {
-    // Slide 12: Main Finding — Two-panel (Blur | Tile Shuffle) on matched 70 human_uids vs Humans
-    12(instant = false) {
-      const anim = instant ? false : { duration: 1050, easing: 'easeOutQuart' };
+    // Slide 9: Main Finding — Two-panel (Blur | Tile Shuffle) on matched 70 human_uids vs Humans
+    9(instant = false) {
+      const anim = instant ? false : { duration: 1000, easing: 'easeOutQuart' };
       const buildPanel = (canvasId, conds, labels) => {
         const h = series(DATA.human, conds);
         const c = series(DATA.clip70, conds);
@@ -230,37 +213,56 @@
             datasets: [
               {
                 label: 'Humans (N=21, 1470 trials)',
-                data: h.data, ciLow: h.ciLow, ciHigh: h.ciHigh,
-                borderColor: '#dc2626', backgroundColor: '#dc2626',
-                borderWidth: 3.2, borderDash: [6, 4],
-                pointStyle: 'triangle', pointRadius: 7, pointHoverRadius: 9,
+                data: h.data,
+                ciLow: h.ciLow,
+                ciHigh: h.ciHigh,
+                borderColor: '#dc2626',
+                backgroundColor: '#dc2626',
+                borderWidth: 3.4,
+                borderDash: [7, 5],
+                pointRadius: 6.5,
+                pointStyle: 'triangle',
                 tension: 0.14
               },
               {
-                label: 'CLIP ViT-L/14 (70 human UIDs)',
-                data: c.data, ciLow: c.ciLow, ciHigh: c.ciHigh,
-                borderColor: '#2563eb', backgroundColor: '#2563eb',
-                borderWidth: 2.6, pointStyle: 'circle', pointRadius: 5.5, pointHoverRadius: 8,
+                label: 'CLIP ViT-L/14 (70 UIDs)',
+                data: c.data,
+                ciLow: c.ciLow,
+                ciHigh: c.ciHigh,
+                borderColor: '#2563eb',
+                backgroundColor: '#2563eb',
+                borderWidth: 2.8,
+                pointRadius: 5.5,
+                pointStyle: 'circle',
                 tension: 0.14
               },
               {
-                label: 'DINOv2 ViT-B/14 (70 human UIDs)',
-                data: d.data, ciLow: d.ciLow, ciHigh: d.ciHigh,
-                borderColor: '#059669', backgroundColor: '#059669',
-                borderWidth: 2.6, pointStyle: 'rect', pointRadius: 5.5, pointHoverRadius: 8,
+                label: 'DINOv2 ViT-B/14 (70 UIDs)',
+                data: d.data,
+                ciLow: d.ciLow,
+                ciHigh: d.ciHigh,
+                borderColor: '#059669',
+                backgroundColor: '#059669',
+                borderWidth: 2.8,
+                pointRadius: 5.5,
+                pointStyle: 'rect',
                 tension: 0.14
               }
             ]
           },
           options: {
-            responsive: true, maintainAspectRatio: false, animation: anim,
-            interaction: { mode: 'index', intersect: false },
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: anim,
             plugins: {
-              legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 14, font: { size: 11.5, weight: '600' } } },
-              chanceLine: { enabled: true, value: 10, label: 'Chance (10%)' },
+              legend: {
+                position: 'bottom',
+                labels: { usePointStyle: true, boxWidth: 10, padding: 14, font: { size: 12.5, weight: '600' } }
+              },
+              chanceLine: { enabled: true, value: 10, label: 'Chance (10%)', align: 'left' },
               tooltip: {
                 callbacks: {
-                  label: ctx => {
+                  label(ctx) {
                     const ds = ctx.dataset;
                     const i = ctx.dataIndex;
                     return `${ds.label}: ${ctx.parsed.y.toFixed(1)}% [95% CI: ${ds.ciLow[i].toFixed(1)}–${ds.ciHigh[i].toFixed(1)}%]`;
@@ -269,8 +271,17 @@
               }
             },
             scales: {
-              y: { min: 0, max: 105, title: { display: true, text: '10-way accuracy (%)', font: { weight: '700', size: 11.5 } }, grid: { color: '#f1f5f9' } },
-              x: { grid: { display: false }, ticks: { font: { weight: '600', size: 11.5 } } }
+              y: {
+                min: 0,
+                max: 105,
+                ticks: { stepSize: 20, font: { size: 12.5 } },
+                title: { display: true, text: '10-way accuracy (%)', font: { weight: '700', size: 13 } },
+                grid: { color: '#f1f5f9' }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { font: { weight: '700', size: 12.5 } }
+              }
             }
           }
         });
@@ -279,117 +290,113 @@
       buildPanel('chart-main-shuffle', DATA.condsShuf, DATA.labelsShuf);
     },
 
-    // Slide 15: Per-Category Accuracy (%) under blur_high (sigma = 10 px)
-    15(instant = false) {
-      const anim = instant ? false : { duration: 1000, easing: 'easeOutQuart' };
+    // Slide 11: Per-Category Accuracy under blur_high (sigma = 10 px)
+    11(instant = false) {
+      const anim = instant ? false : { duration: 950, easing: 'easeOutQuart' };
       makeChart('chart-cat-blur', {
         type: 'bar',
         data: {
           labels: DATA.categories,
           datasets: [
-            { label: 'Humans (N=21)', data: DATA.blurHighCat.human, backgroundColor: '#dc2626', borderRadius: 4 },
+            { label: 'Humans (N=21)',           data: DATA.blurHighCat.human,  backgroundColor: '#dc2626', borderRadius: 4 },
             { label: 'CLIP ViT-L/14 (70 UIDs)', data: DATA.blurHighCat.clip70, backgroundColor: '#2563eb', borderRadius: 4 },
             { label: 'DINOv2 ViT-B/14 (70 UIDs)', data: DATA.blurHighCat.dino70, backgroundColor: '#059669', borderRadius: 4 }
           ]
         },
         options: {
-          responsive: true, maintainAspectRatio: false, animation: anim,
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: anim,
           plugins: {
-            legend: { position: 'top', labels: { boxWidth: 12, padding: 16, font: { size: 12, weight: '600' } } },
-            chanceLine: { enabled: true, value: 10, label: 'Chance (10%)' },
+            legend: { position: 'top', labels: { boxWidth: 13, padding: 16, font: { size: 13, weight: '600' } } },
+            chanceLine: { enabled: true, value: 10, label: 'Chance (10%)', align: 'left' },
             tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%` } }
           },
           scales: {
-            y: { min: 0, max: 108, title: { display: true, text: 'Accuracy at blur_high (σ = 10 px) (%)', font: { weight: '700' } }, grid: { color: '#f1f5f9' } },
-            x: { grid: { display: false }, ticks: { font: { weight: '600', size: 11.5 } } }
+            y: {
+              min: 0,
+              max: 108,
+              ticks: { stepSize: 20, font: { size: 12.5 } },
+              title: { display: true, text: 'Accuracy at σ = 10 px (%)', font: { weight: '700', size: 13 } },
+              grid: { color: '#f1f5f9' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { weight: '700', size: 12.5 } }
+            }
           }
         }
       });
     },
 
-    // Slide 16: Ruling out boring explanations — (A) 70 UIDs vs N=1000 | (B) 3 Human Groups Replication
-    16(instant = false) {
-      const anim = instant ? false : { duration: 980, easing: 'easeOutQuart' };
-      const c70 = DATA.allConds.map(c => DATA.clip70[c].acc);
-      const c1k = DATA.allConds.map(c => DATA.clip1000[c].acc);
-      const d70 = DATA.allConds.map(c => DATA.dino70[c].acc);
-      const d1k = DATA.allConds.map(c => DATA.dino1000[c].acc);
+    // Slide 12: Replication across 3 Human Groups (Left) + Human Reaction Times (Right)
+    12(instant = false) {
+      const anim = instant ? false : { duration: 950, easing: 'easeOutQuart' };
 
-      makeChart('chart-ctrl-subset', {
-        type: 'line',
-        data: {
-          labels: DATA.allCondLabels,
-          datasets: [
-            { label: 'CLIP (N=1000)', data: c1k, borderColor: '#2563eb', backgroundColor: '#2563eb', borderWidth: 2.4, pointRadius: 4, tension: 0.12 },
-            { label: 'CLIP (70 UIDs)', data: c70, borderColor: '#93c5fd', backgroundColor: '#ffffff', borderWidth: 2.2, borderDash: [5, 4], pointRadius: 4.5, pointBorderColor: '#2563eb', tension: 0.12 },
-            { label: 'DINOv2 (N=1000)', data: d1k, borderColor: '#059669', backgroundColor: '#059669', borderWidth: 2.4, pointRadius: 4, tension: 0.12 },
-            { label: 'DINOv2 (70 UIDs)', data: d70, borderColor: '#6ee7b7', backgroundColor: '#ffffff', borderWidth: 2.2, borderDash: [5, 4], pointRadius: 4.5, pointBorderColor: '#059669', tension: 0.12 }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false, animation: anim,
-          plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10, font: { size: 10.5, weight: '600' } } },
-            chanceLine: { enabled: true, value: 10 }
-          },
-          scales: {
-            y: { min: 0, max: 105, title: { display: true, text: 'Accuracy (%)', font: { weight: '700', size: 11 } }, grid: { color: '#f1f5f9' } },
-            x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } }
-          }
-        }
-      });
-
+      // Left: 3 Independent Human Groups vs Pooled Human Curve (monochrome grays + red pooled)
       makeChart('chart-ctrl-groups', {
         type: 'line',
         data: {
           labels: DATA.allCondLabels,
           datasets: [
-            { label: 'Group 1 (P01–P07)', data: DATA.allConds.map(c => DATA.groups.G1[c]), borderColor: '#2563eb', backgroundColor: '#2563eb', borderWidth: 2.4, pointRadius: 4.5, tension: 0.14 },
-            { label: 'Group 2 (P08–P14)', data: DATA.allConds.map(c => DATA.groups.G2[c]), borderColor: '#059669', backgroundColor: '#059669', borderWidth: 2.4, pointRadius: 4.5, tension: 0.14 },
-            { label: 'Group 3 (P15–P21)', data: DATA.allConds.map(c => DATA.groups.G3[c]), borderColor: '#d97706', backgroundColor: '#d97706', borderWidth: 2.4, pointRadius: 4.5, tension: 0.14 },
-            { label: 'Pooled Humans (N=21)', data: DATA.allConds.map(c => DATA.human[c].acc), borderColor: '#dc2626', backgroundColor: '#dc2626', borderWidth: 3, borderDash: [5, 4], pointRadius: 5, pointStyle: 'triangle', tension: 0.14 }
+            { label: 'Group 1 (P01–P07)', data: DATA.allConds.map(c => DATA.groups.G1[c]), borderColor: '#475569', backgroundColor: '#475569', borderWidth: 2, pointRadius: 4, tension: 0.14 },
+            { label: 'Group 2 (P08–P14)', data: DATA.allConds.map(c => DATA.groups.G2[c]), borderColor: '#94a3b8', backgroundColor: '#94a3b8', borderWidth: 2, pointRadius: 4, tension: 0.14 },
+            { label: 'Group 3 (P15–P21)', data: DATA.allConds.map(c => DATA.groups.G3[c]), borderColor: '#0f172a', backgroundColor: '#0f172a', borderWidth: 2, pointRadius: 4, tension: 0.14 },
+            { label: 'Pooled Humans (N=21)', data: DATA.allConds.map(c => DATA.human[c].acc), borderColor: '#dc2626', backgroundColor: '#dc2626', borderWidth: 3.4, borderDash: [6, 4], pointRadius: 6, pointStyle: 'triangle', tension: 0.14 }
           ]
         },
         options: {
-          responsive: true, maintainAspectRatio: false, animation: anim,
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: anim,
           plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10, font: { size: 10.5, weight: '600' } } },
-            chanceLine: { enabled: true, value: 10 }
+            legend: { position: 'bottom', labels: { boxWidth: 11, padding: 10, font: { size: 12, weight: '600' } } },
+            chanceLine: { enabled: true, value: 10, label: 'Chance (10%)', align: 'left' }
           },
           scales: {
-            y: { min: 0, max: 105, title: { display: true, text: 'Human Accuracy (%)', font: { weight: '700', size: 11 } }, grid: { color: '#f1f5f9' } },
-            x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } }
+            y: {
+              min: 0,
+              max: 105,
+              ticks: { stepSize: 20, font: { size: 12 } },
+              title: { display: true, text: 'Human accuracy (%)', font: { weight: '700', size: 12.5 } },
+              grid: { color: '#f1f5f9' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { weight: '600', size: 11.5 } }
+            }
           }
         }
       });
-    },
 
-    // Slide 17: Human Reaction Time (Median + IQR whiskers)
-    17(instant = false) {
-      const anim = instant ? false : { duration: 1000, easing: 'easeOutQuart' };
+      // Right: Human Reaction Times (Median + IQR) in clean monochrome + red peak highlight
       makeChart('chart-rt', {
         type: 'bar',
         data: {
           labels: DATA.allCondLabels,
-          datasets: [{
-            label: 'Median Reaction Time (ms) with IQR (25th–75th pct)',
-            data: DATA.rt.median,
-            ciLow: DATA.rt.q25,
-            ciHigh: DATA.rt.q75,
-            errorBarColor: '#0f172a',
-            errorBarWidth: 2.0,
-            backgroundColor: ['#334155', '#60a5fa', '#3b82f6', '#2563eb', '#a78bfa', '#7c3aed', '#6d28d9'],
-            borderRadius: 6,
-            barPercentage: 0.56
-          }]
+          datasets: [
+            {
+              label: 'Median RT (ms) with IQR (25th–75th pct)',
+              data: DATA.rt.median,
+              ciLow: DATA.rt.q25,
+              ciHigh: DATA.rt.q75,
+              errorBarColor: '#0f172a',
+              errorBarWidth: 2.0,
+              backgroundColor: ['#475569', '#94a3b8', '#94a3b8', '#64748b', '#1e293b', '#dc2626', '#1e293b'],
+              borderRadius: 5,
+              barPercentage: 0.62
+            }
+          ]
         },
         options: {
-          responsive: true, maintainAspectRatio: false, animation: anim,
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: anim,
           plugins: {
-            legend: { position: 'top', labels: { font: { size: 11.5, weight: '600' } } },
+            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 12, weight: '600' } } },
             tooltip: {
               callbacks: {
-                label: ctx => {
+                label(ctx) {
                   const i = ctx.dataIndex;
                   return `Median: ${DATA.rt.median[i]} ms (IQR: ${DATA.rt.q25[i]}–${DATA.rt.q75[i]} ms)`;
                 }
@@ -397,35 +404,48 @@
             }
           },
           scales: {
-            y: { min: 0, max: 3400, title: { display: true, text: 'Response Latency (ms)', font: { weight: '700' } }, grid: { color: '#f1f5f9' } },
-            x: { grid: { display: false }, ticks: { font: { weight: '700', size: 11.5 } } }
+            y: {
+              min: 0,
+              max: 3500,
+              ticks: { stepSize: 500, font: { size: 12 } },
+              title: { display: true, text: 'Reaction time (ms)', font: { weight: '700', size: 12.5 } },
+              grid: { color: '#f1f5f9' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { weight: '600', size: 11.5 } }
+            }
           }
         }
       });
     },
 
-    // Slide 18: Failure Mode 1 — Degenerate Class-Collapse under shuffle_high & blur_high
-    18(instant = false) {
-      const anim = instant ? false : { duration: 1050, easing: 'easeOutQuart' };
+    // Slide 13: Failure Mode 1 — Degenerate Class-Collapse (shuffle_high & blur_high)
+    13(instant = false) {
+      const anim = instant ? false : { duration: 1000, easing: 'easeOutQuart' };
+
       makeChart('chart-collapse-shuf', {
         type: 'bar',
         data: {
           labels: DATA.categories,
           datasets: [
-            { label: 'DINOv2 ViT-B/14 (97.0% chair!)', data: DATA.predShareShuffleHigh.dino, backgroundColor: '#059669', borderRadius: 3 },
-            { label: 'CLIP ViT-L/14 (65.8% chair!)', data: DATA.predShareShuffleHigh.clip, backgroundColor: '#2563eb', borderRadius: 3 },
-            { label: 'Humans (spread across classes)', data: DATA.predShareShuffleHigh.human, backgroundColor: '#dc2626', borderRadius: 3 }
+            { label: 'DINOv2 (97.0% chair)', data: DATA.predShareShuffleHigh.dino,  backgroundColor: '#059669', borderRadius: 3 },
+            { label: 'CLIP (65.8% chair)',   data: DATA.predShareShuffleHigh.clip,  backgroundColor: '#2563eb', borderRadius: 3 },
+            { label: 'Humans (spread)',      data: DATA.predShareShuffleHigh.human, backgroundColor: '#dc2626', borderRadius: 3 }
           ]
         },
         options: {
-          indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: anim,
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: anim,
           plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10, font: { size: 10.5, weight: '600' } } },
-            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}% of all predictions` } }
+            legend: { position: 'bottom', labels: { boxWidth: 11, padding: 10, font: { size: 12, weight: '600' } } },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%` } }
           },
           scales: {
-            x: { min: 0, max: 100, title: { display: true, text: 'Share of all predictions (%) — ideal uniform prior = 10%', font: { size: 10.5, weight: '700' } }, grid: { color: '#f1f5f9' } },
-            y: { grid: { display: false }, ticks: { font: { size: 10.5, weight: '600' } } }
+            x: { min: 0, max: 100, ticks: { font: { size: 12 } }, title: { display: true, text: 'Prediction share (%) — uniform prior = 10%', font: { weight: '700', size: 12 } }, grid: { color: '#f1f5f9' } },
+            y: { grid: { display: false }, ticks: { font: { weight: '700', size: 12 } } }
           }
         }
       });
@@ -435,47 +455,52 @@
         data: {
           labels: DATA.categories,
           datasets: [
-            { label: 'CLIP (61.5% clock/tree)', data: DATA.predShareBlurHigh.clip, backgroundColor: '#2563eb', borderRadius: 3 },
-            { label: 'DINOv2 (55.3% airplane/car)', data: DATA.predShareBlurHigh.dino, backgroundColor: '#059669', borderRadius: 3 },
-            { label: 'Humans (6.7–12.4%, well-calibrated)', data: DATA.predShareBlurHigh.human, backgroundColor: '#dc2626', borderRadius: 3 }
+            { label: 'CLIP (61.5% clock/tree)',    data: DATA.predShareBlurHigh.clip,  backgroundColor: '#2563eb', borderRadius: 3 },
+            { label: 'DINOv2 (55.3% plane/car)',   data: DATA.predShareBlurHigh.dino,  backgroundColor: '#059669', borderRadius: 3 },
+            { label: 'Humans (6.7–12.4%)',         data: DATA.predShareBlurHigh.human, backgroundColor: '#dc2626', borderRadius: 3 }
           ]
         },
         options: {
-          indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: anim,
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: anim,
           plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10, font: { size: 10.5, weight: '600' } } },
-            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}% of all predictions` } }
+            legend: { position: 'bottom', labels: { boxWidth: 11, padding: 10, font: { size: 12, weight: '600' } } },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%` } }
           },
           scales: {
-            x: { min: 0, max: 40, title: { display: true, text: 'Share of all predictions (%) — ideal uniform prior = 10%', font: { size: 10.5, weight: '700' } }, grid: { color: '#f1f5f9' } },
-            y: { grid: { display: false }, ticks: { font: { size: 10.5, weight: '600' } } }
+            x: { min: 0, max: 40, ticks: { font: { size: 12 } }, title: { display: true, text: 'Prediction share (%) — uniform prior = 10%', font: { weight: '700', size: 12 } }, grid: { color: '#f1f5f9' } },
+            y: { grid: { display: false }, ticks: { font: { weight: '700', size: 12 } } }
           }
         }
       });
     },
 
-    // Slide 19: Failure Modes 2 & 3 — Ink-Tile Sparsity Split on shuffle_high
-    19(instant = false) {
-      const anim = instant ? false : { duration: 1000, easing: 'easeOutQuart' };
+    // Slide 14: Failure Mode 2 — Ink-Tile Fraction Split on shuffle_high
+    14(instant = false) {
+      const anim = instant ? false : { duration: 950, easing: 'easeOutQuart' };
       makeChart('chart-ink-split', {
         type: 'bar',
         data: {
           labels: DATA.inkSplit.labels,
           datasets: [
-            { label: 'Few Ink Tiles (≤ 43.8% median)', data: DATA.inkSplit.fewInk, backgroundColor: '#64748b', borderRadius: 5 },
-            { label: 'Many Ink Tiles (> 43.8% median)', data: DATA.inkSplit.manyInk, backgroundColor: '#dc2626', borderRadius: 5 }
+            { label: 'Few Ink Tiles (≤ 43.8% median)',  data: DATA.inkSplit.lowInk,  backgroundColor: '#94a3b8', borderRadius: 5, barPercentage: 0.72 },
+            { label: 'Many Ink Tiles (> 43.8% median)', data: DATA.inkSplit.highInk, backgroundColor: '#0f172a', borderRadius: 5, barPercentage: 0.72 }
           ]
         },
         options: {
-          responsive: true, maintainAspectRatio: false, animation: anim,
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: anim,
           plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 11, padding: 12, font: { size: 11, weight: '600' } } },
-            chanceLine: { enabled: true, value: 10, label: 'Chance (10%)' },
+            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12, font: { size: 12.5, weight: '600' } } },
+            chanceLine: { enabled: true, value: 10, label: 'Chance (10%)', align: 'left' },
             tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%` } }
           },
           scales: {
-            y: { min: 0, max: 30, title: { display: true, text: 'shuffle_high (64 tiles) Acc (%)', font: { weight: '700', size: 11 } }, grid: { color: '#f1f5f9' } },
-            x: { grid: { display: false }, ticks: { font: { weight: '600', size: 11 } } }
+            y: { min: 0, max: 28, ticks: { stepSize: 5, font: { size: 12.5 } }, title: { display: true, text: 'shuffle_high (64 tiles) Acc (%)', font: { weight: '700', size: 12.5 } }, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false }, ticks: { font: { weight: '700', size: 12.5 } } }
           }
         }
       });
@@ -509,7 +534,6 @@
     btn.className = 'sec-seg';
     btn.style.flexGrow = String(sec.indices.length);
     btn.textContent = sec.name;
-    btn.title = `Jump to ${sec.name}`;
     btn.addEventListener('click', () => goToSlide(sec.indices[0]));
     secbarEl.appendChild(btn);
     sec.el = btn;
@@ -570,7 +594,6 @@
         if (INSTANT_RENDER) {
           s.classList.add('anim-ready');
         } else {
-          // Force reflow so animations replay cleanly on every entry
           void s.offsetWidth;
           requestAnimationFrame(() => s.classList.add('anim-ready'));
         }
@@ -596,7 +619,6 @@
       } catch (_) {}
     }
 
-    // Trigger dynamic Chart.js rendering with fresh animation on chart slides
     if (chartInitializers[slideNumber]) {
       if (INSTANT_RENDER) {
         chartInitializers[slideNumber](true);
@@ -646,7 +668,7 @@
   document.getElementById('btn-close-overview').addEventListener('click', () => toggleOverview(false));
   document.getElementById('btn-close-notes').addEventListener('click', () => toggleNotes(false));
 
-  // Keyboard navigation
+  // Keyboard navigation (active silently without on-screen shortcut clutter)
   window.addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key === 'Escape') {

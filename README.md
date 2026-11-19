@@ -1,7 +1,7 @@
 # Blur and Scrambling: People vs. Vision Models
 
 **Authors:** Uriel-Darlin Azemfack-Himele, Fanès Houeha, Halik Mamam, Franck Tchangani  
-**Interactive Final Presentation (23 Slides):** [https://yke0let.github.io/blur-scrambling-people-vs-vit/slides.html#1](https://yke0let.github.io/blur-scrambling-people-vs-vit/slides.html#1)  
+**Interactive Final Presentation (17 Slides):** [https://yke0let.github.io/blur-scrambling-people-vs-vit/slides.html#1](https://yke0let.github.io/blur-scrambling-people-vs-vit/slides.html#1)  
 **Live Psychophysics Platform:** [https://yke0let.github.io/blur-scrambling-people-vs-vit/](https://yke0let.github.io/blur-scrambling-people-vs-vit/)
 
 ---
@@ -59,9 +59,9 @@ Linear probes were trained strictly on **intact** training images (`N = 5000`, v
 ## 4. Repository Structure
 
 ```text
-├── slides.html                             # Interactive 23-slide final web presentation (Keyboard, HUD, Notes, PDF print)
-├── slides.css                              # Academic design system, SVG data-flow animations & @media print 16:9 rules
-├── slides.js                               # Verified real-data Chart.js engine, 95% CI error bars & slide router (#1..#23)
+├── slides.html                             # Interactive 17-slide final web presentation (HUD, Notes, PDF print)
+├── slides.css                              # Monochrome academic design system, SVG animations & @media print 16:9 rules
+├── slides.js                               # Verified real-data Chart.js engine, 95% CI error bars & slide router (#1..#17)
 ├── index.html                              # 5-step academic web psychophysics platform + password-protected Admin Portal
 ├── human_trials.csv                        # 21-participant Latin-square schedule (1470 rows = 3 groups × 7 × 70 trials)
 ├── stimuli_human/                          # 490 PNG stimuli (70 test UIDs × 7 conditions, 224×224 grayscale)
