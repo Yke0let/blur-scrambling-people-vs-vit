@@ -782,12 +782,12 @@ def main() -> None:
 
     plot_comparison_figure(full_df, subset_df, human_df, args.out_figure)
     if human_df is not None or args.update_main_figure:
-        plot_main_figure(full_df, human_df, Path("main_figure.png"))
+        plot_main_figure(subset_df, human_df, Path("main_figure.png"))
         plot_group_comparison_figure(subset_df, group_df, Path("group_comparison_figure.png"))
         plot_diagnostics_figure(raw_human_df, Path("stimuli_manifest.csv"), args.model_predictions, Path("diagnostics_figure.png"))
         out_dir = Path("project_outputs")
         if out_dir.exists():
-            plot_main_figure(full_df, human_df, out_dir / "main_figure.png")
+            plot_main_figure(subset_df, human_df, out_dir / "main_figure.png")
             plot_comparison_figure(full_df, subset_df, human_df, out_dir / "comparison_figure.png")
             plot_group_comparison_figure(subset_df, group_df, out_dir / "group_comparison_figure.png")
             plot_diagnostics_figure(raw_human_df, Path("stimuli_manifest.csv"), args.model_predictions, out_dir / "diagnostics_figure.png")
