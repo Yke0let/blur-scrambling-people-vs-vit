@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blur and Scrambling: People vs. Vision Models — Final Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./slides.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- TOP SEGMENTED SECTION PROGRESS BAR -->
+  <nav id="secbar" aria-label="Presentation sections"></nav>
+
+  <!-- MAIN DECK CONTAINER -->
+  <main id="deck-root">
+
+    <!-- ===================================================================
+         SLIDE 1 — COVER
+         =================================================================== -->
+    <section class="slide" data-section="Cover" data-title="Blur and Scrambling: People vs. Vision Models"
+      data-notes="Good afternoon everyone. We are Uriel-Darlin, Fanès, Halik, and Franck. Today we present our experimental study: Blur and Scrambling — People vs. Vision Models. In the next twelve minutes we will show you what happens when we pit 21 human observers against CLIP ViT-L/14 and DINOv2 ViT-B/14 on the exact same degraded line drawings — and why our results came out completely opposite to what the literature led us to predict.">
+      <div class="stage stage-cover">
+        <div class="anim" data-d="1" style="display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:0.8rem;">
+          <span class="pill pill-clip">Visual Perception · Final Project</span>
+          <span class="pill pill-slate">Track: Experiment</span>
+          <span class="pill pill-human">21 Humans · 1,470 Trials</span>
+        </div>
+
+        <h1 class="anim" data-d="2" style="font-size:clamp(2.3rem, 4.4vw, 3.85rem);font-weight:800;letter-spacing:-0.035em;line-height:1.06;max-width:22ch;color:var(--ink);">
+          Blur and Scrambling:<br />People vs. Vision Models
+        </h1>
+
+        <p class="anim" data-d="3" style="font-size:clamp(1rem, 1.35vw, 1.25rem);color:var(--mute);max-width:58ch;margin-top:0.85rem;line-height:1.45;">
+          Comparing low-pass Gaussian blur and <span class="mono" style="color:var(--ink);font-weight:600;">+7 px</span> offset tile shuffling across human observers, <strong style="color:var(--c-clip);">CLIP ViT-L/14</strong>, and <strong style="color:var(--c-dino);">DINOv2 ViT-B/14</strong>.
+        </p>
+
+        <!-- Minimalist Animated Visual Triptych (Real uid=0 Airplane Stimuli) -->
+        <div class="anim" data-d="4" style="display:flex;align-items:center;justify-content:center;gap:1.6vw;margin-top:2.2rem;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.45rem;">
+            <img src="./stimuli_human/s0000_intact.png" alt="Intact airplane drawing" class="stim-thumb" style="width:128px;height:128px;" />
+            <span class="mono" style="font-size:0.74rem;font-weight:700;color:var(--ink);">Intact Baseline</span>
+          </div>
+          <span style="font-size:1.3rem;color:var(--line-strong);font-weight:700;">vs.</span>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.45rem;">
+            <img src="./stimuli_human/s0000_blur_high.png" alt="Blurred airplane drawing sigma 10" class="stim-thumb" style="width:128px;height:128px;border-color:var(--c-clip-bd);" />
+            <span class="mono" style="font-size:0.74rem;font-weight:700;color:var(--c-clip);">Gaussian Blur (σ = 10 px)</span>
+          </div>
+          <span style="font-size:1.3rem;color:var(--line-strong);font-weight:700;">vs.</span>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.45rem;">
+            <img src="./stimuli_human/s0000_shuffle_high.png" alt="64-tile offset shuffled airplane drawing" class="stim-thumb" style="width:128px;height:128px;border-color:var(--c-plum-bd);" />
+            <span class="mono" style="font-size:0.74rem;font-weight:700;color:var(--c-plum);">64-Tile Shuffle (+7 px)</span>
+          </div>
+        </div>
+
+        <div class="anim" data-d="5" style="margin-top:2.2rem;display:flex;flex-direction:column;align-items:center;gap:0.45rem;">
+          <div style="font-size:0.95rem;font-weight:600;color:var(--ink);">
+            Uriel-Darlin Azemfack-Himele · Fanès Houeha · Halik Mamam · Franck Tchangani
+          </div>
+          <div class="mono" style="font-size:0.74rem;color:var(--mute);">
+            Press <kbd style="padding:1px 5px;border:1px solid var(--line-strong);border-radius:4px;background:#fff;">→</kbd> to navigate · <kbd style="padding:1px 5px;border:1px solid var(--line-strong);border-radius:4px;background:#fff;">O</kbd> overview · <kbd style="padding:1px 5px;border:1px solid var(--line-strong);border-radius:4px;background:#fff;">N</kbd> notes
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 2 — [01 THE IDEA 1/2] CORE QUESTION & ONE EXAMPLE IMAGE
+         =================================================================== -->
+    <section class="slide" data-section="01 The Idea" data-title="The Research Question & One Visual Example"
+      data-notes="Let us start with our core question in one sentence: Which kinds of image damage break vision models and people together, and which break only one of them? Look at the single airplane drawing on the right. When we blur it heavily at sigma equals 10 pixels, it looks like a soft cloud — yet 3 out of 3 humans immediately recognized it as an airplane, while both CLIP and DINOv2 failed. When we instead cut it into 64 offset tiles and scramble them, every single observer — human and Transformer alike — collapses. Testing both damages on the exact same textureless sketches tells us what visual cues biological and artificial vision actually depend on.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-human">01 · The Idea — Clear in the First Minute</div>
+          <h1 class="slide-title">Which image degradations break ViTs and people together vs. only one?</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2-asym">
+            <!-- Left: Question + Why Care -->
+            <div class="col-stack" style="justify-content:center;gap:1.5vh;">
+              <div class="banner-quote banner-human anim" data-d="2" style="padding:1rem 1.25rem;">
+                By pitting <strong>Gaussian blur</strong> (erasing fine contour detail) against <strong>offset tile shuffling</strong> (destroying global arrangement) on identical drawings, we expose whether Vision Transformers rely on the same visual cues as human vision.
+              </div>
+
+              <div class="card anim" data-d="3" style="padding:1.25rem 1.35rem;gap:0.75rem;">
+                <div class="card-title" style="font-size:1.02rem;">Why Should the Room Care?</div>
+                <ul class="clean-list list-ink" style="gap:0.65rem;">
+                  <li style="font-size:0.9rem;"><strong>ViTs are widely used as models of human vision</strong>, yet their failure modes are usually benchmarked on natural photographs rich in surface texture and color.</li>
+                  <li style="font-size:0.9rem;"><strong>Line drawings strip away texture completely</strong>: recognition must rely on <em>local contour detail</em> vs. <em>global shape integration</em>.</li>
+                  <li style="font-size:0.9rem;"><strong>Direct apples-to-apples scale:</strong> Same 10-way forced choice, same <span class="mono">224×224 px</span> pixels, same deterministic damage seeds for every human and every model.</li>
+                </ul>
+              </div>
+
+              <div class="grid-2 anim" data-d="4" style="flex:0 0 auto;gap:1vw;">
+                <div class="card card-accent accent-clip" style="padding:0.95rem 1.1rem;">
+                  <div class="card-title" style="font-size:0.92rem;color:var(--c-clip);">Gaussian Blur (σ)</div>
+                  <div class="card-text" style="font-size:0.84rem;">Removes high-spatial-frequency stroke detail while preserving global silhouette layout.</div>
+                </div>
+                <div class="card card-accent accent-plum" style="padding:0.95rem 1.1rem;">
+                  <div class="card-title" style="font-size:0.92rem;color:var(--c-plum);">Offset Tile Shuffling (+7 px)</div>
+                  <div class="card-text" style="font-size:0.84rem;">Preserves exact pixel distribution &amp; local ink fragments while breaking global spatial structure.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: One Real Example Image (uid=0 Airplane) -->
+            <div class="card-white anim" data-d="4" style="justify-content:center;gap:1.1rem;padding:1.3rem 1.4rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:0.4rem;border-bottom:1px solid var(--line);">
+                <span class="card-title" style="font-size:0.96rem;">One Real Drawing (<span class="mono">uid = 0</span> · Airplane)</span>
+                <span class="pill pill-slate">10-AFC Task</span>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:0.95rem;">
+                <!-- Row 1: Intact -->
+                <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;border-radius:10px;background:var(--surface);border:1px solid var(--line);">
+                  <img src="./stimuli_human/s0000_intact.png" alt="Intact airplane" class="stim-thumb" style="width:102px;height:102px;flex-shrink:0;" />
+                  <div style="display:flex;flex-direction:column;gap:0.38rem;">
+                    <span class="mono" style="font-size:0.8rem;font-weight:700;">1. Intact Baseline</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:0.38rem;">
+                      <span class="pill pill-human">Humans 3/3 ✓</span>
+                      <span class="pill pill-clip">CLIP ✓</span>
+                      <span class="pill pill-dino">DINOv2 ✓</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Row 2: Blur high -->
+                <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;border-radius:10px;background:var(--c-human-bg);border:1px solid var(--c-human-bd);">
+                  <img src="./stimuli_human/s0000_blur_high.png" alt="Blur high airplane" class="stim-thumb" style="width:102px;height:102px;flex-shrink:0;" />
+                  <div style="display:flex;flex-direction:column;gap:0.38rem;">
+                    <span class="mono" style="font-size:0.8rem;font-weight:700;color:var(--c-human);">2. Severe Blur (σ = 10 px) — Divergence!</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:0.38rem;">
+                      <span class="pill pill-human">Humans 3/3 airplane ✓</span>
+                      <span class="pill pill-slate">CLIP: tree ✗</span>
+                      <span class="pill pill-slate">DINOv2: car ✗</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Row 3: Shuffle high -->
+                <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;border-radius:10px;background:var(--c-plum-bg);border:1px solid var(--c-plum-bd);">
+                  <img src="./stimuli_human/s0000_shuffle_high.png" alt="Shuffle high airplane" class="stim-thumb" style="width:102px;height:102px;flex-shrink:0;" />
+                  <div style="display:flex;flex-direction:column;gap:0.38rem;">
+                    <span class="mono" style="font-size:0.8rem;font-weight:700;color:var(--c-plum);">3. 64-Tile Shuffle (+7 px) — Joint Failure</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:0.38rem;">
+                      <span class="pill pill-slate">Humans collapse</span>
+                      <span class="pill pill-slate">CLIP &amp; DINOv2 collapse</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 3 — [01 THE IDEA 2/2] LITERATURE GAP & PREREGISTERED HYPOTHESIS
+         =================================================================== -->
+    <section class="slide" data-section="01 The Idea" data-title="Literature Gap & Preregistered Hypotheses"
+      data-notes="Prior work studied blur and scrambling only in isolation. Geirhos et al. showed humans beat CNNs on blur in 2018 while modern models caught up in 2021. On shuffling, Baker et al., Naseer et al., and Qin et al. reported that CNNs and ViTs are remarkably insensitive to patch shuffling while humans fall steeply. Based on that literature, we preregistered two clear hypotheses before collecting a single human trial: first, both humans and ViTs would fall together under blur; second, ViTs would stay high under tile shuffling while humans collapsed. Keep those predicted curves in mind — because our actual data completely flipped them.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-human">01 · The Idea — Prior Literature &amp; Predictions</div>
+          <h1 class="slide-title">Prior work tested blur &amp; shuffling separately — yielding two hypotheses</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-3 anim" data-d="2" style="flex:0 0 auto;">
+            <div class="card card-accent accent-clip">
+              <div class="card-title" style="color:var(--c-clip);">1. Low-Pass Blur Literature</div>
+              <p class="card-text"><strong>Geirhos et al. (2018, 2021)</strong> tested people vs. classifiers on blurred images: people were more robust in 2018, while large 2021 models matched or beat human accuracy yet still made different image-by-image errors.</p>
+            </div>
+            <div class="card card-accent accent-plum">
+              <div class="card-title" style="color:var(--c-plum);">2. Patch Shuffling Literature</div>
+              <p class="card-text"><strong>Baker et al. (2018)</strong> found humans fell sharply under brief viewing while CNNs kept labels; <strong>Naseer et al. (2021)</strong> &amp; <strong>Qin et al. (2022)</strong> reported ViTs are largely insensitive to patch permutation; <strong>Doshi et al. (2025)</strong> tested one fixed 4×4 grid.</p>
+            </div>
+            <div class="card card-accent accent-amber">
+              <div class="card-title" style="color:var(--c-amber);">3. The Open Gap We Address</div>
+              <p class="card-text">Blur and offset tile shuffling had <strong>never been measured side-by-side</strong> on the exact same textureless drawings, identical 10-way task, and matched patch-14 ViT geometry (<span class="mono">+7 px</span> seam offset).</p>
+            </div>
+          </div>
+
+          <!-- Animated SVG Preregistered Hypothesis Curves -->
+          <div class="card-white anim" data-d="3" style="flex:1 1 auto;padding:1.1rem 1.5rem;justify-content:space-between;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span class="card-title" style="font-size:1rem;">Our Preregistered Hypotheses (Frozen in Project Proposal Before Human Collection)</span>
+              <div style="display:flex;align-items:center;gap:0.85rem;font-size:0.75rem;font-weight:700;">
+                <span style="color:var(--c-human);">--- Humans</span>
+                <span style="color:var(--c-clip);">— CLIP ViT-L/14</span>
+                <span style="color:var(--c-dino);">— DINOv2 ViT-B/14</span>
+                <span class="pill pill-amber">Predicted Curves</span>
+              </div>
+            </div>
+
+            <div class="grid-2" style="gap:2.5vw;align-items:center;">
+              <!-- Predicted Blur Curve SVG -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:0.4rem;height:100%;justify-content:center;">
+                <div style="font-size:0.88rem;font-weight:800;color:var(--c-clip);">Hypothesis H2 (Blur): All Curves Fall Together</div>
+                <svg class="svg-diagram" viewBox="0 0 420 190" style="width:100%;max-height:220px;">
+                  <line x1="48" y1="16" x2="48" y2="156" stroke="#cbd5e1" stroke-width="1.6"/>
+                  <line x1="48" y1="156" x2="398" y2="156" stroke="#cbd5e1" stroke-width="1.6"/>
+                  <line x1="48" y1="138" x2="398" y2="138" stroke="#94a3b8" stroke-dasharray="5 5" stroke-width="1.2"/>
+                  <rect x="54" y="122" width="68" height="14" rx="3" fill="#ffffff" fill-opacity="0.9"/>
+                  <text x="58" y="132" fill="#64748b" font-size="9.5" font-weight="700">Chance 10%</text>
+                  <text x="68" y="175" text-anchor="middle" fill="#334155" font-size="11" font-weight="600">Intact</text>
+                  <text x="172" y="175" text-anchor="middle" fill="#334155" font-size="11" font-weight="600">Low (σ=2)</text>
+                  <text x="276" y="175" text-anchor="middle" fill="#334155" font-size="11" font-weight="600">Med (σ=5)</text>
+                  <text x="374" y="175" text-anchor="middle" fill="#334155" font-size="11" font-weight="600">High (σ=10)</text>
+                  <text x="39" y="28" text-anchor="end" fill="#64748b" font-size="10">90%</text>
+                  <text x="39" y="92" text-anchor="end" fill="#64748b" font-size="10">50%</text>
+                  <path class="curve-draw" d="M 68 28 L 172 42 L 276 80 L 374 120" fill="none" stroke="#2563eb" stroke-width="3.2"/>
+                  <path class="curve-draw" d="M 68 34 L 172 48 L 276 86 L 374 126" fill="none" stroke="#059669" stroke-width="3.2"/>
+                  <path class="curve-draw" d="M 68 31 L 172 45 L 276 76 L 374 116" fill="none" stroke="#dc2626" stroke-width="3.5" stroke-dasharray="7 5"/>
+                  <text x="225" y="20" text-anchor="middle" fill="#475569" font-size="10.5" font-style="italic">Prediction: erasing fine stroke edges degrades humans &amp; ViTs similarly</text>
+                </svg>
+              </div>
+
+              <!-- Predicted Shuffling Curve SVG -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:0.4rem;height:100%;justify-content:center;">
+                <div style="font-size:0.88rem;font-weight:800;color:var(--c-plum);">Hypothesis H1 (Shuffle): People Collapse, ViTs Stay High</div>
+                <svg class="svg-diagram" viewBox="0 0 420 190" style="width:100%;max-height:220px;">
+                  <line x1="48" y1="16" x2="48" y2="156" stroke="#cbd5e1" stroke-width="1.6"/>
+                  <line x1="48" y1="156" x2="398" y2="156" stroke="#cbd5e1" stroke-width="1.6"/>
+                  <line x1="48" y1="138" x2="398" y2="138" stroke="#94a3b8" stroke-dasharray="5 5" stroke-width="1.2"/>
+                  <rect x="54" y="122" width="68" height="14" rx="3" fill="#ffffff" fill-opacity="0.9"/>
+                  <text x="58" y="132" fill="#64748b" font-size="9.5" font-weight="700">Chance 10%</text>
+                  <text x="68" y="175" text-anchor="middle" fill="#334155" font-size="11" font-weight="600">Intact</text>
+                  <text x="172" y="175" text-anchor="middle" fill="#334155" font-size="11" font-weight="600">4 tiles</text>
+                  <text x="276" y="175" text-anchor="middle" fill="#334155" font-size="11" font-weight="600">16 tiles</text>
+                  <text x="374" y="175" text-anchor="middle" fill="#334155" font-size="11" font-weight="600">64 tiles</text>
+                  <text x="39" y="28" text-anchor="end" fill="#64748b" font-size="10">90%</text>
+                  <text x="39" y="92" text-anchor="end" fill="#64748b" font-size="10">50%</text>
+                  <polygon points="172,38 276,50 374,64 374,132 276,112 172,68" fill="rgba(109,40,217,0.09)"/>
+                  <path class="curve-draw" d="M 68 28 L 172 36 L 276 47 L 374 60" fill="none" stroke="#2563eb" stroke-width="3.2"/>
+                  <path class="curve-draw" d="M 68 33 L 172 42 L 276 54 L 374 68" fill="none" stroke="#059669" stroke-width="3.2"/>
+                  <path class="curve-draw" d="M 68 31 L 172 68 L 276 112 L 374 132" fill="none" stroke="#dc2626" stroke-width="3.5" stroke-dasharray="7 5"/>
+                  <text x="318" y="87" text-anchor="middle" fill="#6d28d9" font-size="10.5" font-weight="800">Expected</text>
+                  <text x="318" y="101" text-anchor="middle" fill="#6d28d9" font-size="10.5" font-weight="800">ViT–Human gap</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cite-line">Geirhos et al. (2018, 2021) · Baker et al. (2018) · Naseer et al. (2021) · Qin et al. (2022) · Doshi et al. (2025)</div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 4 — [02 SETUP 1/8] END-TO-END EXPERIMENTAL PIPELINE
+         =================================================================== -->
+    <section class="slide" data-section="02 Setup &amp; Models" data-title="End-to-End Experimental Pipeline"
+      data-notes="Here is our complete experimental pipeline. Everything starts from Quick, Draw! stroke files across 10 balanced categories, rendered cleanly at 224 by 224 pixels with a 20-pixel white border. We generate 7 deterministic damage conditions with logged random seeds so that every PNG seen by a human is bit-for-bit identical to the tensor passed into our models. The pipeline then splits into two strictly parallel tracks: 21 human observers in our hosted web lab, and our two frozen patch-14 Vision Transformers with intact-only linear probes. Both tracks converge on the exact same 10-way accuracy metric with 2,000-resample bootstrap confidence intervals.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow">02 · Experimental Setup — Unified Pipeline</div>
+          <h1 class="slide-title">One shared stimulus generator feeds parallel Human and ViT evaluation tracks</h1>
+        </div>
+
+        <div class="body-area" style="justify-content:center;">
+          <!-- Animated Full-Width SVG Pipeline -->
+          <div class="card-white anim" data-d="2" style="flex:1 1 auto;padding:1.2rem;justify-content:center;">
+            <svg class="svg-diagram" viewBox="0 0 1120 350" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <marker id="arr-slate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b"/>
+                </marker>
+                <marker id="arr-human" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 9 5 L 0 9 z" fill="#dc2626"/>
+                </marker>
+                <marker id="arr-clip" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 9 5 L 0 9 z" fill="#2563eb"/>
+                </marker>
+              </defs>
+
+              <!-- Stage 1: Quick Draw -->
+              <g>
+                <rect x="12" y="112" width="150" height="122" rx="12" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
+                <text x="87" y="142" text-anchor="middle" font-size="13" font-weight="800" fill="#0f172a">1. Quick, Draw!</text>
+                <text x="87" y="164" text-anchor="middle" font-size="11.5" fill="#334155">10 balanced classes</text>
+                <text x="87" y="182" text-anchor="middle" font-size="11" fill="#64748b">5,000 train · 1,000 val</text>
+                <text x="87" y="199" text-anchor="middle" font-size="11" fill="#64748b">1,000 test (disjoint)</text>
+                <text x="87" y="220" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b45309">No 'recognized' filter</text>
+              </g>
+
+              <!-- Arrow 1->2 -->
+              <path class="flow-path" d="M 164 173 L 204 173" stroke="#64748b" stroke-width="2.5" marker-end="url(#arr-slate)"/>
+
+              <!-- Stage 2: Render & Damage -->
+              <g>
+                <rect x="210" y="88" width="205" height="170" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="2.2"/>
+                <text x="312" y="116" text-anchor="middle" font-size="13" font-weight="800" fill="#92400e">2. Render &amp; Damage</text>
+                <text x="312" y="138" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">224×224 px · 20 px margin</text>
+                <text x="312" y="156" text-anchor="middle" font-size="11" fill="#334155">4 px stroke · centered (112, 112)</text>
+                <line x1="230" y1="168" x2="395" y2="168" stroke="#fde68a" stroke-width="1.2"/>
+                <text x="312" y="188" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f172a">7 Conditions (Logged Seeds)</text>
+                <text x="312" y="206" text-anchor="middle" font-size="11" fill="#2563eb">• Intact + Blur σ ∈ {2, 5, 10}</text>
+                <text x="312" y="223" text-anchor="middle" font-size="11" fill="#6d28d9">• Shuffle {4, 16, 64} tiles (+7 px)</text>
+                <text x="312" y="244" text-anchor="middle" font-size="10.5" font-weight="700" fill="#059669">✓ Bit-for-bit PNG == Tensor</text>
+              </g>
+
+              <!-- Fork Arrows 2->3A (Humans) & 2->3B (Models) -->
+              <path class="flow-path" d="M 417 135 C 452 135, 452 74, 492 74" fill="none" stroke="#dc2626" stroke-width="2.6" marker-end="url(#arr-human)"/>
+              <path class="flow-path" d="M 417 210 C 452 210, 452 272, 492 272" fill="none" stroke="#2563eb" stroke-width="2.6" marker-end="url(#arr-clip)"/>
+
+              <!-- Upper Track: HUMANS -->
+              <g>
+                <text x="678" y="18" text-anchor="middle" font-size="12" font-weight="800" fill="#dc2626">HUMAN TRACK · 21 PARTICIPANTS (3 GROUPS × 7 SLICES)</text>
+                <rect x="498" y="30" width="170" height="88" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+                <text x="583" y="55" text-anchor="middle" font-size="12" font-weight="700" fill="#991b1b">Web Psychophysics</text>
+                <text x="583" y="75" text-anchor="middle" font-size="11" fill="#334155">600ms fix → 1500ms img</text>
+                <text x="583" y="92" text-anchor="middle" font-size="11" fill="#334155">→ 400ms backward mask</text>
+                <text x="583" y="108" text-anchor="middle" font-size="10.5" fill="#64748b">70 trials / person (490 PNGs)</text>
+
+                <path class="flow-path" d="M 670 74 L 706 74" stroke="#dc2626" stroke-width="2.4" marker-end="url(#arr-human)"/>
+
+                <rect x="712" y="30" width="150" height="88" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+                <text x="787" y="57" text-anchor="middle" font-size="12" font-weight="700" fill="#991b1b">10-AFC Response</text>
+                <text x="787" y="77" text-anchor="middle" font-size="11" fill="#334155">1,470 total trials</text>
+                <text x="787" y="94" text-anchor="middle" font-size="11" fill="#334155">3 observers / (uid, cond)</text>
+                <text x="787" y="110" text-anchor="middle" font-size="10.5" fill="#64748b">+ Reaction time (rt_ms)</text>
+              </g>
+
+              <!-- Lower Track: MODELS -->
+              <g>
+                <text x="678" y="338" text-anchor="middle" font-size="12" font-weight="800" fill="#2563eb">VISION MODEL TRACK · FROZEN PATCH-14 ENCODERS (NVIDIA L40S GPU)</text>
+                <rect x="498" y="228" width="170" height="88" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                <text x="583" y="253" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">Frozen Encoders</text>
+                <text x="583" y="273" text-anchor="middle" font-size="11.5" font-weight="700" fill="#2563eb">CLIP ViT-L/14 (304M)</text>
+                <text x="583" y="291" text-anchor="middle" font-size="11.5" font-weight="700" fill="#059669">DINOv2 ViT-B/14 (86M)</text>
+                <text x="583" y="308" text-anchor="middle" font-size="10.5" fill="#64748b">16×16 patches (14 px)</text>
+
+                <path class="flow-path" d="M 670 272 L 706 272" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arr-clip)"/>
+
+                <rect x="712" y="228" width="150" height="88" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+                <text x="787" y="253" text-anchor="middle" font-size="12" font-weight="700" fill="#065f46">Intact Linear Probe</text>
+                <text x="787" y="273" text-anchor="middle" font-size="11" fill="#334155">Trained on 5k intact only</text>
+                <text x="787" y="290" text-anchor="middle" font-size="11" fill="#334155">Zero-shot on 7 conditions</text>
+                <text x="787" y="307" text-anchor="middle" font-size="10.5" fill="#64748b">70 human UIDs &amp; N=1000</text>
+              </g>
+
+              <!-- Converging Arrows -> Stage 4 -->
+              <path class="flow-path" d="M 864 74 C 902 74, 902 148, 932 148" fill="none" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arr-human)"/>
+              <path class="flow-path" d="M 864 272 C 902 272, 902 198, 932 198" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arr-clip)"/>
+
+              <!-- Stage 4: Evaluation -->
+              <g>
+                <rect x="938" y="108" width="170" height="130" rx="12" fill="#f5f3ff" stroke="#6d28d9" stroke-width="2.2"/>
+                <text x="1023" y="136" text-anchor="middle" font-size="13" font-weight="800" fill="#5b21b6">4. Evaluation</text>
+                <text x="1023" y="158" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">10-Way Accuracy (%)</text>
+                <text x="1023" y="177" text-anchor="middle" font-size="11" fill="#334155">2,000-resample 95% CI</text>
+                <text x="1023" y="195" text-anchor="middle" font-size="11" fill="#334155">Two-panel curves</text>
+                <text x="1023" y="213" text-anchor="middle" font-size="11" fill="#334155">RT &amp; class-collapse</text>
+                <text x="1023" y="230" text-anchor="middle" font-size="10.5" font-weight="700" fill="#6d28d9">diagnostics</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="kpi-strip anim" data-d="3">
+            <div class="kpi-box"><span class="kpi-lbl">Categories</span><span class="kpi-val">10</span><span class="kpi-sub">10-AFC · Chance = 10%</span></div>
+            <div class="kpi-box"><span class="kpi-lbl">Conditions</span><span class="kpi-val">7</span><span class="kpi-sub">1 intact + 3 blur + 3 shuffle</span></div>
+            <div class="kpi-box"><span class="kpi-lbl">Human Dataset</span><span class="kpi-val" style="color:var(--c-human);">1,470</span><span class="kpi-sub">21 people × 70 trials</span></div>
+            <div class="kpi-box"><span class="kpi-lbl">Model Dataset</span><span class="kpi-val" style="color:var(--c-clip);">7,000</span><span class="kpi-sub">1,000 test UIDs × 7 conds</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 5 — [02 SETUP 2/8] STIMULI DESIGN & 7 CONDITIONS
+         =================================================================== -->
+    <section class="slide" data-section="02 Setup &amp; Models" data-title="Stimuli Geometry & The 7 Experimental Conditions"
+      data-notes="Here is a real test drawing, uid 0, across all seven experimental conditions. Notice the visual progression: Gaussian blur smoothly softens edges at sigma 2, 5, and 10 pixels while preserving the airplane silhouette. Tile shuffling rolls the image by 7 pixels, cuts it into 4, 16, or 64 tiles, applies a strict derangement so no tile stays in place, and rolls it back. We intentionally kept all Quick, Draw! sketches without filtering by Google's recognized flag, because that flag comes from a neural classifier and would bias a human-versus-model comparison.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow">02 · Experimental Setup — Dataset &amp; Damage Design</div>
+          <h1 class="slide-title">10 textureless categories rendered at 224×224 px across 7 deterministic conditions</h1>
+        </div>
+
+        <div class="body-area">
+          <!-- Real 7-Condition Visual Strip -->
+          <div class="stim-strip-7 anim" data-d="2">
+            <div class="stim-card">
+              <img src="./stimuli_human/s0000_intact.png" alt="intact" />
+              <span class="stim-name">intact</span>
+              <span class="stim-param">Baseline (0)</span>
+            </div>
+            <div class="stim-card" style="border-color:var(--c-clip-bd);background:var(--c-clip-bg);">
+              <img src="./stimuli_human/s0000_blur_low.png" alt="blur low" />
+              <span class="stim-name" style="color:var(--c-clip);">blur_low</span>
+              <span class="stim-param">Gaussian σ = 2 px</span>
+            </div>
+            <div class="stim-card" style="border-color:var(--c-clip-bd);background:var(--c-clip-bg);">
+              <img src="./stimuli_human/s0000_blur_medium.png" alt="blur medium" />
+              <span class="stim-name" style="color:var(--c-clip);">blur_medium</span>
+              <span class="stim-param">Gaussian σ = 5 px</span>
+            </div>
+            <div class="stim-card" style="border-color:var(--c-clip);background:var(--c-clip-bg);">
+              <img src="./stimuli_human/s0000_blur_high.png" alt="blur high" />
+              <span class="stim-name" style="color:var(--c-clip);">blur_high</span>
+              <span class="stim-param">Gaussian σ = 10 px</span>
+            </div>
+            <div class="stim-card" style="border-color:var(--c-plum-bd);background:var(--c-plum-bg);">
+              <img src="./stimuli_human/s0000_shuffle_low.png" alt="shuffle low" />
+              <span class="stim-name" style="color:var(--c-plum);">shuffle_low</span>
+              <span class="stim-param">2×2 = 4 tiles (+7 px)</span>
+            </div>
+            <div class="stim-card" style="border-color:var(--c-plum-bd);background:var(--c-plum-bg);">
+              <img src="./stimuli_human/s0000_shuffle_medium.png" alt="shuffle medium" />
+              <span class="stim-name" style="color:var(--c-plum);">shuffle_medium</span>
+              <span class="stim-param">4×4 = 16 tiles (+7 px)</span>
+            </div>
+            <div class="stim-card" style="border-color:var(--c-plum);background:var(--c-plum-bg);">
+              <img src="./stimuli_human/s0000_shuffle_high.png" alt="shuffle high" />
+              <span class="stim-name" style="color:var(--c-plum);">shuffle_high</span>
+              <span class="stim-param">8×8 = 64 tiles (+7 px)</span>
+            </div>
+          </div>
+
+          <div class="grid-3 grid-auto anim" data-d="3" style="margin-top:0.5vh;">
+            <div class="card" style="padding:1.2rem 1.3rem;">
+              <div class="card-title">Quick, Draw! Categories &amp; Splits</div>
+              <ul class="clean-list" style="margin-top:0.2rem;gap:0.6rem;">
+                <li><strong>10 balanced classes (CC BY 4.0)</strong> covering everyday vehicles, animals, objects, and structures.</li>
+                <li>Disjoint splits per class: <span class="mono">500 train / 100 val / 100 test</span> (<span class="mono">7,000</span> total test stimuli).</li>
+                <li><strong>No <span class="mono">recognized</span> filter</strong> — prevents pre-selecting drawings friendly to neural classifiers.</li>
+              </ul>
+            </div>
+
+            <div class="card" style="padding:1.2rem 1.3rem;">
+              <div class="card-title">Canvas &amp; Rendering Invariants</div>
+              <ul class="clean-list list-dino" style="margin-top:0.2rem;gap:0.6rem;">
+                <li><strong>224 × 224 px</strong> grayscale uint8 rendered with 4× supersampling (Lanczos anti-aliasing).</li>
+                <li>Bounding box scaled &amp; centered at <span class="mono">(112, 112)</span> with <span class="mono">4 px</span> strokes and <span class="mono">20 px</span> white margin.</li>
+                <li><strong>Margin assertion (<span class="mono">margin = 20 &gt; 7 px</span>):</strong> guarantees the 7 px roll never wraps ink across edges.</li>
+              </ul>
+            </div>
+
+            <div class="card" style="padding:1.2rem 1.3rem;">
+              <div class="card-title">Reproducible Damage Protocol</div>
+              <ul class="clean-list list-plum" style="margin-top:0.2rem;gap:0.6rem;">
+                <li><strong>Gaussian Blur:</strong> <span class="mono">scipy.ndimage.gaussian_filter</span> with constant white border (<span class="mono">cval = 255.0</span>).</li>
+                <li><strong>Offset Shuffling:</strong> strict <em>derangement</em> (no tile stays fixed) seeded by <span class="mono">(1234, uid, cond_idx)</span>.</li>
+                <li><strong>Exact verification:</strong> Notebook asserts all 490 human PNGs equal model tensors bit-for-bit.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card-white anim" data-d="4" style="flex:0 0 auto;flex-direction:row;align-items:center;justify-content:space-between;padding:0.7rem 1.15rem;margin-top:auto;">
+            <span class="mono" style="font-size:0.74rem;font-weight:700;color:var(--mute);text-transform:uppercase;">10-AFC Categories</span>
+            <div style="display:flex;gap:0.45rem;flex-wrap:wrap;">
+              <span class="pill pill-slate">1. airplane</span>
+              <span class="pill pill-slate">2. bicycle</span>
+              <span class="pill pill-slate">3. car</span>
+              <span class="pill pill-slate">4. cat</span>
+              <span class="pill pill-slate">5. chair</span>
+              <span class="pill pill-slate">6. clock</span>
+              <span class="pill pill-slate">7. fish</span>
+              <span class="pill pill-slate">8. house</span>
+              <span class="pill pill-slate">9. tree</span>
+              <span class="pill pill-slate">0. umbrella</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 6 — [MODELS 1/4] SHARED VIT/14 ARCHITECTURE & +7 PX OFFSET
+         =================================================================== -->
+    <section class="slide" data-section="02 Setup &amp; Models" data-title="[Models 1/4] Shared ViT/14 Architecture &amp; +7 px Patch Offset"
+      data-notes="Let us dive into the technical architecture of our vision models over the next four slides. First, both CLIP ViT-L/14 and DINOv2 ViT-B/14 share the exact same patch-14 Vision Transformer input geometry: a 224-pixel drawing splits into a 16 by 16 grid of 256 non-overlapping 14-by-14 pixel patches, each flattened and linearly projected into a token embedding plus positional encodings and a learnable CLS token. Now look at the right-hand animation: if we shuffled on a standard 0-pixel grid, every tile boundary would land cleanly between ViT patches, leaving every internal patch intact. By shifting the shuffle grid by 7 pixels — exactly half a patch — every single tile seam slices directly through the middle of the ViT's 14-pixel patches.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-plum">02 · Model Architecture Deep-Dive (1 / 4) — Shared Patch-14 Backbone</div>
+          <h1 class="slide-title">How patch-14 ViTs tokenize images — and why the +7 px offset matters</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2-asym">
+            <!-- Left: Animated ViT/14 Forward Architecture Diagram -->
+            <div class="card-white anim" data-d="2" style="padding:1.1rem 1.25rem;justify-content:space-between;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span class="card-title">Shared ViT/14 Tokenization &amp; Transformer Pipeline</span>
+                <span class="pill pill-clip">224 = 16 × 14 px → 256 Tokens</span>
+              </div>
+
+              <svg class="svg-diagram" viewBox="0 0 690 310" preserveAspectRatio="xMidYMid meet" style="margin:auto 0;">
+                <defs>
+                  <marker id="arr-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto">
+                    <path d="M 0 1 L 9 5 L 0 9 z" fill="#2563eb"/>
+                  </marker>
+                </defs>
+
+                <!-- Step 1: 224x224 Input -->
+                <rect x="8" y="76" width="96" height="96" rx="8" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <g stroke="#93c5fd" stroke-width="1">
+                  <line x1="32" y1="76" x2="32" y2="172"/><line x1="56" y1="76" x2="56" y2="172"/><line x1="80" y1="76" x2="80" y2="172"/>
+                  <line x1="8" y1="100" x2="104" y2="100"/><line x1="8" y1="124" x2="104" y2="124"/><line x1="8" y1="148" x2="104" y2="148"/>
+                </g>
+                <text x="56" y="64" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f172a">Input Image</text>
+                <text x="56" y="190" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#475569">3×224×224</text>
+                <text x="56" y="205" text-anchor="middle" font-size="9.5" fill="#64748b">(gray → 3ch, norm)</text>
+
+                <path class="flow-path" d="M 106 124 L 134 124" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arr-b)"/>
+
+                <!-- Step 2: Patch Embed Conv 14x14 stride 14 -->
+                <rect x="138" y="64" width="118" height="120" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                <text x="197" y="90" text-anchor="middle" font-size="11.5" font-weight="800" fill="#1e40af">Patch Embed</text>
+                <text x="197" y="110" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#0f172a">Conv2d(14×14,</text>
+                <text x="197" y="124" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#0f172a">stride=14)</text>
+                <rect x="150" y="136" width="94" height="36" rx="6" fill="#ffffff" stroke="#bfdbfe"/>
+                <text x="197" y="152" text-anchor="middle" font-size="9.5" font-weight="700" fill="#2563eb">256 patches</text>
+                <text x="197" y="166" text-anchor="middle" font-size="9.5" fill="#475569">+ [CLS] + PosEmb</text>
+
+                <path class="flow-path" d="M 258 124 L 288 124" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arr-b)"/>
+
+                <!-- Step 3: Transformer Encoder Stack (widened so all text fits with generous padding!) -->
+                <rect x="292" y="18" width="242" height="212" rx="12" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
+                <text x="413" y="40" text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a">L × Transformer Blocks</text>
+                <text x="413" y="56" text-anchor="middle" font-size="9.2" font-family="JetBrains Mono" fill="#475569">CLIP: L=24, D=1024 · DINOv2: L=12, D=768</text>
+
+                <!-- Inner MHSA block -->
+                <rect class="pulse-node" x="314" y="70" width="198" height="46" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+                <text x="413" y="90" text-anchor="middle" font-size="11" font-weight="700" fill="#1d4ed8">LayerNorm → MHSA</text>
+                <text x="413" y="106" text-anchor="middle" font-size="9.5" fill="#475569">Global all-to-all token attention</text>
+
+                <!-- Residual indicator cleanly centered inside -->
+                <path d="M 413 116 L 413 138" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr-b)"/>
+                <text x="424" y="131" font-size="9.2" font-family="JetBrains Mono" fill="#64748b">+ residual skip</text>
+
+                <!-- Inner MLP block -->
+                <rect x="314" y="142" width="198" height="46" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="1.6"/>
+                <text x="413" y="162" text-anchor="middle" font-size="11" font-weight="700" fill="#047857">LayerNorm → GELU MLP</text>
+                <text x="413" y="178" text-anchor="middle" font-size="9.5" fill="#475569">Per-token 4× channel expansion</text>
+
+                <text x="413" y="214" text-anchor="middle" font-size="10.2" font-weight="700" fill="#dc2626">All Encoder Weights Frozen (eval)</text>
+
+                <path class="flow-path" d="M 536 124 L 566 124" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arr-b)"/>
+
+                <!-- Step 4: Output Embedding -->
+                <rect x="570" y="74" width="112" height="100" rx="10" fill="#f5f3ff" stroke="#6d28d9" stroke-width="2"/>
+                <text x="626" y="102" text-anchor="middle" font-size="11.5" font-weight="800" fill="#5b21b6">Image Vector</text>
+                <text x="626" y="126" text-anchor="middle" font-size="14" font-weight="800" font-family="JetBrains Mono" fill="#6d28d9">768-D</text>
+                <text x="626" y="146" text-anchor="middle" font-size="9.5" fill="#475569">Linear Probe</text>
+                <text x="626" y="161" text-anchor="middle" font-size="9.5" fill="#475569">→ 10 Logits</text>
+
+                <!-- Bottom note -->
+                <rect x="8" y="252" width="674" height="48" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+                <text x="345" y="272" text-anchor="middle" font-size="10.8" font-weight="700" fill="#0f172a">
+                  Strictly controlled patch-14 geometry: tile sizes are 112 px (2×2), 56 px (4×4), and 28 px (8×8)
+                </text>
+                <text x="345" y="289" text-anchor="middle" font-size="10.2" fill="#475569">
+                  All are exact multiples of 14 px — so adding a +7 px shift guarantees EVERY tile edge splits a ViT patch in half.
+                </text>
+              </svg>
+            </div>
+
+            <!-- Right: Animated +7 px Half-Patch Offset Visualizer -->
+            <div class="card-white anim" data-d="3" style="padding:1.1rem 1.25rem;justify-content:space-between;">
+              <div>
+                <span class="card-title" style="color:var(--c-plum);">The +7 px Half-Patch Offset Trick</span>
+                <p class="card-text" style="margin-top:0.25rem;">
+                  Watch the <strong style="color:var(--c-plum);">shuffle tile cut</strong> shift by <span class="mono">+7 px</span> across the fixed <strong style="color:var(--c-clip);">14×14 px ViT patch grid</strong>:
+                </p>
+              </div>
+
+              <svg class="svg-diagram" viewBox="0 0 280 250" style="width:100%;max-height:275px;margin:auto 0;">
+                <!-- Top callout badge cleanly outside the drawing -->
+                <rect x="44" y="4" width="192" height="24" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.3"/>
+                <text x="140" y="20" text-anchor="middle" font-size="10.5" font-weight="800" fill="#6d28d9">+7 px seam splits every 14 px patch!</text>
+
+                <!-- Base 6x6 grid of 14px ViT patches (scaled: 1 patch = 32px, half-patch = 16px) -->
+                <g transform="translate(44, 42)">
+                  <rect x="0" y="0" width="192" height="192" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6"/>
+                  <!-- Simulated stroke contour -->
+                  <path d="M 22 135 Q 96 58 172 78 Q 146 112 22 142 Z" fill="none" stroke="#0f172a" stroke-width="5" stroke-linejoin="round"/>
+                  <path d="M 82 95 L 55 24 L 96 32 L 122 86" fill="none" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+                  <path d="M 92 115 L 70 175 L 106 168 L 128 112" fill="none" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+
+                  <!-- Fixed ViT 14px Patch Grid (blue) -->
+                  <g stroke="#2563eb" stroke-width="1.2" stroke-opacity="0.6">
+                    <line x1="32" y1="0" x2="32" y2="192"/><line x1="64" y1="0" x2="64" y2="192"/><line x1="96" y1="0" x2="96" y2="192"/>
+                    <line x1="128" y1="0" x2="128" y2="192"/><line x1="160" y1="0" x2="160" y2="192"/>
+                    <line x1="0" y1="32" x2="192" y2="32"/><line x1="0" y1="64" x2="192" y2="64"/><line x1="0" y1="96" x2="192" y2="96"/>
+                    <line x1="0" y1="128" x2="192" y2="128"/><line x1="0" y1="160" x2="192" y2="160"/>
+                  </g>
+
+                  <!-- Animated Shifted Shuffle Grid (+7px = +16px in SVG) -->
+                  <g class="offset-grid-anim">
+                    <rect x="0" y="0" width="64" height="64" fill="rgba(109,40,217,0.10)" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="5 3"/>
+                    <rect x="64" y="0" width="64" height="64" fill="rgba(220,38,38,0.08)" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="5 3"/>
+                    <rect x="0" y="64" width="64" height="64" fill="rgba(220,38,38,0.08)" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="5 3"/>
+                    <rect x="64" y="64" width="64" height="64" fill="rgba(109,40,217,0.10)" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="5 3"/>
+                  </g>
+                </g>
+              </svg>
+
+              <div class="card card-accent accent-plum" style="padding:0.75rem 0.95rem;">
+                <div class="card-text" style="font-size:0.82rem;">
+                  <strong>Scientific consequence:</strong> Previous papers (Naseer et al. 2021) shuffled <em>along</em> ViT patch borders (<span class="mono">0 px</span> offset), keeping every 14×14 token pristine. Our <span class="mono">+7 px</span> shift forces seam discontinuities <em>inside</em> patch tokens.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 7 — [MODELS 2/4] MODEL 1: CLIP ViT-L/14
+         =================================================================== -->
+    <section class="slide" data-section="02 Setup &amp; Models" data-title="[Models 2/4] Model 1: CLIP ViT-L/14"
+      data-notes="Our first model is OpenAI's CLIP ViT-L/14. It is a large 24-layer Vision Transformer with 16 attention heads, 1024 hidden width, and roughly 304 million vision parameters, projected linearly into a 768-dimensional multimodal embedding space aligned with natural language via contrastive InfoNCE pretraining on 400 million web image-text pairs. In our pipeline, we freeze the entire vision encoder in eval mode, feed 224-pixel sketches normalized with CLIP's exact channel statistics under fp16 autocast, and extract the 768-D projected image embedding. Its strength is strong abstract semantic recognition on clean sketches — reaching 97.7 percent intact — but because web captions rarely describe heavily blurred shapes or fragmented line seams, its representation is highly vulnerable when sharp stroke edges disappear.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow">02 · Model Architecture Deep-Dive (2 / 4) — Language-Supervised Vision</div>
+          <div class="slide-header-row">
+            <h1 class="slide-title">Model 1: CLIP ViT-L/14 (<span class="mono" style="font-size:0.78em;color:var(--c-clip);">openai/clip-vit-large-patch14</span>)</h1>
+            <span class="pill pill-clip">24 Layers · 16 Heads · 304M Vision Params</span>
+          </div>
+        </div>
+
+        <div class="body-area" style="justify-content:space-between;gap:2vh;">
+          <!-- Animated CLIP Dual-Tower & Frozen Vision Extraction SVG -->
+          <div class="card-white anim" data-d="2" style="flex:1 1 auto;padding:1.1rem 1.2rem;justify-content:center;">
+            <svg class="svg-diagram" viewBox="0 0 1160 220" style="width:100%;max-height:270px;">
+              <defs>
+                <marker id="arr-clip2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 9 5 L 0 9 z" fill="#2563eb"/>
+                </marker>
+              </defs>
+
+              <!-- Pretraining Context Box -->
+              <rect x="8" y="10" width="218" height="200" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 3"/>
+              <text x="117" y="34" text-anchor="middle" font-size="11" font-weight="800" fill="#475569">PRETRAINING OBJECTIVE</text>
+              <rect x="24" y="48" width="186" height="46" rx="7" fill="#eff6ff" stroke="#93c5fd"/>
+              <text x="117" y="68" text-anchor="middle" font-size="10.8" font-weight="700" fill="#1e40af">400M Web Image–Text Pairs</text>
+              <text x="117" y="84" text-anchor="middle" font-size="9.5" fill="#475569">Symmetric InfoNCE Contrastive Loss</text>
+              <path d="M 117 96 L 117 118" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-clip2)"/>
+              <rect x="24" y="122" width="186" height="70" rx="7" fill="#ffffff" stroke="#e2e8f0"/>
+              <text x="117" y="143" text-anchor="middle" font-size="10.8" font-weight="700" fill="#0f172a">Shared Semantic Space</text>
+              <text x="117" y="160" text-anchor="middle" font-size="9.5" fill="#64748b">Aligns visual embeddings with</text>
+              <text x="117" y="176" text-anchor="middle" font-size="9.5" fill="#64748b">natural-language concept names</text>
+
+              <path class="flow-path" d="M 228 110 L 262 110" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arr-clip2)"/>
+
+              <!-- Input Normalization -->
+              <rect x="268" y="44" width="144" height="132" rx="10" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+              <text x="340" y="70" text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a">224×224 Input</text>
+              <text x="340" y="92" text-anchor="middle" font-size="9.6" font-family="JetBrains Mono" fill="#2563eb">μ=(.481,.458,.408)</text>
+              <text x="340" y="108" text-anchor="middle" font-size="9.6" font-family="JetBrains Mono" fill="#2563eb">σ=(.269,.261,.276)</text>
+              <text x="340" y="132" text-anchor="middle" font-size="9.8" fill="#475569">No resize / no crop</text>
+              <text x="340" y="152" text-anchor="middle" font-size="9.8" font-weight="700" fill="#64748b">fp16 CUDA autocast</text>
+
+              <path class="flow-path" d="M 414 110 L 444 110" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arr-clip2)"/>
+
+              <!-- 24-Layer ViT-L/14 Stack (generously widened for clean padding) -->
+              <rect x="450" y="18" width="336" height="184" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.4"/>
+              <text x="618" y="42" text-anchor="middle" font-size="12.5" font-weight="800" fill="#1e3a8a">CLIP Vision Encoder (ViT-L/14 · FROZEN)</text>
+              <g>
+                <rect x="468" y="56" width="60" height="92" rx="7" fill="#dbeafe" stroke="#3b82f6"/>
+                <text x="498" y="97" text-anchor="middle" font-size="10" font-weight="700" fill="#1e40af">Patch</text>
+                <text x="498" y="113" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#1e40af">257×1024</text>
+
+                <rect class="pulse-node" x="538" y="56" width="74" height="92" rx="7" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.6"/>
+                <text x="575" y="96" text-anchor="middle" font-size="10.2" font-weight="800" fill="#1e3a8a">Blocks 1–8</text>
+                <text x="575" y="113" text-anchor="middle" font-size="9.2" fill="#1e40af">16 heads</text>
+
+                <rect class="pulse-node" x="620" y="56" width="74" height="92" rx="7" fill="#93c5fd" stroke="#2563eb" stroke-width="1.6" style="animation-delay:0.4s;"/>
+                <text x="657" y="96" text-anchor="middle" font-size="10.2" font-weight="800" fill="#1e3a8a">Blocks 9–16</text>
+                <text x="657" y="113" text-anchor="middle" font-size="9.2" fill="#1e3a8a">D = 1024</text>
+
+                <rect class="pulse-node" x="702" y="56" width="74" height="92" rx="7" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.6" style="animation-delay:0.8s;"/>
+                <text x="739" y="96" text-anchor="middle" font-size="9.8" font-weight="800" fill="#ffffff">Blocks 17–24</text>
+                <text x="739" y="113" text-anchor="middle" font-size="9.2" fill="#eff6ff">Pre-LN</text>
+              </g>
+              <text x="618" y="178" text-anchor="middle" font-size="10.2" font-family="JetBrains Mono" fill="#1e40af">QuickGELU · 16 attention heads · 4096 MLP dim</text>
+
+              <path class="flow-path" d="M 788 110 L 818 110" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arr-clip2)"/>
+
+              <!-- Visual Projection -->
+              <rect x="824" y="52" width="144" height="116" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+              <text x="896" y="80" text-anchor="middle" font-size="11.5" font-weight="800" fill="#1e40af">Visual Projection</text>
+              <text x="896" y="102" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#0f172a">1024 → 768-D</text>
+              <text x="896" y="124" text-anchor="middle" font-size="9.5" fill="#64748b">get_image_features()</text>
+              <text x="896" y="144" text-anchor="middle" font-size="9.8" font-weight="700" fill="#2563eb">Semantic Vector</text>
+
+              <path class="flow-path" d="M 970 110 L 1000 110" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arr-clip2)"/>
+
+              <!-- Linear Probe -->
+              <rect x="1006" y="52" width="146" height="116" rx="10" fill="#0f172a"/>
+              <text x="1079" y="82" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">Intact Probe</text>
+              <text x="1079" y="104" text-anchor="middle" font-size="10.2" font-family="JetBrains Mono" fill="#93c5fd">Linear(768 → 10)</text>
+              <text x="1079" y="126" text-anchor="middle" font-size="10.2" font-family="JetBrains Mono" fill="#a7f3d0">wd = 1e-3</text>
+              <text x="1079" y="148" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">Val: 97.10%</text>
+            </svg>
+          </div>
+
+          <div class="grid-3 grid-auto anim" data-d="3">
+            <div class="card card-accent accent-clip" style="padding:1.25rem 1.35rem;">
+              <div class="card-title" style="color:var(--c-clip);font-size:1.02rem;">Role in Our Pipeline</div>
+              <p class="card-text" style="font-size:0.9rem;">Serves as our <strong>language-aligned semantic vision backbone</strong>. Text encoder is discarded at inference; only the frozen vision tower extracts 768-D features cached on GPU (<span class="mono">NVIDIA L40S</span>) across all 7 conditions.</p>
+              <div class="card-meta"><span>Feature space</span><strong class="mono" style="color:var(--c-clip);">768-D projected</strong></div>
+            </div>
+            <div class="card card-accent accent-dino" style="padding:1.25rem 1.35rem;">
+              <div class="card-title" style="color:var(--c-dino);font-size:1.02rem;">Key Strengths</div>
+              <ul class="clean-list list-dino" style="gap:0.6rem;">
+                <li style="font-size:0.9rem;">Exceptional abstraction on clean sketches: <strong>97.7%</strong> (<span class="mono">N=1000</span>) and <strong>98.6%</strong> (<span class="mono">70 UIDs</span>) intact.</li>
+                <li style="font-size:0.9rem;">Resilient at moderate blur (<span class="mono">σ=5 px</span>: <strong>88.6%</strong> subset / <strong>84.5%</strong> full).</li>
+              </ul>
+              <div class="card-meta"><span>Best regime</span><strong class="mono" style="color:var(--c-dino);">Intact &amp; moderate blur</strong></div>
+            </div>
+            <div class="card card-accent accent-human" style="padding:1.25rem 1.35rem;">
+              <div class="card-title" style="color:var(--c-human);font-size:1.02rem;">Observed Limitations</div>
+              <ul class="clean-list list-human" style="gap:0.6rem;">
+                <li style="font-size:0.9rem;">Sharp breakdown at <span class="mono">σ=10 px</span> (<strong>50.8%</strong> full / <strong>52.9%</strong> subset), collapsing onto <span class="mono">clock</span> &amp; <span class="mono">tree</span> (61.5%).</li>
+                <li style="font-size:0.9rem;">Collapses to <strong>15.5%</strong> on 64-tile shuffle (65.8% <span class="mono">chair</span> predictions).</li>
+              </ul>
+              <div class="card-meta"><span>Failure mode</span><strong class="mono" style="color:var(--c-human);">Prototype bias collapse</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 8 — [MODELS 3/4] MODEL 2: DINOv2 ViT-B/14
+         =================================================================== -->
+    <section class="slide" data-section="02 Setup &amp; Models" data-title="[Models 3/4] Model 2: DINOv2 ViT-B/14"
+      data-notes="Our second model is Meta AI's DINOv2 ViT-B/14. Unlike CLIP, DINOv2 never sees a single text caption during pretraining. It is a 12-layer, 12-head, 86-million-parameter Vision Transformer trained purely via self-supervised visual self-distillation on 142 million curated images, combining global-to-local crop alignment with iBOT masked patch prediction. Comparing CLIP and DINOv2 side-by-side at identical 14-pixel patch geometry is scientifically decisive: if both models fail on blur and offset shuffling despite completely different pretraining objectives — language supervision versus purely visual geometry — then the vulnerability comes from the frozen patch-14 representation itself, not just text pretraining.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-dino">02 · Model Architecture Deep-Dive (3 / 4) — Pure Self-Supervised Vision</div>
+          <div class="slide-header-row">
+            <h1 class="slide-title">Model 2: DINOv2 ViT-B/14 (<span class="mono" style="font-size:0.78em;color:var(--c-dino);">facebook/dinov2-base</span>)</h1>
+            <span class="pill pill-dino">12 Layers · 12 Heads · 86M Params · Zero Text Supervision</span>
+          </div>
+        </div>
+
+        <div class="body-area" style="justify-content:space-between;gap:2vh;">
+          <!-- Animated DINOv2 Self-Distillation & Frozen Backbone SVG -->
+          <div class="card-white anim" data-d="2" style="flex:1 1 auto;padding:1.1rem 1.2rem;justify-content:center;">
+            <svg class="svg-diagram" viewBox="0 0 1160 220" style="width:100%;max-height:270px;">
+              <defs>
+                <marker id="arr-dino" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 9 5 L 0 9 z" fill="#059669"/>
+                </marker>
+              </defs>
+
+              <!-- Pretraining Self-Distillation Diagram -->
+              <rect x="8" y="10" width="232" height="200" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 3"/>
+              <text x="124" y="32" text-anchor="middle" font-size="10.8" font-weight="800" fill="#475569">SELF-SUPERVISED PRETRAINING</text>
+              <rect x="22" y="44" width="204" height="38" rx="7" fill="#ecfdf5" stroke="#6ee7b7"/>
+              <text x="124" y="61" text-anchor="middle" font-size="10.5" font-weight="700" fill="#065f46">LVD-142M Curated Images</text>
+              <text x="124" y="75" text-anchor="middle" font-size="9.2" fill="#475569">Global + Local Crops · Masked Patches</text>
+
+              <rect x="22" y="95" width="90" height="46" rx="7" fill="#ffffff" stroke="#059669" stroke-width="1.5"/>
+              <text x="67" y="115" text-anchor="middle" font-size="10.2" font-weight="800" fill="#059669">Student ViT</text>
+              <text x="67" y="131" text-anchor="middle" font-size="9" fill="#64748b">local + masked</text>
+
+              <rect x="136" y="95" width="90" height="46" rx="7" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+              <text x="181" y="115" text-anchor="middle" font-size="10.2" font-weight="800" fill="#065f46">EMA Teacher</text>
+              <text x="181" y="131" text-anchor="middle" font-size="9" fill="#047857">global views</text>
+
+              <path class="flow-path-slow" d="M 114 118 L 134 118" stroke="#059669" stroke-width="2"/>
+              <rect x="22" y="152" width="204" height="44" rx="7" fill="#ffffff" stroke="#e2e8f0"/>
+              <text x="124" y="170" text-anchor="middle" font-size="10.2" font-weight="700" fill="#0f172a">DINO ([CLS]) + iBOT (Patch) Loss</text>
+              <text x="124" y="186" text-anchor="middle" font-size="9.2" fill="#64748b">Learns dense part &amp; geometric structure</text>
+
+              <path class="flow-path" d="M 244 110 L 274 110" stroke="#059669" stroke-width="2.4" marker-end="url(#arr-dino)"/>
+
+              <!-- Input Normalization -->
+              <rect x="280" y="44" width="144" height="132" rx="10" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+              <text x="352" y="70" text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a">224×224 Input</text>
+              <text x="352" y="92" text-anchor="middle" font-size="9.6" font-family="JetBrains Mono" fill="#059669">μ=(.485,.456,.406)</text>
+              <text x="352" y="108" text-anchor="middle" font-size="9.6" font-family="JetBrains Mono" fill="#059669">σ=(.229,.224,.225)</text>
+              <text x="352" y="132" text-anchor="middle" font-size="9.8" fill="#475569">ImageNet stats</text>
+              <text x="352" y="152" text-anchor="middle" font-size="9.8" font-weight="700" fill="#64748b">fp16 CUDA autocast</text>
+
+              <path class="flow-path" d="M 426 110 L 456 110" stroke="#059669" stroke-width="2.4" marker-end="url(#arr-dino)"/>
+
+              <!-- 12-Layer ViT-B/14 Stack (generously widened for clean padding) -->
+              <rect x="462" y="18" width="324" height="184" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2.4"/>
+              <text x="624" y="42" text-anchor="middle" font-size="12.5" font-weight="800" fill="#065f46">DINOv2 Encoder (ViT-B/14 · FROZEN)</text>
+              <g>
+                <rect x="480" y="56" width="64" height="92" rx="7" fill="#d1fae5" stroke="#10b981"/>
+                <text x="512" y="97" text-anchor="middle" font-size="10" font-weight="700" fill="#065f46">Patch</text>
+                <text x="512" y="113" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#065f46">257×768</text>
+
+                <rect class="pulse-node" x="556" y="56" width="106" height="92" rx="7" fill="#a7f3d0" stroke="#059669" stroke-width="1.6"/>
+                <text x="609" y="95" text-anchor="middle" font-size="10.5" font-weight="800" fill="#064e3b">Blocks 1–6</text>
+                <text x="609" y="113" text-anchor="middle" font-size="9" fill="#065f46">12 heads · LayerScale</text>
+
+                <rect class="pulse-node" x="674" y="56" width="96" height="92" rx="7" fill="#34d399" stroke="#047857" stroke-width="1.6" style="animation-delay:0.5s;"/>
+                <text x="722" y="95" text-anchor="middle" font-size="10.5" font-weight="800" fill="#064e3b">Blocks 7–12</text>
+                <text x="722" y="113" text-anchor="middle" font-size="9.2" fill="#064e3b">D = 768 · GELU</text>
+              </g>
+              <text x="624" y="178" text-anchor="middle" font-size="9.8" font-family="JetBrains Mono" fill="#065f46">Final LayerNorm → pooler_output ([CLS] token)</text>
+
+              <path class="flow-path" d="M 788 110 L 818 110" stroke="#059669" stroke-width="2.4" marker-end="url(#arr-dino)"/>
+
+              <!-- CLS Embedding -->
+              <rect x="824" y="52" width="144" height="116" rx="10" fill="#ffffff" stroke="#059669" stroke-width="2"/>
+              <text x="896" y="80" text-anchor="middle" font-size="11.5" font-weight="800" fill="#065f46">CLS Embedding</text>
+              <text x="896" y="104" text-anchor="middle" font-size="14" font-weight="800" font-family="JetBrains Mono" fill="#059669">768-D</text>
+              <text x="896" y="126" text-anchor="middle" font-size="9.5" fill="#64748b">Pure visual token</text>
+              <text x="896" y="144" text-anchor="middle" font-size="9.8" font-weight="700" fill="#059669">No projection head</text>
+
+              <path class="flow-path" d="M 970 110 L 1000 110" stroke="#059669" stroke-width="2.4" marker-end="url(#arr-dino)"/>
+
+              <!-- Linear Probe -->
+              <rect x="1006" y="52" width="146" height="116" rx="10" fill="#0f172a"/>
+              <text x="1079" y="82" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">Intact Probe</text>
+              <text x="1079" y="104" text-anchor="middle" font-size="10.2" font-family="JetBrains Mono" fill="#6ee7b7">Linear(768 → 10)</text>
+              <text x="1079" y="126" text-anchor="middle" font-size="10.2" font-family="JetBrains Mono" fill="#fde68a">wd = 1e-1</text>
+              <text x="1079" y="148" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">Val: 96.40%</text>
+            </svg>
+          </div>
+
+          <div class="grid-3 grid-auto anim" data-d="3">
+            <div class="card card-accent accent-dino" style="padding:1.25rem 1.35rem;">
+              <div class="card-title" style="color:var(--c-dino);font-size:1.02rem;">Why Pair DINOv2 with CLIP?</div>
+              <p class="card-text" style="font-size:0.9rem;">Both share identical <span class="mono">14×14 px</span> patch tokens, cleanly isolating <strong>pretraining regime</strong> (self-supervised visual structure vs. web text-image semantics) without confounding patch resolution.</p>
+              <div class="card-meta"><span>Control variable</span><strong class="mono" style="color:var(--c-dino);">Zero text labels</strong></div>
+            </div>
+            <div class="card card-accent accent-clip" style="padding:1.25rem 1.35rem;">
+              <div class="card-title" style="color:var(--c-clip);font-size:1.02rem;">Key Strengths</div>
+              <ul class="clean-list" style="gap:0.6rem;">
+                <li style="font-size:0.9rem;"><strong>Zero drop at mild blur</strong> (<span class="mono">σ=2 px</span>: <strong>97.5%</strong> full / <strong>97.1%</strong> subset — matches intact!).</li>
+                <li style="font-size:0.9rem;">Strongest accuracy on mild 4-tile shuffle (<strong>76.8%</strong> full / <strong>67.1%</strong> subset) via local-crop invariance.</li>
+              </ul>
+              <div class="card-meta"><span>Best regime</span><strong class="mono" style="color:var(--c-clip);">Mild blur &amp; 4-tile shuffle</strong></div>
+            </div>
+            <div class="card card-accent accent-human" style="padding:1.25rem 1.35rem;">
+              <div class="card-title" style="color:var(--c-human);font-size:1.02rem;">Observed Limitations</div>
+              <ul class="clean-list list-human" style="gap:0.6rem;">
+                <li style="font-size:0.9rem;">Steeper drop at <span class="mono">σ=5 px</span> (<strong>76.5%</strong> full) and <span class="mono">σ=10 px</span> (<strong>58.2%</strong> full / <strong>54.3%</strong> subset).</li>
+                <li style="font-size:0.9rem;">Extreme 64-tile collapse: <strong>10.0%</strong> accuracy with <strong>97.0%</strong> of predictions collapsed onto <span class="mono">chair</span>!</li>
+              </ul>
+              <div class="card-meta"><span>Failure mode</span><strong class="mono" style="color:var(--c-human);">97.0% single-class collapse</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 9 — [MODELS 4/4] LINEAR PROBING & TECHNICAL COMPARISON
+         =================================================================== -->
+    <section class="slide" data-section="02 Setup &amp; Models" data-title="[Models 4/4] Frozen Linear Probing &amp; Model Comparison"
+      data-notes="To evaluate both encoders fairly without leaking any knowledge of blur or scrambling into the classifier, we train one shared linear probe per model strictly on the 5,000 intact training drawings. Features are standardized using training mean and standard deviation only, optimized with full-batch Adam for 400 epochs, and L2 weight decay is chosen on the 1,000-image intact validation split — selecting 1e-3 for CLIP at 97.10 percent validation accuracy and 1e-1 for DINOv2 at 96.40 percent. That frozen probe is then evaluated zero-shot across all seven damage conditions. Below is the complete head-to-head technical specification table.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-slate">02 · Model Architecture Deep-Dive (4 / 4) — Probing Protocol &amp; Comparison</div>
+          <h1 class="slide-title">Intact-only linear probing ensures pure zero-shot robustness testing</h1>
+        </div>
+
+        <div class="body-area">
+          <!-- Animated Linear Probing Protocol Strip -->
+          <div class="card-white anim" data-d="2" style="flex:0 0 auto;padding:0.75rem 1rem;">
+            <svg class="svg-diagram" viewBox="0 0 1100 108" style="max-height:98px;">
+              <defs>
+                <marker id="arr-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto">
+                  <path d="M 0 1 L 9 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <rect x="6" y="14" width="188" height="80" rx="9" fill="#f8fafc" stroke="#0f172a" stroke-width="1.8"/>
+              <text x="100" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a">1. Intact Train Features</text>
+              <text x="100" y="57" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#2563eb">X_train: 5,000 × 768</text>
+              <text x="100" y="75" text-anchor="middle" font-size="9.5" fill="#64748b">500 intact drawings / class</text>
+
+              <path class="flow-path" d="M 196 54 L 228 54" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-k)"/>
+
+              <rect x="232" y="14" width="194" height="80" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+              <text x="329" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#1e40af">2. Train Z-Score Norm</text>
+              <text x="329" y="57" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#0f172a">z = (x − μ_tr) / (σ_tr + 1e-6)</text>
+              <text x="329" y="75" text-anchor="middle" font-size="9.5" fill="#475569">No test-time adaptation</text>
+
+              <path class="flow-path" d="M 428 54 L 460 54" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-k)"/>
+
+              <rect x="464" y="14" width="214" height="80" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.8"/>
+              <text x="571" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#065f46">3. Linear Head + L2 Sweep</text>
+              <text x="571" y="57" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#0f172a">Adam(lr=1e-2, 400 ep)</text>
+              <text x="571" y="75" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono" fill="#047857">wd ∈ {0,1e-4,1e-3,1e-2,1e-1}</text>
+
+              <path class="flow-path" d="M 680 54 L 712 54" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-k)"/>
+
+              <rect x="716" y="14" width="166" height="80" rx="9" fill="#fffbeb" stroke="#d97706" stroke-width="1.8"/>
+              <text x="799" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#92400e">4. Val Model Select</text>
+              <text x="799" y="57" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#0f172a">1,000 intact val</text>
+              <text x="799" y="75" text-anchor="middle" font-size="9.5" fill="#b45309">Ties → larger L2 wd</text>
+
+              <path class="flow-path" d="M 884 54 L 916 54" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-k)"/>
+
+              <rect x="920" y="14" width="174" height="80" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+              <text x="1007" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#991b1b">5. Zero-Shot Test</text>
+              <text x="1007" y="57" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#0f172a">7 conds × 1,000 imgs</text>
+              <text x="1007" y="75" text-anchor="middle" font-size="9.5" fill="#dc2626">+ matched 70 human UIDs</text>
+            </svg>
+          </div>
+
+          <!-- Technical Head-to-Head Comparison Table -->
+          <div class="card-white anim" data-d="3" style="flex:1 1 auto;padding:1.1rem 1.35rem;justify-content:space-between;">
+            <table class="data-table" style="font-size:0.86rem;">
+              <thead>
+                <tr>
+                  <th style="width:22%;padding:0.65rem 0.75rem;">Technical Dimension</th>
+                  <th style="width:39%;padding:0.65rem 0.75rem;color:var(--c-clip);">CLIP ViT-L/14 (<span class="mono keep-case">openai/clip-vit-large-patch14</span>)</th>
+                  <th style="width:39%;padding:0.65rem 0.75rem;color:var(--c-dino);">DINOv2 ViT-B/14 (<span class="mono keep-case">facebook/dinov2-base</span>)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding:0.68rem 0.75rem;"><strong>Architecture &amp; Depth</strong></td>
+                  <td style="padding:0.68rem 0.75rem;"><span class="mono">24</span> Transformer blocks · <span class="mono">16</span> heads · width <span class="mono">1024</span> · ~<span class="mono">304M</span> vision params</td>
+                  <td style="padding:0.68rem 0.75rem;"><span class="mono">12</span> Transformer blocks · <span class="mono">12</span> heads · width <span class="mono">768</span> · ~<span class="mono">86M</span> params</td>
+                </tr>
+                <tr>
+                  <td style="padding:0.68rem 0.75rem;"><strong>Patch &amp; Output Geometry</strong></td>
+                  <td style="padding:0.68rem 0.75rem;"><span class="mono">14×14 px</span> (<span class="mono">16×16</span> grid) → linear vision projection → <span class="mono">768-D</span></td>
+                  <td style="padding:0.68rem 0.75rem;"><span class="mono">14×14 px</span> (<span class="mono">16×16</span> grid) → final LayerNorm <span class="mono">[CLS]</span> → <span class="mono">768-D</span></td>
+                </tr>
+                <tr>
+                  <td style="padding:0.68rem 0.75rem;"><strong>Pretraining Paradigm</strong></td>
+                  <td style="padding:0.68rem 0.75rem;">Weakly-supervised contrastive image–text alignment (<span class="mono">400M</span> web pairs)</td>
+                  <td style="padding:0.68rem 0.75rem;">Self-supervised visual self-distillation + iBOT patch masking (<span class="mono">LVD-142M</span>)</td>
+                </tr>
+                <tr>
+                  <td style="padding:0.68rem 0.75rem;"><strong>Probe Hyperparameters</strong></td>
+                  <td style="padding:0.68rem 0.75rem;">Chosen <span class="mono">weight_decay = 1e-3</span> · Intact Val Acc = <strong style="color:var(--c-clip);">97.10%</strong></td>
+                  <td style="padding:0.68rem 0.75rem;">Chosen <span class="mono">weight_decay = 1e-1</span> · Intact Val Acc = <strong style="color:var(--c-dino);">96.40%</strong></td>
+                </tr>
+                <tr>
+                  <td style="padding:0.68rem 0.75rem;"><strong>Intact Test Accuracy</strong></td>
+                  <td style="padding:0.68rem 0.75rem;"><span class="mono">97.7%</span> (Full <span class="mono">N=1000</span>) · <span class="mono">98.6%</span> (Matched <span class="mono">70</span> human UIDs)</td>
+                  <td style="padding:0.68rem 0.75rem;"><span class="mono">97.5%</span> (Full <span class="mono">N=1000</span>) · <span class="mono">95.7%</span> (Matched <span class="mono">70</span> human UIDs)</td>
+                </tr>
+                <tr>
+                  <td style="padding:0.68rem 0.75rem;"><strong>Relative Profile</strong></td>
+                  <td style="padding:0.68rem 0.75rem;">Higher at <span class="mono">blur_medium</span> (84.5%) &amp; <span class="mono">shuffle_high</span> (15.5%); collapses to <span class="mono">clock/tree</span> on blur</td>
+                  <td style="padding:0.68rem 0.75rem;">Lossless at <span class="mono">blur_low</span> (97.5%) &amp; higher at <span class="mono">shuffle_low</span> (76.8%); 97% <span class="mono">chair</span> collapse on 64 tiles</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="card card-accent accent-ink" style="padding:0.7rem 1rem;flex-direction:row;align-items:center;justify-content:space-between;">
+              <div class="card-text" style="font-size:0.84rem;">
+                <strong>Key Scientific Control:</strong> Identical <span class="mono">14×14 px</span> patch grid, identical <span class="mono">768-D</span> linear probe capacity, and zero damage-specific fine-tuning cleanly isolate pretraining supervision.
+              </div>
+              <span class="pill pill-slate">Zero Test-Time Adaptation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 10 — [02 SETUP 7/8] HUMAN PSYCHOPHYSICS PROTOCOL
+         =================================================================== -->
+    <section class="slide" data-section="02 Setup &amp; Models" data-title="Human Psychophysics Protocol &amp; 21-Participant Design"
+      data-notes="On the human side, we upgraded our initial 12-person plan to a balanced 21-participant design: three independent groups of seven observers. Within each group of seven, participants partition all 490 stimuli — 70 unique drawings across 7 conditions — into 7 disjoint Latin-square slices so each person sees every drawing exactly once, with 10 trials per condition and 7 per category. Every trial runs on a strict performance.now() timing loop: 600 milliseconds central fixation, exactly 1.5 seconds of drawing exposure at 384 by 384 pixels, a 400-millisecond procedural backward noise mask to erase retinal afterimages, and then the 10-choice response grid with a hidden 15-second re-queue timer.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-human">02 · Experimental Setup — Human Psychophysics Protocol</div>
+          <h1 class="slide-title">Strict timed brief viewing across 21 observers (3 Groups × 7 Latin-Square Slices)</h1>
+        </div>
+
+        <div class="body-area">
+          <!-- Animated 4-Phase Trial Timeline -->
+          <div class="card-white anim" data-d="2" style="flex:0 0 auto;padding:0.95rem 1.2rem;gap:0.7rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span class="card-title">Single-Trial Psychophysics State Machine (<span class="mono">performance.now()</span> + <span class="mono">requestAnimationFrame</span>)</span>
+              <span class="pill pill-human">2 Intact Warm-Up Trials → 70 Main Trials (~8–10 min)</span>
+            </div>
+
+            <div class="grid-4" style="gap:0.9vw;">
+              <div class="card" style="padding:0.75rem 0.9rem;gap:0.35rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span class="mono" style="font-size:0.75rem;font-weight:700;color:var(--c-clip);">1. Fixation</span>
+                  <span class="pill pill-slate mono">600 ms</span>
+                </div>
+                <div style="height:6px;background:var(--line);border-radius:99px;overflow:hidden;">
+                  <div class="timing-fill" style="--target-w:25%;height:100%;background:var(--mute);"></div>
+                </div>
+                <p class="card-text" style="font-size:0.76rem;">Central <span class="mono">+</span> cross anchors foveal gaze before stimulus onset.</p>
+              </div>
+
+              <div class="card" style="padding:0.75rem 0.9rem;gap:0.35rem;border-color:var(--c-clip-bd);background:var(--c-clip-bg);">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span class="mono" style="font-size:0.75rem;font-weight:700;color:var(--c-clip);">2. Stimulus</span>
+                  <span class="pill pill-clip mono">1500 ms</span>
+                </div>
+                <div style="height:6px;background:var(--c-clip-bd);border-radius:99px;overflow:hidden;">
+                  <div class="timing-fill" style="--target-w:100%;height:100%;background:var(--c-clip);transition-delay:0.25s;"></div>
+                </div>
+                <p class="card-text" style="font-size:0.76rem;">Exact <span class="mono">1.5 s</span> viewing (<span class="mono">384×384 px</span> display) prevents slow jigsaw solving.</p>
+              </div>
+
+              <div class="card" style="padding:0.75rem 0.9rem;gap:0.35rem;border-color:var(--c-plum-bd);background:var(--c-plum-bg);">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span class="mono" style="font-size:0.75rem;font-weight:700;color:var(--c-plum);">3. Backward Mask</span>
+                  <span class="pill pill-plum mono">400 ms</span>
+                </div>
+                <div style="height:6px;background:var(--c-plum-bd);border-radius:99px;overflow:hidden;">
+                  <div class="timing-fill" style="--target-w:60%;height:100%;background:var(--c-plum);transition-delay:0.5s;"></div>
+                </div>
+                <p class="card-text" style="font-size:0.76rem;">Dynamic 7 px random-block + random-stroke noise clears retinal afterimages.</p>
+              </div>
+
+              <div class="card" style="padding:0.75rem 0.9rem;gap:0.35rem;border-color:var(--c-human-bd);background:var(--c-human-bg);">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span class="mono" style="font-size:0.75rem;font-weight:700;color:var(--c-human);">4. 10-AFC Choice</span>
+                  <span class="pill pill-human mono">RT logged</span>
+                </div>
+                <div style="height:6px;background:var(--c-human-bd);border-radius:99px;overflow:hidden;">
+                  <div class="timing-fill" style="--target-w:85%;height:100%;background:var(--c-human);transition-delay:0.75s;"></div>
+                </div>
+                <p class="card-text" style="font-size:0.76rem;">Click or keys <span class="mono">[1–9, 0]</span>; hidden <span class="mono">15 s</span> timeout re-queues missed trials.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Groups x 7 Slices Matrix & Ethics -->
+          <div class="grid-2 anim" data-d="3">
+            <div class="card-white" style="padding:1.15rem 1.3rem;justify-content:space-between;">
+              <div>
+                <div class="card-title" style="font-size:1rem;margin-bottom:0.55rem;">3 × 7 Balanced Latin-Square Cohort (21 / 21 Completed)</div>
+                <table class="data-table" style="font-size:0.82rem;">
+                  <thead>
+                    <tr>
+                      <th style="padding:0.55rem 0.65rem;">Group</th>
+                      <th style="padding:0.55rem 0.65rem;">Participants</th>
+                      <th style="padding:0.55rem 0.65rem;">Stimulus Coverage</th>
+                      <th class="num" style="padding:0.55rem 0.65rem;">Collected Trials</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding:0.6rem 0.65rem;"><strong style="color:var(--c-clip);">Group 1 (G1)</strong></td>
+                      <td class="mono" style="padding:0.6rem 0.65rem;">P01 – P07</td>
+                      <td style="padding:0.6rem 0.65rem;">Disjoint Slices S1–S7 (all 490 PNGs)</td>
+                      <td class="num" style="padding:0.6rem 0.65rem;"><strong>490 / 490 ✓</strong></td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0.6rem 0.65rem;"><strong style="color:var(--c-dino);">Group 2 (G2)</strong></td>
+                      <td class="mono" style="padding:0.6rem 0.65rem;">P08 – P14</td>
+                      <td style="padding:0.6rem 0.65rem;">Exact replication of Slices S1–S7</td>
+                      <td class="num" style="padding:0.6rem 0.65rem;"><strong>490 / 490 ✓</strong></td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0.6rem 0.65rem;"><strong style="color:var(--c-amber);">Group 3 (G3)</strong></td>
+                      <td class="mono" style="padding:0.6rem 0.65rem;">P15 – P21</td>
+                      <td style="padding:0.6rem 0.65rem;">Third replication of Slices S1–S7</td>
+                      <td class="num" style="padding:0.6rem 0.65rem;"><strong>490 / 490 ✓</strong></td>
+                    </tr>
+                    <tr style="background:var(--surface);">
+                      <td style="padding:0.62rem 0.65rem;"><strong>Total Pooled</strong></td>
+                      <td class="mono" style="padding:0.62rem 0.65rem;"><strong>21 Observers</strong></td>
+                      <td style="padding:0.62rem 0.65rem;"><strong>3 independent humans per (uid, cond)</strong></td>
+                      <td class="num" style="padding:0.62rem 0.65rem;"><strong style="color:var(--c-human);">1,470 Trials</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="card" style="padding:0.75rem 0.95rem;gap:0.35rem;">
+                <div style="font-size:0.78rem;font-weight:700;color:var(--ink);">Per-Participant Balance Guarantee (70 Trials)</div>
+                <div style="display:flex;gap:0.45rem;flex-wrap:wrap;">
+                  <span class="pill pill-clip">10 trials / condition</span>
+                  <span class="pill pill-dino">7 trials / category</span>
+                  <span class="pill pill-human">70 unique UIDs (0 repeats)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="padding:1.25rem 1.4rem;justify-content:space-between;">
+              <div>
+                <div class="card-title" style="font-size:1.02rem;margin-bottom:0.75rem;">Ethics, Anonymity &amp; Bias Controls</div>
+                <ul class="clean-list list-human" style="gap:0.85rem;">
+                  <li style="font-size:0.9rem;"><strong>No repeats:</strong> Each participant sees each of the 70 unique drawings <em>once</em> in a single condition (zero memory leakage across conditions).</li>
+                  <li style="font-size:0.9rem;"><strong>Strict anonymity:</strong> Supervisor-assigned anonymous IDs only (<span class="mono">P01</span>–<span class="mono">P21</span>), explicit informed consent checkbox, right to pause/stop anytime.</li>
+                  <li style="font-size:0.9rem;"><strong>Blind completion:</strong> No accuracy score or feedback shown to participants during or after the 70 trials to avoid priming subsequent cohort volunteers.</li>
+                  <li style="font-size:0.9rem;"><strong>Zero data loss:</strong> Automatic <span class="mono">localStorage</span> resume + dual cloud sync (<span class="mono">ntfy.sh</span> + KV mirror) with anti-overwrite slot locking.</li>
+                </ul>
+              </div>
+              <div class="card-meta"><span>Completion rate across all 21 slots</span><strong class="mono" style="color:var(--c-dino);">100% (1,470 / 1,470 trials)</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 11 — [02 SETUP 8/8] LIVE WEB PLATFORM & DEMO SHOWCASE
+         =================================================================== -->
+    <section class="slide" data-section="02 Setup &amp; Models" data-title="Custom Web Psychophysics Platform &amp; Live Demo"
+      data-notes="To collect clean, high-precision data remotely from 21 classmates, we engineered a dedicated five-step academic psychophysics platform hosted on GitHub Pages. It features manual supervisor ID validation with anti-overwrite slot locking, zero-latency image preloading into browser memory before trial 1, an enlarged glare-free 384-pixel stimulus viewport, and a password-protected Admin Telemetry Portal with live cloud sync, dynamic slot allocation beyond 21 participants, group comparison charts, and one-click CSV export. We can open the live platform directly from this button if anyone wants to try the two warm-up trials during Q&A.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-clip">02 · Experimental Setup — Live Psychophysics Instrument</div>
+          <div class="slide-header-row">
+            <h1 class="slide-title">Engineered a hosted 5-step web lab &amp; live Admin telemetry dashboard</h1>
+            <a class="demo-cta" href="./index.html" target="_blank" rel="noopener">Launch Live Web Lab ↗</a>
+          </div>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2">
+            <!-- Left: Interactive Visual Mockup of the 5-Step Participant Flow -->
+            <div class="card-white anim" data-d="2" style="padding:1.15rem 1.3rem;justify-content:space-between;gap:0.9rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:0.55rem;">
+                <div style="display:flex;align-items:center;gap:0.45rem;">
+                  <span style="width:9px;height:9px;border-radius:50%;background:var(--c-clip);display:inline-block;"></span>
+                  <span style="font-size:0.86rem;font-weight:700;">Visual Perception Study — Participant Wizard</span>
+                </div>
+                <span class="mono" style="font-size:0.7rem;color:var(--c-dino);font-weight:700;">● Hosted on GitHub Pages</span>
+              </div>
+
+              <!-- 5-Step pills on a single clean row -->
+              <div style="display:flex;gap:0.25rem;align-items:center;justify-content:space-between;flex-wrap:nowrap;">
+                <span class="pill pill-clip" style="font-size:0.65rem;padding:0.18rem 0.45rem;">1. ID &amp; Consent</span>
+                <span style="color:var(--mute);font-size:0.7rem;">→</span>
+                <span class="pill pill-slate" style="font-size:0.65rem;padding:0.18rem 0.45rem;">2. Rules</span>
+                <span style="color:var(--mute);font-size:0.7rem;">→</span>
+                <span class="pill pill-slate" style="font-size:0.65rem;padding:0.18rem 0.45rem;">3. Practice</span>
+                <span style="color:var(--mute);font-size:0.7rem;">→</span>
+                <span class="pill pill-human" style="font-size:0.65rem;padding:0.18rem 0.45rem;">4. 70 Trials</span>
+                <span style="color:var(--mute);font-size:0.7rem;">→</span>
+                <span class="pill pill-dino" style="font-size:0.65rem;padding:0.18rem 0.45rem;">5. Cloud Sync</span>
+              </div>
+
+              <!-- Simulated Stimulus Viewport Preview -->
+              <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:1.15rem;display:flex;align-items:center;justify-content:space-around;gap:1.1rem;">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:0.45rem;">
+                  <img src="./stimuli_human/s0701_blur_high.png" alt="Stimulus preview" class="stim-thumb" style="width:144px;height:144px;" />
+                  <div style="width:144px;height:6px;background:var(--line-strong);border-radius:99px;overflow:hidden;">
+                    <div class="timing-fill" style="--target-w:78%;height:100%;background:var(--c-clip);"></div>
+                  </div>
+                  <span class="mono" style="font-size:0.72rem;color:var(--mute);font-weight:600;">1.5s Exposure Frame</span>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:0.42rem;font-size:0.76rem;font-weight:600;">
+                  <div style="padding:0.38rem 0.65rem;background:#fff;border:1px solid var(--line);border-radius:7px;">[1] Airplane</div>
+                  <div style="padding:0.38rem 0.65rem;background:#fff;border:1px solid var(--line);border-radius:7px;">[2] Bicycle</div>
+                  <div style="padding:0.38rem 0.65rem;background:#fff;border:1px solid var(--line);border-radius:7px;">[3] Car</div>
+                  <div style="padding:0.38rem 0.65rem;background:#fff;border:1px solid var(--line);border-radius:7px;">[4] Cat</div>
+                  <div style="padding:0.38rem 0.65rem;background:#fff;border:1px solid var(--line);border-radius:7px;">[5] Chair</div>
+                  <div style="padding:0.38rem 0.65rem;background:#fff;border:1px solid var(--line);border-radius:7px;">[6] Clock</div>
+                  <div style="padding:0.38rem 0.65rem;background:#fff;border:1px solid var(--line);border-radius:7px;">[7] Fish</div>
+                  <div style="padding:0.38rem 0.65rem;background:var(--c-clip-bg);border:1.5px solid var(--c-clip);color:var(--c-clip);border-radius:7px;">[8] House ✓</div>
+                  <div style="padding:0.38rem 0.65rem;background:#fff;border:1px solid var(--line);border-radius:7px;">[9] Tree</div>
+                  <div style="padding:0.38rem 0.65rem;background:#fff;border:1px solid var(--line);border-radius:7px;">[0] Umbrella</div>
+                </div>
+              </div>
+
+              <!-- Live Telemetry Status Bar -->
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0.65rem 0.9rem;display:flex;align-items:center;justify-content:space-between;font-size:0.74rem;">
+                <span style="font-weight:700;color:var(--ink);">Admin Telemetry Snapshot:</span>
+                <div style="display:flex;gap:0.45rem;">
+                  <span class="pill pill-dino">21 / 21 Slots Filled</span>
+                  <span class="pill pill-clip">1,470 Trials Synced</span>
+                  <span class="pill pill-slate">0 Overwrites</span>
+                </div>
+              </div>
+
+              <div class="mono" style="font-size:0.74rem;color:var(--mute);text-align:center;">
+                https://yke0let.github.io/blur-scrambling-people-vs-vit/
+              </div>
+            </div>
+
+            <!-- Right: Engineering & Telemetry Highlights -->
+            <div class="col-stack" style="justify-content:space-between;gap:1.1rem;">
+              <div class="card card-accent accent-clip anim" data-d="3" style="flex:1 1 auto;justify-content:center;padding:1.25rem 1.35rem;">
+                <div class="card-title" style="font-size:1.02rem;color:var(--c-clip);">Zero-Latency Stimulus Preloading &amp; Offline Fallback</div>
+                <p class="card-text" style="font-size:0.9rem;">All 70 PNGs are preloaded into browser memory prior to Trial 1 so network jitter never distorts the <span class="mono">1500 ms</span> exposure window. Works both hosted on GitHub Pages and offline via local CSV/PNG loader.</p>
+              </div>
+
+              <div class="card card-accent accent-dino anim" data-d="4" style="flex:1 1 auto;justify-content:center;padding:1.25rem 1.35rem;">
+                <div class="card-title" style="font-size:1.02rem;color:var(--c-dino);">Anti-Overwrite Slot Locking &amp; Dual Cloud Sync</div>
+                <p class="card-text" style="font-size:0.9rem;">Supervisor-assigned IDs are validated against local + cloud completion status to prevent duplicate submissions. Completed 70-trial logs encode into compact <span class="mono">VL1:</span> tokens synced automatically to <span class="mono">ntfy.sh</span> &amp; KV storage.</p>
+              </div>
+
+              <div class="card card-accent accent-plum anim" data-d="5" style="flex:1 1 auto;justify-content:center;padding:1.25rem 1.35rem;">
+                <div class="card-title" style="font-size:1.02rem;color:var(--c-plum);">Password-Protected Admin Telemetry Dashboard</div>
+                <p class="card-text" style="font-size:0.9rem;">Real-time tracking of all 21 candidates, dynamic slot capacity expansion (<span class="mono">+3</span> balanced group cycling), persistent purge tombstones, live Chart.js curves overlaying CLIP &amp; DINOv2, and 1-click CSV exports.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 12 — [03 RESULTS 1/6] HEADLINE FINDING & MAIN INTERACTIVE FIGURE
+         =================================================================== -->
+    <section class="slide" data-section="03 Results" data-title="Headline Finding: The Exact Opposite of Our Hypothesis"
+      data-notes="Now for our main result, which can be stated in a single sentence: Severe Gaussian blur at sigma equals 10 pixels breaks both Vision Transformers while humans remain highly accurate at 82.4 percent, whereas 7-pixel offset tile shuffling breaks humans and Vision Transformers together down to near chance at 10 to 17 percent. Look at the left panel: humans hold an almost flat curve from 88.1 percent intact to 82.4 percent at sigma 10, beating CLIP by 29.5 percentage points and DINOv2 by 28.1 percentage points with completely non-overlapping 95 percent confidence intervals. Look at the right panel: once tile borders are offset by half a patch, neither CLIP nor DINOv2 stays flat — both crash straight down alongside humans at 16 and 64 tiles.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-human">03 · Results — Main Finding</div>
+          <h1 class="slide-title">Severe blur breaks only ViTs (82.4% human); offset shuffling breaks everyone</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="banner-quote banner-human anim" data-d="2" style="padding:0.65rem 1rem;font-size:clamp(0.88rem, 1.12vw, 1.02rem);">
+            <strong>One-sentence takeaway:</strong> At <span class="mono">σ = 10 px</span> blur, humans outperform both ViTs by <strong>+28 to +30 pp</strong> (<span class="mono">82.4%</span> vs. <span class="mono">52.9–54.3%</span>); under <span class="mono">+7 px</span> offset shuffling, ViTs lose their reported invariance and collapse alongside humans to <strong>10–17%</strong>.
+          </div>
+
+          <div class="grid-2 anim" data-d="3">
+            <div class="chart-box">
+              <div class="chart-title">Panel A · Gaussian Blur (Matched 70 Human UIDs · 95% Bootstrap CIs)</div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-main-blur"></canvas>
+              </div>
+            </div>
+            <div class="chart-box">
+              <div class="chart-title">Panel B · Offset Tile Shuffling (+7 px Grid · 95% Bootstrap CIs)</div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-main-shuffle"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cite-line">Hover over any data point for exact accuracy and 2,000-resample 95% bootstrap confidence intervals. Models evaluated on the exact 70 drawings seen by all 21 human observers.</div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 13 — [03 RESULTS 2/6] FULL QUANTITATIVE TABLE & HYPOTHESIS VERDICT
+         =================================================================== -->
+    <section class="slide" data-section="03 Results" data-title="Full Quantitative Summary &amp; Hypothesis Verdict"
+      data-notes="Here are the exact numbers across all seven conditions for humans, matched 70-UID model evaluation, and full 1,000-image model evaluation. Two rows tell the whole story. First, at blur_high, humans stay at 82.38 percent — literally identical to blur_medium — dropping only 5.7 points from intact, while CLIP drops 45.7 points and DINOv2 drops 41.4 points. Second, at shuffle_medium and shuffle_high, all three systems converge within a few percentage points of each other, crashing to 10 to 17 percent. Both of our preregistered hypotheses from the proposal are decisively falsified in the opposite direction.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-human">03 · Results — Complete Benchmark Table &amp; Verdict</div>
+          <h1 class="slide-title">Both preregistered hypotheses are decisively falsified by the data</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="card-white anim" data-d="2" style="padding:0.75rem 0.95rem;flex:0 0 auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Condition</th>
+                  <th>Parameter</th>
+                  <th class="num" style="color:var(--c-human);">Humans (N=21, 1470)</th>
+                  <th class="num" style="color:var(--c-clip);">CLIP ViT-L/14 (70 UIDs)</th>
+                  <th class="num" style="color:var(--c-clip);">CLIP (N=1000)</th>
+                  <th class="num" style="color:var(--c-dino);">DINOv2 ViT-B/14 (70 UIDs)</th>
+                  <th class="num" style="color:var(--c-dino);">DINOv2 (N=1000)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono"><strong>intact</strong></td>
+                  <td>Baseline</td>
+                  <td class="num"><strong>88.10%</strong><span class="ci-sub">[83.8, 92.4]</span></td>
+                  <td class="num">98.57%<span class="ci-sub">[95.7, 100.0]</span></td>
+                  <td class="num">97.7%<span class="ci-sub">[96.7, 98.6]</span></td>
+                  <td class="num">95.71%<span class="ci-sub">[90.0, 100.0]</span></td>
+                  <td class="num">97.5%<span class="ci-sub">[96.5, 98.4]</span></td>
+                </tr>
+                <tr>
+                  <td class="mono"><strong>blur_low</strong></td>
+                  <td>σ = 2 px</td>
+                  <td class="num"><strong>89.05%</strong><span class="ci-sub">[84.8, 93.3]</span></td>
+                  <td class="num">92.86%<span class="ci-sub">[85.7, 98.6]</span></td>
+                  <td class="num">91.9%<span class="ci-sub">[90.1, 93.6]</span></td>
+                  <td class="num">97.14%<span class="ci-sub">[92.9, 100.0]</span></td>
+                  <td class="num">97.5%<span class="ci-sub">[96.5, 98.4]</span></td>
+                </tr>
+                <tr>
+                  <td class="mono"><strong>blur_medium</strong></td>
+                  <td>σ = 5 px</td>
+                  <td class="num"><strong>82.38%</strong><span class="ci-sub">[77.1, 87.1]</span></td>
+                  <td class="num">88.57%<span class="ci-sub">[80.0, 95.7]</span></td>
+                  <td class="num">84.5%<span class="ci-sub">[82.3, 86.8]</span></td>
+                  <td class="num">85.71%<span class="ci-sub">[77.1, 92.9]</span></td>
+                  <td class="num">76.5%<span class="ci-sub">[73.9, 79.1]</span></td>
+                </tr>
+                <tr class="row-highlight-blur">
+                  <td class="mono"><strong style="color:var(--c-human);">blur_high ★</strong></td>
+                  <td><strong>σ = 10 px</strong></td>
+                  <td class="num"><strong style="color:var(--c-human);font-size:0.92rem;">82.38%</strong><span class="ci-sub">[77.1, 87.6]</span></td>
+                  <td class="num"><strong>52.86%</strong><span class="ci-sub">[41.4, 64.3]</span></td>
+                  <td class="num">50.8%<span class="ci-sub">[47.6, 53.8]</span></td>
+                  <td class="num"><strong>54.29%</strong><span class="ci-sub">[42.9, 65.7]</span></td>
+                  <td class="num">58.2%<span class="ci-sub">[55.1, 61.1]</span></td>
+                </tr>
+                <tr>
+                  <td class="mono"><strong>shuffle_low</strong></td>
+                  <td>2×2 (4 tiles)</td>
+                  <td class="num"><strong>47.14%</strong><span class="ci-sub">[40.5, 53.8]</span></td>
+                  <td class="num">54.29%<span class="ci-sub">[42.9, 65.7]</span></td>
+                  <td class="num">63.5%<span class="ci-sub">[60.7, 66.5]</span></td>
+                  <td class="num">67.14%<span class="ci-sub">[55.7, 78.6]</span></td>
+                  <td class="num">76.8%<span class="ci-sub">[74.2, 79.5]</span></td>
+                </tr>
+                <tr>
+                  <td class="mono"><strong>shuffle_medium</strong></td>
+                  <td>4×4 (16 tiles)</td>
+                  <td class="num"><strong>22.38%</strong><span class="ci-sub">[16.7, 27.6]</span></td>
+                  <td class="num">21.43%<span class="ci-sub">[12.9, 31.4]</span></td>
+                  <td class="num">23.8%<span class="ci-sub">[21.2, 26.4]</span></td>
+                  <td class="num">15.71%<span class="ci-sub">[7.1, 24.3]</span></td>
+                  <td class="num">21.2%<span class="ci-sub">[18.7, 23.8]</span></td>
+                </tr>
+                <tr class="row-highlight-shuf">
+                  <td class="mono"><strong style="color:var(--c-plum);">shuffle_high ★</strong></td>
+                  <td><strong>8×8 (64 tiles)</strong></td>
+                  <td class="num"><strong style="color:var(--c-plum);">15.24%</strong><span class="ci-sub">[10.5, 20.5]</span></td>
+                  <td class="num"><strong>17.14%</strong><span class="ci-sub">[8.6, 25.7]</span></td>
+                  <td class="num">15.5%<span class="ci-sub">[13.2, 17.7]</span></td>
+                  <td class="num"><strong>10.00%</strong><span class="ci-sub">[4.3, 17.1]</span></td>
+                  <td class="num">10.4%<span class="ci-sub">[8.6, 12.3]</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid-2 grid-auto anim" data-d="3" style="margin-top:auto;">
+            <div class="card card-accent accent-human" style="padding:1.15rem 1.3rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="card-title" style="color:var(--c-human);font-size:1.02rem;">Verdict on H2 (Gaussian Blur)</span>
+                <span class="pill pill-human">FALSIFIED — Selective ViT Failure</span>
+              </div>
+              <p class="card-text" style="font-size:0.9rem;">Predicted similar decline for everyone. Observed a <strong>+29.5 pp human lead over CLIP</strong> and <strong>+28.1 pp over DINOv2</strong> at <span class="mono">σ=10 px</span> (non-overlapping 95% CIs by &gt;11 pp on 70 UIDs and &gt;23 pp vs. N=1000).</p>
+            </div>
+            <div class="card card-accent accent-plum" style="padding:1.15rem 1.3rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="card-title" style="color:var(--c-plum);font-size:1.02rem;">Verdict on H1 (Offset Tile Shuffling)</span>
+                <span class="pill pill-plum">FALSIFIED — Shared Collapse</span>
+              </div>
+              <p class="card-text" style="font-size:0.9rem;">Predicted ViTs would stay high while humans fell. Only at mild <strong>4 tiles</strong> does DINOv2 lead humans (<span class="mono">67.1% vs 47.1%</span>); by <strong>16 and 64 tiles</strong>, both ViTs crash right alongside humans to <span class="mono">10–22%</span>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 14 — [03 RESULTS 3/6] CONCRETE STIMULUS EXAMPLES
+         =================================================================== -->
+    <section class="slide" data-section="03 Results" data-title="Concrete Stimulus Examples: Divergence vs. Shared Collapse"
+      data-notes="Let us look directly at real stimuli from our experiment to see what these accuracy curves look like in practice. In column one, under heavy blur sigma 10, humans get 3 out of 3 right on both this airplane and this house in under half a second to 1.6 seconds — while CLIP calls them tree and clock, and DINOv2 calls them car and airplane. In column two, under mild 4-tile shuffling, we see the one regime where models edge out humans: both ViTs recognize the airplane and car from intact quadrant pieces, whereas humans misread the dislocated geometry as a cat or bicycle. Finally, in column three, at 64 offset tiles, everybody fails completely — notice that both CLIP and DINOv2 already collapse to predicting chair on both drawings.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-human">03 · Results — Real Stimulus Walkthrough</div>
+          <h1 class="slide-title">Three regimes illustrated by real test drawings and observer predictions</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-3">
+            <!-- Regime 1: Humans Win on blur_high -->
+            <div class="card-white anim" data-d="2" style="border-top:4px solid var(--c-human);padding:1.15rem 1.25rem;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:0.4rem;margin-bottom:0.45rem;">
+                  <span class="pill pill-human">Regime 1 · Blur (σ = 10 px)</span>
+                  <span class="mono" style="font-size:0.74rem;font-weight:700;color:var(--c-human);">82.4% vs 53–54%</span>
+                </div>
+                <div class="card-title" style="font-size:1.02rem;">Humans Win Easily; Both ViTs Fail</div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:0.9rem;">
+                <div style="display:flex;gap:0.85rem;align-items:center;padding:0.75rem;border-radius:10px;background:var(--surface);border:1px solid var(--line);">
+                  <img src="./stimuli_human/s0000_blur_high.png" alt="uid 0 blur high" class="stim-thumb" style="width:98px;height:98px;flex-shrink:0;" />
+                  <div style="font-size:0.8rem;line-height:1.48;">
+                    <div><strong>True: <span class="mono">airplane</span></strong> <span class="mono" style="color:var(--mute);">(uid 0)</span></div>
+                    <div style="color:var(--c-human);font-weight:700;">Humans: 3/3 airplane ✓</div>
+                    <div style="color:var(--mute);">CLIP: <span class="mono">tree ✗</span><br />DINOv2: <span class="mono">car ✗</span></div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:0.85rem;align-items:center;padding:0.75rem;border-radius:10px;background:var(--surface);border:1px solid var(--line);">
+                  <img src="./stimuli_human/s0701_blur_high.png" alt="uid 701 blur high" class="stim-thumb" style="width:98px;height:98px;flex-shrink:0;" />
+                  <div style="font-size:0.8rem;line-height:1.48;">
+                    <div><strong>True: <span class="mono">house</span></strong> <span class="mono" style="color:var(--mute);">(uid 701)</span></div>
+                    <div style="color:var(--c-human);font-weight:700;">Humans: 3/3 house ✓ (466 ms)</div>
+                    <div style="color:var(--mute);">CLIP: <span class="mono">clock ✗</span><br />DINOv2: <span class="mono">airplane ✗</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding:0.7rem 0.9rem;">
+                <p class="card-text" style="font-size:0.82rem;">Coarse triangular roof &amp; winged silhouette stay readable to human holistic vision despite erased stroke edges.</p>
+              </div>
+            </div>
+
+            <!-- Regime 2: Models Edge Out Humans on shuffle_low -->
+            <div class="card-white anim" data-d="3" style="border-top:4px solid var(--c-dino);padding:1.15rem 1.25rem;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:0.4rem;margin-bottom:0.45rem;">
+                  <span class="pill pill-dino">Regime 2 · 4-Tile Shuffle</span>
+                  <span class="mono" style="font-size:0.74rem;font-weight:700;color:var(--c-dino);">DINOv2 67% vs 47%</span>
+                </div>
+                <div class="card-title" style="font-size:1.02rem;">ViTs Edge Out Humans on Large Parts</div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:0.9rem;">
+                <div style="display:flex;gap:0.85rem;align-items:center;padding:0.75rem;border-radius:10px;background:var(--surface);border:1px solid var(--line);">
+                  <img src="./stimuli_human/s0003_shuffle_low.png" alt="uid 3 shuffle low" class="stim-thumb" style="width:98px;height:98px;flex-shrink:0;" />
+                  <div style="font-size:0.8rem;line-height:1.48;">
+                    <div><strong>True: <span class="mono">airplane</span></strong> <span class="mono" style="color:var(--mute);">(uid 3)</span></div>
+                    <div style="color:var(--c-dino);font-weight:700;">CLIP ✓ · DINOv2 ✓</div>
+                    <div style="color:var(--mute);">Humans: <span class="mono">0/3</span><br />(<span class="mono">cat, cat, cat ✗</span>)</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:0.85rem;align-items:center;padding:0.75rem;border-radius:10px;background:var(--surface);border:1px solid var(--line);">
+                  <img src="./stimuli_human/s0200_shuffle_low.png" alt="uid 200 shuffle low" class="stim-thumb" style="width:98px;height:98px;flex-shrink:0;" />
+                  <div style="font-size:0.8rem;line-height:1.48;">
+                    <div><strong>True: <span class="mono">car</span></strong> <span class="mono" style="color:var(--mute);">(uid 200)</span></div>
+                    <div style="color:var(--c-dino);font-weight:700;">CLIP ✓ · DINOv2 ✓</div>
+                    <div style="color:var(--mute);">Humans: <span class="mono">0/3</span><br />(<span class="mono">bicycle ×3 ✗</span>)</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding:0.7rem 0.9rem;">
+                <p class="card-text" style="font-size:0.82rem;">At 112 px tiles, large local parts (wheels, wings) survive inside patches — letting DINOv2 (67.1%) exceed humans (47.1%).</p>
+              </div>
+            </div>
+
+            <!-- Regime 3: Joint Collapse on shuffle_high -->
+            <div class="card-white anim" data-d="4" style="border-top:4px solid var(--c-plum);padding:1.15rem 1.25rem;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:0.4rem;margin-bottom:0.45rem;">
+                  <span class="pill pill-plum">Regime 3 · 64-Tile Shuffle</span>
+                  <span class="mono" style="font-size:0.74rem;font-weight:700;color:var(--c-plum);">All 10–17%</span>
+                </div>
+                <div class="card-title" style="font-size:1.02rem;">Shared Collapse Across All Observers</div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:0.9rem;">
+                <div style="display:flex;gap:0.85rem;align-items:center;padding:0.75rem;border-radius:10px;background:var(--surface);border:1px solid var(--line);">
+                  <img src="./stimuli_human/s0002_shuffle_high.png" alt="uid 2 shuffle high" class="stim-thumb" style="width:98px;height:98px;flex-shrink:0;" />
+                  <div style="font-size:0.8rem;line-height:1.48;">
+                    <div><strong>True: <span class="mono">airplane</span></strong> <span class="mono" style="color:var(--mute);">(uid 2)</span></div>
+                    <div style="color:var(--c-plum);font-weight:700;">Humans: 0/3 (scattered)</div>
+                    <div style="color:var(--mute);">CLIP: <span class="mono">chair ✗</span><br />DINOv2: <span class="mono">chair ✗</span></div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:0.85rem;align-items:center;padding:0.75rem;border-radius:10px;background:var(--surface);border:1px solid var(--line);">
+                  <img src="./stimuli_human/s0100_shuffle_high.png" alt="uid 100 shuffle high" class="stim-thumb" style="width:98px;height:98px;flex-shrink:0;" />
+                  <div style="font-size:0.8rem;line-height:1.48;">
+                    <div><strong>True: <span class="mono">bicycle</span></strong> <span class="mono" style="color:var(--mute);">(uid 100)</span></div>
+                    <div style="color:var(--c-plum);font-weight:700;">Humans: 0/3 (scattered)</div>
+                    <div style="color:var(--mute);">CLIP: <span class="mono">chair ✗</span><br />DINOv2: <span class="mono">chair ✗</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding:0.7rem 0.9rem;">
+                <p class="card-text" style="font-size:0.82rem;">At 28 px offset tiles, stroke fragments lose all global configuration; humans scatter guesses while both ViTs default to <span class="mono">chair</span>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 15 — [03 RESULTS 4/6] PER-CATEGORY SENSITIVITY UNDER BLUR_HIGH
+         =================================================================== -->
+    <section class="slide" data-section="03 Results" data-title="Per-Category Sensitivity: Where Models Break Under Blur"
+      data-notes="Digging one level deeper into our severe blur condition at sigma equals 10 pixels reveals an equally striking pattern across the 10 individual categories. Humans stay consistently high across nearly every object class — hitting 100 percent on houses and 90.5 percent on bicycles, chairs, fish, and umbrellas. In sharp contrast, the two Vision Transformers exhibit extreme category brittleness and collapse in completely different places: CLIP plunges to 14.3 percent on airplanes, cats, chairs, and houses while hitting 100 percent on clocks, whereas DINOv2 drops to literally 0 percent on fish while scoring 100 percent on cars.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-human">03 · Results — Category-Level Breakdown</div>
+          <h1 class="slide-title">Under severe blur (σ = 10 px), humans stay uniform while ViTs collapse</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="chart-box anim" data-d="2" style="flex:1.4 1 auto;">
+            <div class="chart-title">Per-Category 10-Way Accuracy at blur_high (<span class="keep-case">σ = 10 px</span>) — Humans vs. CLIP vs. DINOv2 (70 UIDs)</div>
+            <div class="chart-canvas-wrap">
+              <canvas id="chart-cat-blur"></canvas>
+            </div>
+          </div>
+
+          <div class="grid-3 anim" data-d="3" style="flex:0 0 auto;">
+            <div class="card card-accent accent-human" style="padding:0.75rem 0.95rem;">
+              <div class="card-title" style="font-size:0.84rem;color:var(--c-human);">Humans: Uniform Shape Resilience</div>
+              <div class="card-text" style="font-size:0.77rem;"><strong>100%</strong> on <span class="mono">house</span>; <strong>90.5%</strong> on <span class="mono">bicycle, chair, fish, umbrella</span>; never below <strong>57.1%</strong> (<span class="mono">tree</span>, confused with <span class="mono">umbrella</span>).</div>
+            </div>
+            <div class="card card-accent accent-clip" style="padding:0.75rem 0.95rem;">
+              <div class="card-title" style="font-size:0.84rem;color:var(--c-clip);">CLIP: Catastrophic Class Drops</div>
+              <div class="card-text" style="font-size:0.77rem;">Plunges to <strong>14.3%</strong> on <span class="mono">airplane, cat, chair, house</span> while scoring <strong>100%</strong> on <span class="mono">clock</span> (driven by strong blur-to-<span class="mono">clock/tree</span> prediction bias).</div>
+            </div>
+            <div class="card card-accent accent-dino" style="padding:0.75rem 0.95rem;">
+              <div class="card-title" style="font-size:0.84rem;color:var(--c-dino);">DINOv2: Asymmetric Collapse</div>
+              <div class="card-text" style="font-size:0.77rem;">Scores <strong>0.0%</strong> on <span class="mono">fish</span> and <strong>28.6%</strong> on <span class="mono">cat/tree</span>, while holding <strong>100%</strong> on <span class="mono">car</span> and <strong>85.7%</strong> on <span class="mono">airplane/chair/house</span>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 16 — [03 RESULTS 5/6] RULING OUT BORING EXPLANATIONS
+         =================================================================== -->
+    <section class="slide" data-section="03 Results" data-title="Ruling Out Boring Explanations: N=1000 &amp; 3-Group Replication"
+      data-notes="Could our main finding simply be a boring artifact of our 70-image human subset or a few noisy volunteers? We ran two direct checks to rule both out. On the left, comparing our matched 70-image subset against the full 1,000-image test set shows tight agreement across every condition — in fact, on the full 1,000 images, CLIP drops even slightly lower at blur_high to 50.8 percent. On the right, plotting our three independent groups of 7 participants separately shows remarkable inter-group replication: Group 1 scores 80.0 percent on blur_high, Group 2 scores 85.7 percent, and Group 3 scores 81.4 percent — and all three collapse together on 16 and 64 tiles.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-human">03 · Results — Robustness &amp; Replication Checks</div>
+          <h1 class="slide-title">No sampling artifacts: 70-UID curves match N=1000 &amp; replicate across 3 groups</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2 anim" data-d="2">
+            <div class="chart-box">
+              <div class="chart-title">Check A · Matched 70 Human UIDs vs. Full N=1000 Test Set</div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-ctrl-subset"></canvas>
+              </div>
+            </div>
+            <div class="chart-box">
+              <div class="chart-title">Check B · Independent Replication Across 3 Human Groups (7 People Each)</div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-ctrl-groups"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2 anim" data-d="3" style="flex:0 0 auto;">
+            <div class="card" style="padding:0.75rem 1rem;">
+              <div class="card-title" style="font-size:0.84rem;">No Subset Cherry-Picking</div>
+              <div class="card-text" style="font-size:0.78rem;">Median bootstrap CI half-width on <span class="mono">N=1000</span> is just <strong>±2.4 pp</strong> (max 3.1 pp). The 70-UID subset reproduces the exact blur drop (<span class="mono">52.9% vs 50.8%</span> CLIP; <span class="mono">54.3% vs 58.2%</span> DINOv2) and 64-tile collapse.</div>
+            </div>
+            <div class="card" style="padding:0.75rem 1rem;">
+              <div class="card-title" style="font-size:0.84rem;">Consistent Across All 3 Independent Human Cohorts</div>
+              <div class="card-text" style="font-size:0.78rem;">Every group of 7 independently reproduces high <span class="mono">blur_high</span> accuracy (<strong>G1: 80.0% · G2: 85.7% · G3: 81.4%</strong>) and sharp <span class="mono">shuffle_high</span> collapse (<strong>G1: 15.7% · G2: 8.6% · G3: 21.4%</strong>).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 17 — [03 RESULTS 6/6] HUMAN REACTION TIMES
+         =================================================================== -->
+    <section class="slide" data-section="03 Results" data-title="Cognitive Effort Signature: Human Reaction Times"
+      data-notes="Our reaction time measurements across all 1,470 human trials add independent behavioral evidence for two distinct perceptual regimes. On intact drawings, median response time is 765 milliseconds. At mild blur sigma 2, it barely moves to 798 milliseconds. Even at heavy blur sigma 10, median latency rises by only 178 milliseconds to 943 milliseconds — indicating fast, holistic gist recognition from coarse silhouette cues. By contrast, tile shuffling triggers a dramatic latency surge: 1,410 milliseconds on 4 tiles and 1,883 milliseconds on 16 tiles — nearly two and a half times slower — as participants effortfully attempt mental jigsaw reassembly before falling to chance.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-human">03 · Results — Behavioral Latency Diagnostics</div>
+          <h1 class="slide-title">Reaction times reveal fast holistic blur recognition vs. 2.46× slower jigsaw search</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2-asym">
+            <div class="chart-box anim" data-d="2">
+              <div class="chart-title">Human Response Latency Across 7 Conditions (Median ms ± IQR · N = 1,470 Trials)</div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-rt"></canvas>
+              </div>
+            </div>
+
+            <div class="col-stack" style="justify-content:space-between;gap:1.1rem;">
+              <div class="kpi-box anim" data-d="2" style="border-left:5px solid var(--ink);padding:0.95rem 1.15rem;">
+                <span class="kpi-lbl">Intact Baseline Median Latency</span>
+                <span class="kpi-val" style="color:var(--ink);">765 ms</span>
+                <span class="kpi-sub">IQR <span class="mono">[520, 1397] ms</span> · <span class="mono">88.1%</span> accuracy</span>
+              </div>
+
+              <div class="kpi-box anim" data-d="3" style="border-left:5px solid var(--c-clip);padding:0.95rem 1.15rem;">
+                <span class="kpi-lbl">Severe Blur Latency Cost (<span class="keep-case">σ = 10 px</span>)</span>
+                <span class="kpi-val" style="color:var(--c-clip);">+178 ms</span>
+                <span class="kpi-sub"><span class="mono">765 ms → 943 ms</span> while holding <strong>82.4%</strong> accuracy</span>
+              </div>
+
+              <div class="kpi-box anim" data-d="4" style="border-left:5px solid var(--c-plum);padding:0.95rem 1.15rem;">
+                <span class="kpi-lbl">Peak Shuffle Latency (16 Tiles)</span>
+                <span class="kpi-val" style="color:var(--c-plum);">1,883 ms (2.46×)</span>
+                <span class="kpi-sub"><span class="mono">+1,118 ms</span> slow cognitive reassembly search</span>
+              </div>
+
+              <div class="card anim" data-d="5" style="padding:1rem 1.15rem;">
+                <div class="card-title">Why RT Drops Slightly at 64 Tiles</div>
+                <p class="card-text">Median RT peaks at <span class="mono">shuffle_medium</span> (<strong>1,883 ms</strong>) where fragments still tempt effortful mental piecing, then eases to <strong>1,630 ms</strong> at <span class="mono">shuffle_high</span> as observers recognize the image is unreadable and guess faster.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 18 — [04 WHERE IT FAILS 1/3] FAILURE MODE 1: CLASS COLLAPSE
+         =================================================================== -->
+    <section class="slide" data-section="04 Where It Fails" data-title="Failure Mode 1: Degenerate ViT Class-Collapse"
+      data-notes="Now let us be completely honest about where our models and setup fail. Our single most striking diagnostic finding is severe degenerate class-collapse inside the Vision Transformers. Under 64-tile shuffling on the 1,000-image test set, DINOv2 predicts the single class chair on 970 out of 1,000 images — 97 percent! CLIP predicts chair on 658 out of 1,000 images — 65.8 percent! So their 10 to 15 percent accuracy is not uniform chance guessing; the linear probes collapse onto whichever class direction happens to align with high-frequency grid-seam texture. Even under heavy blur, CLIP collapses 61.5 percent of predictions onto clock and tree, and DINOv2 collapses 55.3 percent onto airplane and car, while humans stay well-calibrated across all 10 classes.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-amber">04 · Where It Fails — Model Failure Analysis</div>
+          <h1 class="slide-title">Failure Mode 1: Under damage, ViTs suffer degenerate class-collapse</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2 anim" data-d="2">
+            <div class="chart-box">
+              <div class="chart-title">shuffle_high (64 Tiles): Prediction Share (%) — DINOv2 97.0% &amp; CLIP 65.8% "Chair"!</div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-collapse-shuf"></canvas>
+              </div>
+            </div>
+            <div class="chart-box">
+              <div class="chart-title">blur_high (<span class="keep-case">σ = 10 px</span>): Prediction Share (%) — Models Collapse, Humans Stay Calibrated</div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-collapse-blur"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-accent accent-amber anim" data-d="3" style="flex:0 0 auto;padding:0.75rem 1rem;">
+            <div class="card-text">
+              <strong>Diagnostic Explanation:</strong> Dense 8×8 offset tile seams create orthogonal grid-like stroke segments that project strongly onto the intact <span class="mono">chair</span> prototype vector (driving DINOv2 to <span class="mono">100%</span> recall on chairs and <span class="mono">0%</span> on all other 9 classes = <span class="mono">10.0%</span> accuracy!). Under <span class="mono">σ=10 px</span> blur, soft dark blobs trigger CLIP's <span class="mono">clock</span> (33.2%) &amp; <span class="mono">tree</span> (28.3%) bias, whereas human predictions stay near the true 10% uniform prior (6.7–12.4%).
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 19 — [04 WHERE IT FAILS 2/3] INK SPARSITY & LABEL NOISE
+         =================================================================== -->
+    <section class="slide" data-section="04 Where It Fails" data-title="Failure Modes 2 &amp; 3: Ink-Tile Sparsity &amp; Label Noise"
+      data-notes="We also uncovered two concrete dataset and stimulus failure modes that we explicitly anticipated in our proposal. On the left, at 64 tiles only 44.8 percent of tiles contain any ink on average. Splitting the 1,000 test drawings at the median ink-tile fraction shows that drawings with MORE ink-filled tiles actually drive both ViTs below random chance — 9.8 percent for CLIP and 5.6 percent for DINOv2 — because dense ink scatters fragmented edges across every patch and intensifies the chair class-collapse. On the right, unverified Quick, Draw! label noise explains why human intact accuracy caps at 88.1 percent rather than 98 percent: look at uid 303, whose prompted label was cat, yet 3 out of 3 humans, CLIP, and DINOv2 all unanimously saw an airplane or bicycle — and uid 805 where tree sketches closely mimic umbrellas.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-amber">04 · Where It Fails — Stimulus &amp; Dataset Failure Cases</div>
+          <h1 class="slide-title">Failure Modes 2 &amp; 3: Ink-tile fragmentation below chance &amp; Quick, Draw! label noise</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2">
+            <!-- Left: Ink-Tile Fraction Split Chart -->
+            <div class="col-stack">
+              <div class="chart-box anim" data-d="2">
+                <div class="chart-title">Failure Mode 2 · shuffle_high Split by Median Ink-Tile Fraction (0.438)</div>
+                <div class="chart-canvas-wrap">
+                  <canvas id="chart-ink-split"></canvas>
+                </div>
+              </div>
+              <div class="card anim" data-d="3" style="flex:0 0 auto;padding:0.75rem 0.95rem;">
+                <div class="card-text" style="font-size:0.78rem;">
+                  Mean inked tiles drop from <span class="mono">98.2%</span> (4 tiles) → <span class="mono">70.6%</span> (16 tiles) → <strong><span class="mono">44.8%</span></strong> (64 tiles). Dense ink scatters more broken stroke fragments across patches, pushing ViTs <strong>below 10% chance</strong> (CLIP <span class="mono">9.8%</span>, DINOv2 <span class="mono">5.6%</span>).
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Unverified Quick, Draw! Label Noise Examples -->
+            <div class="card-white anim" data-d="3" style="padding:1.15rem 1.3rem;justify-content:space-between;gap:0.85rem;">
+              <div>
+                <span class="pill pill-amber" style="margin-bottom:0.4rem;">Failure Mode 3 · Dataset Label Noise</span>
+                <div class="card-title" style="font-size:1.02rem;">Why Human Intact Ceiling Is 88.1% (Not 99%)</div>
+                <p class="card-text" style="margin-top:0.25rem;">Because <em>Quick, Draw!</em> comes from a 20-second game without human verification (and we intentionally kept <span class="mono">recognized=False</span> drawings), ambiguous sketches cap human intact accuracy:</p>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:0.85rem;">
+                <div style="display:flex;gap:0.95rem;align-items:center;padding:0.75rem;border-radius:10px;background:var(--c-amber-bg);border:1px solid var(--c-amber-bd);">
+                  <img src="./stimuli_human/s0303_intact.png" alt="uid 303 intact labeled cat" class="stim-thumb" style="width:104px;height:104px;flex-shrink:0;" />
+                  <div style="font-size:0.82rem;line-height:1.45;">
+                    <div><strong>Prompted Label: <span class="mono" style="color:var(--c-human);">cat</span></strong> <span class="mono" style="color:var(--mute);">(uid 303 · intact)</span></div>
+                    <div><strong>Humans (0/3):</strong> <span class="mono">airplane, airplane, bicycle</span></div>
+                    <div><strong>CLIP &amp; DINOv2:</strong> both predict <span class="mono">airplane</span></div>
+                    <div style="color:var(--c-amber);font-weight:700;margin-top:0.15rem;">Everyone agrees it is not a recognizable cat!</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:0.95rem;align-items:center;padding:0.75rem;border-radius:10px;background:var(--surface);border:1px solid var(--line);">
+                  <img src="./stimuli_human/s0805_intact.png" alt="uid 805 intact labeled tree" class="stim-thumb" style="width:104px;height:104px;flex-shrink:0;" />
+                  <div style="font-size:0.82rem;line-height:1.45;">
+                    <div><strong>Prompted Label: <span class="mono">tree</span></strong> <span class="mono" style="color:var(--mute);">(uid 805 · intact)</span></div>
+                    <div><strong>Humans (1/3):</strong> <span class="mono">umbrella, tree, umbrella</span></div>
+                    <div><strong>Top intact confusion:</strong> <span class="mono">tree → umbrella</span> (5 errors), capping human intact <span class="mono">tree</span> acc at <strong>66.7%</strong>.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card card-accent accent-human" style="padding:0.7rem 0.95rem;">
+                <div class="card-text" style="font-size:0.8rem;">
+                  <strong>Why this strengthens our result:</strong> Despite ~10 pp of raw dataset noise lowering the human intact baseline to <strong>88.1%</strong>, humans still beat both ViTs by <strong>+28–30 pp</strong> under <span class="mono">σ=10 px</span> blur!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 20 — [04 WHERE IT FAILS 3/3] WHAT OUR SETUP CANNOT TELL US
+         =================================================================== -->
+    <section class="slide" data-section="04 Where It Fails" data-title="Honest Boundaries: What Our Setup Cannot Tell Us"
+      data-notes="Equally important to showing where models fail is being clear about what our experimental setup cannot tell us. First, we have not yet evaluated a convolutional baseline like ResNet or an arrangement-blind model like BagNet, so we cannot claim this blur-vs-shuffle dissociation is unique to Vision Transformers. Second, because our linear probes are trained strictly on intact sketches, we measure zero-shot representation fragility rather than whether ViTs could recover under blur-augmented training. Third, binary grayscale line drawings with a fixed 1.5-second exposure leave out color, natural texture, and unlimited-time cognitive reasoning. Finally, having three human observers per image-condition pair gives tight condition-level error bars, but not enough statistical power for per-image Cohen's kappa error consistency.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-amber">04 · Where It Fails — Scope &amp; Methodological Limits</div>
+          <h1 class="slide-title">What our experimental setup can — and cannot — tell us</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2x2">
+            <div class="card card-accent accent-clip anim" data-d="2" style="padding:1.4rem 1.55rem;gap:0.65rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="pill pill-clip">Scope Limit 01</span>
+                <span class="mono" style="font-size:0.74rem;color:var(--mute);">Model Diversity</span>
+              </div>
+              <div class="card-title" style="font-size:1.08rem;color:var(--c-clip);">Not Yet Isolated as ViT-Exclusive (No CNN / BagNet Control)</div>
+              <p class="card-text" style="font-size:0.95rem;line-height:1.54;">We benchmarked two patch-14 ViTs (<span class="mono">CLIP ViT-L/14</span> &amp; <span class="mono">DINOv2 ViT-B/14</span>) without a CNN (<span class="mono">ResNet-50</span>) or local-patch model (<span class="mono">BagNet-33</span>) on the same 7 conditions. We cannot yet separate ViT-specific patch mechanics from general deep-network blur sensitivity.</p>
+              <div class="card-meta"><span>Boundary</span><strong>Applies to frozen ViT/14 encoders</strong></div>
+            </div>
+
+            <div class="card card-accent accent-dino anim" data-d="3" style="padding:1.4rem 1.55rem;gap:0.65rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="pill pill-dino">Scope Limit 02</span>
+                <span class="mono" style="font-size:0.74rem;color:var(--mute);">Readout Protocol</span>
+              </div>
+              <div class="card-title" style="font-size:1.08rem;color:var(--c-dino);">Zero-Shot Frozen Probes vs. Adaptation Capacity</div>
+              <p class="card-text" style="font-size:0.95rem;line-height:1.54;">Training probes strictly on intact drawings cleanly tests <strong>out-of-distribution representation invariance</strong>, but cannot tell us whether ViTs already encode usable low-frequency silhouette features that a blur-augmented probe or fine-tuned backbone could unlock.</p>
+              <div class="card-meta"><span>Boundary</span><strong>Tests zero-shot linear separability</strong></div>
+            </div>
+
+            <div class="card card-accent accent-plum anim" data-d="4" style="padding:1.4rem 1.55rem;gap:0.65rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="pill pill-plum">Scope Limit 03</span>
+                <span class="mono" style="font-size:0.74rem;color:var(--mute);">Stimulus &amp; Timing</span>
+              </div>
+              <div class="card-title" style="font-size:1.08rem;color:var(--c-plum);">Domain Scope: Textureless Sketches &amp; Fixed 1.5 s Timing</div>
+              <p class="card-text" style="font-size:0.95rem;line-height:1.54;">Results apply specifically to binary <span class="mono">224×224</span> line drawings under brief masked presentation (<span class="mono">1.5 s + 0.4 s</span> mask). They do not generalize directly to natural cluttered photographs (where surface texture aids models) or self-paced human puzzle solving.</p>
+              <div class="card-meta"><span>Boundary</span><strong>Pure contour domain · brief masked vision</strong></div>
+            </div>
+
+            <div class="card card-accent accent-amber anim" data-d="5" style="padding:1.4rem 1.55rem;gap:0.65rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="pill pill-amber">Scope Limit 04</span>
+                <span class="mono" style="font-size:0.74rem;color:var(--mute);">Statistical Granularity</span>
+              </div>
+              <div class="card-title" style="font-size:1.08rem;color:var(--c-amber);">Condition-Level Power vs. Image-Level Error Consistency (κ)</div>
+              <p class="card-text" style="font-size:0.95rem;line-height:1.54;">With <span class="mono">21 = 3 × 7</span> observers, every <span class="mono">(uid, condition)</span> pair has <strong>3 human judgments</strong> — yielding tight condition-level 95% CIs (<span class="mono">≈ ±5 pp</span>), but insufficient per-image repeatability to compute high-power image-by-image Cohen's <span class="mono">κ</span> error consistency.</p>
+              <div class="card-meta"><span>Boundary</span><strong>High power per condition; 3 reps / image</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 21 — [05 WHAT IT MEANS 1/2] FOR MODELS & FOR PEOPLE
+         =================================================================== -->
+    <section class="slide" data-section="05 What It Means" data-title="What It Means: How Models See vs. How People See"
+      data-notes="So what do these results mean for how machines see and how people see? For vision models, our data challenge the popular claim that Vision Transformers are inherently permutation-invariant bags of patches: that invariance is largely an artifact of shuffling along patch borders. Shift the grid by just 7 pixels and both CLIP and DINOv2 collapse — and worse, they collapse degenerately onto a single default class. At the same time, their sharp drop under sigma-10 blur reveals over-reliance on high-frequency local stroke edges. For human vision, the takeaway is the exact complement: human object recognition is anchored in fast, coarse low-spatial-frequency silhouettes — resilient even when fine contours are washed out — yet critically dependent on global spatial continuity.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-dino">05 · What It Means — Scientific Implications</div>
+          <h1 class="slide-title">Two fundamentally different visual strategies exposed on identical sketches</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2">
+            <!-- Column 1: For Vision Models -->
+            <div class="card-white anim" data-d="2" style="border-top:5px solid var(--c-clip);padding:1.4rem 1.6rem;justify-content:space-between;gap:1.1rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:0.65rem;border-bottom:1px solid var(--line);">
+                <span class="card-title" style="font-size:1.18rem;color:var(--c-clip);">For How Vision Models See</span>
+                <span class="pill pill-clip">CLIP · DINOv2</span>
+              </div>
+
+              <ul class="clean-list" style="gap:1.05rem;">
+                <li style="font-size:0.95rem;line-height:1.52;"><strong>"Patch-order invariance" is fragile to boundary alignment:</strong> Prior reports of ViT scrambling robustness rely on <span class="mono">0 px</span> patch-aligned cuts. A <span class="mono">+7 px</span> half-patch shift breaks local token structure and causes full collapse by 16–64 tiles.</li>
+                <li style="font-size:0.95rem;line-height:1.52;"><strong>High-frequency edge dependence:</strong> Both language-supervised (CLIP) and self-supervised (DINOv2) backbones lose <span class="mono">40–47 pp</span> when sharp stroke edges are smoothed at <span class="mono">σ=10 px</span>.</li>
+                <li style="font-size:0.95rem;line-height:1.52;"><strong>Uncalibrated OOD failure modes:</strong> Rather than expressing uncertainty, frozen ViT probes suffer catastrophic prototype attraction (<span class="mono">97% chair</span> in DINOv2; <span class="mono">65.8% chair</span> in CLIP).</li>
+                <li style="font-size:0.95rem;line-height:1.52;"><strong>Pretraining still matters at intermediate damage:</strong> DINOv2's local-crop objective preserves <span class="mono">97.5%</span> at mild blur and <span class="mono">76.8%</span> at 4-tile shuffle, outperforming CLIP under mild spatial disruption.</li>
+              </ul>
+
+              <div class="card card-accent accent-clip" style="padding:0.75rem 1rem;">
+                <div class="card-text" style="font-size:0.86rem;">
+                  <strong>Core Machine Signature:</strong> High-frequency patch-token dependence + brittle OOD calibration.
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 2: For Human Vision -->
+            <div class="card-white anim" data-d="3" style="border-top:5px solid var(--c-human);padding:1.4rem 1.6rem;justify-content:space-between;gap:1.1rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:0.65rem;border-bottom:1px solid var(--line);">
+                <span class="card-title" style="font-size:1.18rem;color:var(--c-human);">For How People See</span>
+                <span class="pill pill-human">21 Human Observers</span>
+              </div>
+
+              <ul class="clean-list list-human" style="gap:1.05rem;">
+                <li style="font-size:0.95rem;line-height:1.52;"><strong>Coarse-to-fine holistic silhouette dominance:</strong> Even when fine stroke contours are completely blurred out (<span class="mono">σ=10 px</span>), humans recover global object shape effortlessly (<strong>82.4%</strong> accuracy, only <span class="mono">+178 ms</span> latency).</li>
+                <li style="font-size:0.95rem;line-height:1.52;"><strong>Global spatial arrangement is non-negotiable:</strong> Breaking configural continuity immediately halves human accuracy at just 4 tiles (<span class="mono">47.1%</span>) and triggers slow, serial mental reassembly (<span class="mono">1,883 ms</span> at 16 tiles).</li>
+                <li style="font-size:0.95rem;line-height:1.52;"><strong>Calibrated graceful degradation:</strong> Even when accuracy approaches chance at 64 tiles, human responses stay distributed across plausible categories rather than collapsing onto one biased label.</li>
+                <li style="font-size:0.95rem;line-height:1.52;"><strong>Benchmark takeaway:</strong> Matching human visual robustness requires combining <em>low-frequency global shape integration</em> with <em>spatial-configuration sensitivity</em>.</li>
+              </ul>
+
+              <div class="card card-accent accent-human" style="padding:0.75rem 1rem;">
+                <div class="card-text" style="font-size:0.86rem;">
+                  <strong>Core Biological Signature:</strong> Fast low-frequency holistic shape integration + calibrated uncertainty.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 22 — [05 WHAT IT MEANS 2/2] WHAT WE WOULD DO WITH ANOTHER WEEK
+         =================================================================== -->
+    <section class="slide" data-section="05 What It Means" data-title="With One More Week: Concrete Next Experiments"
+      data-notes="If we had one more week on this project, four targeted experiments follow directly from what we just observed. First, add a controlled 0-pixel patch-aligned versus +7-pixel offset shuffling ablation to measure the exact accuracy drop caused purely by splitting ViT patches. Second, benchmark ResNet-50 and BagNet-33 on the identical 70 human UIDs to separate ViT-specific behavior from CNNs. Third, test blur-augmented linear probing and temperature calibration to see whether low-frequency shape information already exists inside frozen ViT layers or is genuinely absent. Fourth, collect a shared 70-image subset across all observers to compute image-by-image error consistency kappa and full confusion matrices.">
+      <div class="stage">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-dino">05 · What It Means — Concrete Future Roadmap</div>
+          <h1 class="slide-title">What we would do with one more week</h1>
+        </div>
+
+        <div class="body-area">
+          <div class="grid-2x2">
+            <div class="card-white card-accent accent-plum anim" data-d="2" style="padding:1.4rem 1.55rem;gap:0.65rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="card-title" style="font-size:1.06rem;color:var(--c-plum);">1. Direct 0 px vs. +7 px Shuffling Ablation</span>
+                <span class="pill pill-plum">High Priority</span>
+              </div>
+              <p class="card-text" style="font-size:0.94rem;line-height:1.52;">Run the exact same 1,000 test drawings under both <strong>patch-aligned (<span class="mono">0 px</span>)</strong> and <strong>half-patch offset (<span class="mono">+7 px</span>)</strong> grids across 4, 16, and 64 tiles to quantify exactly how much of ViTs' reported permutation invariance vanishes when patch interiors are cut.</p>
+              <div class="card-meta"><span>Directly tests</span><strong class="mono">Patch-boundary artifact hypothesis</strong></div>
+            </div>
+
+            <div class="card-white card-accent accent-clip anim" data-d="3" style="padding:1.4rem 1.55rem;gap:0.65rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="card-title" style="font-size:1.06rem;color:var(--c-clip);">2. Add CNN &amp; BagNet Baselines</span>
+                <span class="pill pill-clip">Architecture Control</span>
+              </div>
+              <p class="card-text" style="font-size:0.94rem;line-height:1.52;">Evaluate <strong>ResNet-50</strong> (inductive local convolutions) and <strong>BagNet-33</strong> (strictly local receptive field, arrangement-blind) on the exact same 7 conditions and 70 human UIDs to map the full spectrum from local-feature models to global-shape vision.</p>
+              <div class="card-meta"><span>Directly tests</span><strong class="mono">ViT vs. CNN inductive bias</strong></div>
+            </div>
+
+            <div class="card-white card-accent accent-dino anim" data-d="4" style="padding:1.4rem 1.55rem;gap:0.65rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="card-title" style="font-size:1.06rem;color:var(--c-dino);">3. Blur-Augmented Probing &amp; Layer Analysis</span>
+                <span class="pill pill-dino">Representation Test</span>
+              </div>
+              <p class="card-text" style="font-size:0.94rem;line-height:1.52;">Train linear probes on <strong>blur-augmented sketches</strong> and probe intermediate ViT blocks (layers 6, 12, 18, 24) to test whether coarse low-frequency shape is lost early or merely ignored by an intact-trained linear readout — and whether this eliminates the <span class="mono">chair/clock</span> collapse.</p>
+              <div class="card-meta"><span>Directly tests</span><strong class="mono">Feature absence vs. readout shift</strong></div>
+            </div>
+
+            <div class="card-white card-accent accent-human anim" data-d="5" style="padding:1.4rem 1.55rem;gap:0.65rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="card-title" style="font-size:1.06rem;color:var(--c-human);">4. Image-Level Error Consistency (κ) &amp; Confusions</span>
+                <span class="pill pill-human">Psychophysics Extension</span>
+              </div>
+              <p class="card-text" style="font-size:0.94rem;line-height:1.52;">Use our dynamic slot allocator (<span class="mono">&gt;21</span> slots already built into the Admin portal) to collect 10+ observers per drawing on a shared subset, unlocking Cohen's <span class="mono">κ</span> error consistency and full 10×10 human vs. ViT confusion matrices.</p>
+              <div class="card-meta"><span>Directly tests</span><strong class="mono">Image-by-image alignment (Geirhos κ)</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 23 — CLOSING: SUMMARY, LIVE RESOURCES & Q&A
+         =================================================================== -->
+    <section class="slide" data-section="05 What It Means" data-title="Takeaways, Live Resources &amp; Q&amp;A"
+      data-notes="To wrap up: first, severe Gaussian blur exposes a massive +28 to +30 point human advantage over both CLIP and DINOv2; second, +7-pixel offset tile shuffling breaks humans and patch-14 ViTs together down to near chance; and third, looking under the hood revealed degenerate 97 percent chair class-collapse in DINOv2 and 66 percent in CLIP. All of our code, GPU notebook, 21-participant dataset, and live psychophysics platform are openly available on GitHub Pages. Thank you very much for listening — we would love to take your questions or run a quick live demo.">
+      <div class="stage" style="justify-content:space-between;">
+        <div class="slide-header anim" data-d="1">
+          <div class="eyebrow is-slate">Summary &amp; Open Artifacts</div>
+          <h1 class="slide-title">Thank You — Questions &amp; Live Demo</h1>
+        </div>
+
+        <div class="body-area" style="justify-content:space-between;gap:2.2vh;">
+          <!-- 3 Executive Takeaways -->
+          <div class="grid-3 grid-auto anim" data-d="2">
+            <div class="card card-accent accent-human" style="padding:1.35rem 1.45rem;">
+              <div class="kpi-val" style="color:var(--c-human);">82.4% vs. 52.9%</div>
+              <div class="card-title" style="margin-top:0.25rem;font-size:1.05rem;">Severe Blur Breaks Only ViTs</div>
+              <p class="card-text" style="font-size:0.9rem;">Humans stay resilient at <span class="mono">σ=10 px</span> with fast holistic silhouette perception (<span class="mono">943 ms</span>), while both CLIP and DINOv2 lose <span class="mono">40–47 pp</span>.</p>
+            </div>
+
+            <div class="card card-accent accent-plum" style="padding:1.35rem 1.45rem;">
+              <div class="kpi-val" style="color:var(--c-plum);">10–17% Together</div>
+              <div class="card-title" style="margin-top:0.25rem;font-size:1.05rem;">+7 px Shuffling Breaks Everyone</div>
+              <p class="card-text" style="font-size:0.9rem;">Offset tile seams cut through 14 px ViT patches and break human configural continuity, driving all systems to near chance by 64 tiles.</p>
+            </div>
+
+            <div class="card card-accent accent-amber" style="padding:1.35rem 1.45rem;">
+              <div class="kpi-val" style="color:var(--c-amber);">97.0% "Chair"</div>
+              <div class="card-title" style="margin-top:0.25rem;font-size:1.05rem;">Degenerate Model Collapse</div>
+              <p class="card-text" style="font-size:0.9rem;">Under extreme damage, frozen ViT probes collapse onto single biased classes (<span class="mono">97%</span> DINOv2, <span class="mono">66%</span> CLIP), while human errors stay calibrated.</p>
+            </div>
+          </div>
+
+          <!-- Centerpiece Study Summary Banner & Verified Artifacts -->
+          <div class="card-white anim" data-d="3" style="flex:1 1 auto;justify-content:center;align-items:center;text-align:center;gap:1.1rem;padding:1.4rem 2rem;background:radial-gradient(circle at 15% 50%, rgba(37,99,235,0.035), transparent 55%), radial-gradient(circle at 85% 50%, rgba(220,38,38,0.035), transparent 55%), #ffffff;">
+            <div style="font-size:clamp(1.25rem, 1.9vw, 1.65rem);font-weight:800;color:var(--ink);letter-spacing:-0.02em;">
+              Questions? Happy to discuss or run a live 2-trial demo.
+            </div>
+            <div style="display:flex;gap:0.7rem;flex-wrap:wrap;justify-content:center;">
+              <span class="pill pill-human" style="font-size:0.8rem;padding:0.32rem 0.85rem;">21 Observers · 1,470 Human Trials</span>
+              <span class="pill pill-clip" style="font-size:0.8rem;padding:0.32rem 0.85rem;">7,000 GPU Evaluations (NVIDIA L40S)</span>
+              <span class="pill pill-dino" style="font-size:0.8rem;padding:0.32rem 0.85rem;">Bit-for-Bit Verified PNG == Tensor</span>
+              <span class="pill pill-plum" style="font-size:0.8rem;padding:0.32rem 0.85rem;">3 Independent Replication Groups</span>
+            </div>
+          </div>
+
+          <!-- Open Science Resources & Live Links -->
+          <div class="card-white anim" data-d="4" style="flex:0 0 auto;padding:1.15rem 1.4rem;gap:0.85rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.8rem;">
+              <div>
+                <div class="card-title">Reproducible Code, Dataset &amp; Live Experiment Platform</div>
+                <div class="mono" style="font-size:0.78rem;color:var(--mute);margin-top:0.15rem;">
+                  https://yke0let.github.io/blur-scrambling-people-vs-vit/
+                </div>
+              </div>
+              <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+                <a class="demo-cta" href="./index.html" target="_blank" rel="noopener">Try Live Psychophysics App ↗</a>
+                <a class="demo-cta secondary" href="https://github.com/Yke0let/blur-scrambling-people-vs-vit" target="_blank" rel="noopener">GitHub Repository ↗</a>
+              </div>
+            </div>
+
+            <div style="border-top:1px solid var(--line);padding-top:0.7rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;font-size:0.78rem;color:var(--mute);">
+              <div><strong>Team:</strong> Uriel-Darlin Azemfack-Himele · Fanès Houeha · Halik Mamam · Franck Tchangani</div>
+              <div><strong>Credits:</strong> Quick, Draw! (CC BY 4.0) · OpenAI CLIP · Meta AI DINOv2 · 21 Anonymous Volunteers</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM HUD & INTERACTIVE CONTROLS -->
+  <footer id="hud-bar">
+    <div id="hud-left">
+      <span id="hud-counter">01 / 23</span>
+      <span style="color:var(--line-strong);">|</span>
+      <span id="hud-sec-label">Cover</span>
+    </div>
+    <div id="hud-controls">
+      <button class="hud-btn" id="btn-prev" title="Previous slide (←)">← Prev</button>
+      <button class="hud-btn" id="btn-next" title="Next slide (→ / Space)">Next →</button>
+      <button class="hud-btn" id="btn-overview" title="Slide overview (O)">Overview (O)</button>
+      <button class="hud-btn" id="btn-notes" title="Speaker notes (N)">Notes (N)</button>
+      <button class="hud-btn" id="btn-fullscreen" title="Fullscreen (F)">Fullscreen (F)</button>
+      <button class="hud-btn" id="btn-print" title="Export clean 16:9 PDF">PDF</button>
+    </div>
+  </footer>
+
+  <!-- SPEAKER NOTES DRAWER -->
+  <aside id="notes-drawer" aria-label="Speaker notes">
+    <div class="notes-hdr">
+      <span id="notes-slide-title">Speaker Notes</span>
+      <button class="hud-btn" id="btn-close-notes" style="background:#1e293b;color:#f8fafc;border-color:#334155;">✕ Close (N)</button>
+    </div>
+    <p id="notes-text"></p>
+  </aside>
+
+  <!-- SLIDE OVERVIEW MODAL -->
+  <div id="overview-modal" role="dialog" aria-label="Slide overview">
+    <div class="overview-shell">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <h2 style="font-size:1.15rem;font-weight:800;color:var(--ink);">Slide Overview (23 Slides)</h2>
+          <p style="font-size:0.8rem;color:var(--mute);">Click any slide to jump directly, or press <span class="mono">Esc</span> to close.</p>
+        </div>
+        <button class="hud-btn" id="btn-close-overview">✕ Close</button>
+      </div>
+      <div class="overview-grid" id="overview-grid"></div>
+    </div>
+  </div>
+
+  <script src="./slides.js"></script>
+</body>
+</html>
