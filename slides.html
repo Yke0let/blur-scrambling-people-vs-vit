@@ -643,46 +643,48 @@
             </svg>
           </div>
 
-          <!-- Technical Comparison Table (large & airy) -->
-          <div class="card-white anim" data-d="3" style="flex:1 1 auto;padding:1rem 1.3rem;justify-content:space-between;">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th style="width:22%;">Dimension</th>
-                  <th style="width:39%;color:var(--c-clip);">CLIP ViT-L/14</th>
-                  <th style="width:39%;color:var(--c-dino);">DINOv2 ViT-B/14</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Backbone Size</strong></td>
-                  <td><span class="mono">24</span> blocks · <span class="mono">16</span> heads · width <span class="mono">1024</span> (~<span class="mono">304M</span>)</td>
-                  <td><span class="mono">12</span> blocks · <span class="mono">12</span> heads · width <span class="mono">768</span> (~<span class="mono">86M</span>)</td>
-                </tr>
-                <tr>
-                  <td><strong>Patch &amp; Vector</strong></td>
-                  <td><span class="mono">14×14 px</span> → linear vision projection → <span class="mono">768-D</span></td>
-                  <td><span class="mono">14×14 px</span> → final LayerNorm <span class="mono">[CLS]</span> → <span class="mono">768-D</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Pretraining</strong></td>
-                  <td>Contrastive image–text alignment (<span class="mono">400M</span> web pairs)</td>
-                  <td>Self-distillation + iBOT masking (<span class="mono">LVD-142M</span>)</td>
-                </tr>
-                <tr>
-                  <td><strong>Selected Probe</strong></td>
-                  <td><span class="mono">wd = 1e-3</span> · Intact Val = <span class="t-clip">97.10%</span></td>
-                  <td><span class="mono">wd = 1e-1</span> · Intact Val = <span class="t-dino">96.40%</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Intact Test Acc</strong></td>
-                  <td><span class="mono">97.7%</span> (<span class="mono">N=1000</span>) · <span class="mono">98.6%</span> (<span class="mono">70</span> UIDs)</td>
-                  <td><span class="mono">97.5%</span> (<span class="mono">N=1000</span>) · <span class="mono">95.7%</span> (<span class="mono">70</span> UIDs)</td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- Technical Comparison Table (expanded full-height) -->
+          <div class="card-white anim" data-d="3" style="flex:1 1 auto;padding:1rem 1.3rem;gap:0.85rem;">
+            <div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;">
+              <table class="data-table table-fill">
+                <thead>
+                  <tr>
+                    <th style="width:21%;">Dimension</th>
+                    <th style="width:39.5%;color:var(--c-clip);">CLIP ViT-L/14</th>
+                    <th style="width:39.5%;color:var(--c-dino);">DINOv2 ViT-B/14</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Backbone Size</strong></td>
+                    <td><span class="mono">24</span> blocks · <span class="mono">16</span> heads · width <span class="mono">1024</span> (~<span class="mono">304M</span>)</td>
+                    <td><span class="mono">12</span> blocks · <span class="mono">12</span> heads · width <span class="mono">768</span> (~<span class="mono">86M</span>)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Patch &amp; Vector</strong></td>
+                    <td><span class="mono">14×14 px</span> → linear vision projection → <span class="mono">768-D</span></td>
+                    <td><span class="mono">14×14 px</span> → final LayerNorm <span class="mono">[CLS]</span> → <span class="mono">768-D</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Pretraining</strong></td>
+                    <td>Contrastive image–text alignment (<span class="mono">400M</span> web pairs)</td>
+                    <td>Self-distillation + iBOT masking (<span class="mono">LVD-142M</span>)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Selected Probe</strong></td>
+                    <td><span class="mono">wd = 1e-3</span> · Intact Val = <span class="t-clip">97.10%</span></td>
+                    <td><span class="mono">wd = 1e-1</span> · Intact Val = <span class="t-dino">96.40%</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Intact Test Acc</strong></td>
+                    <td><span class="mono">97.7%</span> (<span class="mono">N=1000</span>) · <span class="mono">98.6%</span> (<span class="mono">70</span> UIDs)</td>
+                    <td><span class="mono">97.5%</span> (<span class="mono">N=1000</span>) · <span class="mono">95.7%</span> (<span class="mono">70</span> UIDs)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-            <div class="card card-rule" style="padding:0.75rem 1.05rem;">
+            <div class="card card-rule" style="flex:0 0 auto;padding:0.75rem 1.05rem;">
               <p class="card-text"><strong>Controlled comparison:</strong> Identical <span class="mono">14×14 px</span> patch grid, identical <span class="mono">768-D</span> linear probe capacity, and zero damage-specific fine-tuning.</p>
             </div>
           </div>
@@ -848,9 +850,9 @@
           <h1 class="slide-title">Both preregistered hypotheses are decisively falsified — and match N=1000</h1>
         </div>
 
-        <div class="body-area" style="justify-content:space-between;">
-          <div class="card-white anim" data-d="2" style="padding:0.85rem 1.05rem;flex:0 0 auto;">
-            <table class="data-table">
+        <div class="body-area" style="justify-content:space-between;gap:1.2vh;">
+          <div class="card-white anim" data-d="2" style="padding:0.75rem 1.05rem;flex:1 1 auto;min-height:0;">
+            <table class="data-table table-fill" style="font-size:1.05rem;">
               <thead>
                 <tr>
                   <th>Condition</th>
