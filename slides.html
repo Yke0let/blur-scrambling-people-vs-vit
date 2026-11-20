@@ -1219,37 +1219,37 @@
 
         <div class="body-area">
           <div class="grid-2">
-            <div class="card-white card-rule-clip anim" data-d="2" style="padding:1.45rem 1.65rem;gap:1.25rem;">
-              <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:0.65rem;">
-                <span class="card-title" style="font-size:1.25rem;">For How Vision Models See</span>
-                <span class="tag">CLIP · DINOv2</span>
+            <div class="card-white card-rule-clip anim" data-d="2" style="padding:1.6rem 1.85rem;gap:1.3rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--line);padding-bottom:0.75rem;">
+                <span class="card-title" style="font-size:1.42rem;">For How Vision Models See</span>
+                <span class="tag" style="font-size:0.9rem;">CLIP · DINOv2</span>
               </div>
 
-              <ul class="clean-list list-clip" style="gap:1.25rem;">
-                <li style="font-size:1.05rem;"><strong>Patch invariance is boundary-dependent:</strong> shifting shuffle cuts by <span class="mono">+7 px</span> breaks <span class="mono">14 px</span> token interiors and collapses both ViTs by 16–64 tiles.</li>
-                <li style="font-size:1.05rem;"><strong>High-frequency edge dependence:</strong> both language-supervised and self-supervised ViTs lose <strong>40–47 pp</strong> when sharp edges are smoothed at <span class="mono">σ=10 px</span>.</li>
-                <li style="font-size:1.05rem;"><strong>Uncalibrated OOD failure:</strong> frozen probes collapse onto single prototype attractors (<strong>97%</strong> &amp; <strong>66%</strong> <span class="mono">chair</span>) instead of spreading uncertainty.</li>
+              <ul class="clean-list list-clip" style="flex:1 1 auto;justify-content:space-evenly;gap:1.1rem;">
+                <li style="font-size:1.22rem;line-height:1.54;"><strong>Patch invariance is boundary-dependent:</strong> shifting shuffle cuts by <span class="mono">+7 px</span> breaks <span class="mono">14 px</span> token interiors and collapses both ViTs by 16–64 tiles.</li>
+                <li style="font-size:1.22rem;line-height:1.54;"><strong>High-frequency edge dependence:</strong> both language-supervised and self-supervised ViTs lose <strong>40–47 pp</strong> when sharp edges are smoothed at <span class="mono">σ=10 px</span>.</li>
+                <li style="font-size:1.22rem;line-height:1.54;"><strong>Uncalibrated OOD failure:</strong> frozen probes collapse onto single prototype attractors (<strong>97%</strong> &amp; <strong>66%</strong> <span class="mono">chair</span>) instead of spreading uncertainty.</li>
               </ul>
 
-              <div class="card" style="padding:0.9rem 1.1rem;margin-top:auto;">
-                <p class="card-text"><strong>Machine signature:</strong> High-frequency local patch reliance + brittle OOD calibration.</p>
+              <div class="card" style="padding:1.05rem 1.25rem;margin-top:auto;">
+                <p class="card-text" style="font-size:1.08rem;"><strong>Machine signature:</strong> High-frequency local patch reliance + brittle OOD calibration.</p>
               </div>
             </div>
 
-            <div class="card-white card-rule-human anim" data-d="3" style="padding:1.45rem 1.65rem;gap:1.25rem;">
-              <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:0.65rem;">
-                <span class="card-title" style="font-size:1.25rem;">For How People See</span>
-                <span class="tag">21 Observers</span>
+            <div class="card-white card-rule-human anim" data-d="3" style="padding:1.6rem 1.85rem;gap:1.3rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--line);padding-bottom:0.75rem;">
+                <span class="card-title" style="font-size:1.42rem;">For How People See</span>
+                <span class="tag" style="font-size:0.9rem;">21 Observers</span>
               </div>
 
-              <ul class="clean-list list-human" style="gap:1.25rem;">
-                <li style="font-size:1.05rem;"><strong>Coarse holistic silhouettes dominate:</strong> humans retain <strong>82.4%</strong> accuracy at <span class="mono">σ=10 px</span> with only <strong>+178 ms</strong> latency cost.</li>
-                <li style="font-size:1.05rem;"><strong>Global configuration is essential:</strong> even 4 shuffled tiles halve accuracy (<strong>47.1%</strong>) and trigger <strong>2.46×</strong> slower mental reassembly (<span class="mono">1,883 ms</span>).</li>
-                <li style="font-size:1.05rem;"><strong>Calibrated graceful failure:</strong> near chance at 64 tiles, human guesses stay distributed across classes rather than collapsing to one label.</li>
+              <ul class="clean-list list-human" style="flex:1 1 auto;justify-content:space-evenly;gap:1.1rem;">
+                <li style="font-size:1.22rem;line-height:1.54;"><strong>Coarse holistic silhouettes dominate:</strong> humans retain <strong>82.4%</strong> accuracy at <span class="mono">σ=10 px</span> with only <strong>+178 ms</strong> latency cost.</li>
+                <li style="font-size:1.22rem;line-height:1.54;"><strong>Global configuration is essential:</strong> even 4 shuffled tiles halve accuracy (<strong>47.1%</strong>) and trigger <strong>2.46×</strong> slower mental reassembly (<span class="mono">1,883 ms</span>).</li>
+                <li style="font-size:1.22rem;line-height:1.54;"><strong>Calibrated graceful failure:</strong> near chance at 64 tiles, human guesses stay distributed across classes rather than collapsing to one label.</li>
               </ul>
 
-              <div class="card" style="padding:0.9rem 1.1rem;margin-top:auto;">
-                <p class="card-text"><strong>Human signature:</strong> Fast low-frequency global shape integration + calibrated uncertainty.</p>
+              <div class="card" style="padding:1.05rem 1.25rem;margin-top:auto;">
+                <p class="card-text" style="font-size:1.08rem;"><strong>Human signature:</strong> Fast low-frequency global shape integration + calibrated uncertainty.</p>
               </div>
             </div>
           </div>
@@ -1270,44 +1270,44 @@
 
         <div class="body-area" style="justify-content:space-between;gap:1.8vh;">
           <!-- 3 Executive Takeaways (borderless directly on white canvas) -->
-          <div class="grid-3 grid-auto anim" data-d="2" style="gap:2vw;padding:0.4rem 0 0.6rem;border-bottom:1px solid var(--line);">
-            <div style="display:flex;flex-direction:column;gap:0.25rem;padding:0.2rem 0;">
-              <span class="kpi-lbl">1 · Severe Blur (<span class="keep-case">σ = 10 px</span>)</span>
-              <span class="kpi-val" style="color:var(--c-human);">82.4% vs. 53%</span>
-              <span class="kpi-sub">Breaks only ViTs; fast holistic human recognition (+178 ms).</span>
+          <div class="grid-3 grid-auto anim" data-d="2" style="gap:2vw;padding:0.45rem 0 0.85rem;border-bottom:1.5px solid var(--line);">
+            <div style="display:flex;flex-direction:column;gap:0.3rem;padding:0.2rem 0;">
+              <span class="kpi-lbl" style="font-size:0.86rem;">1 · Severe Blur (<span class="keep-case">σ = 10 px</span>)</span>
+              <span class="kpi-val" style="color:var(--c-human);font-size:clamp(1.55rem, 2.2vw, 2.1rem);">82.4% vs. 53%</span>
+              <span class="kpi-sub" style="font-size:1.02rem;">Breaks only ViTs; fast holistic human recognition (+178 ms).</span>
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:0.25rem;padding:0.2rem 0;">
-              <span class="kpi-lbl">2 · Offset Shuffle (<span class="keep-case">+7 px</span>)</span>
-              <span class="kpi-val">10–17% Together</span>
-              <span class="kpi-sub">Half-patch seams break ViTs and humans together by 64 tiles.</span>
+            <div style="display:flex;flex-direction:column;gap:0.3rem;padding:0.2rem 0;">
+              <span class="kpi-lbl" style="font-size:0.86rem;">2 · Offset Shuffle (<span class="keep-case">+7 px</span>)</span>
+              <span class="kpi-val" style="font-size:clamp(1.55rem, 2.2vw, 2.1rem);">10–17% Together</span>
+              <span class="kpi-sub" style="font-size:1.02rem;">Half-patch seams break ViTs and humans together by 64 tiles.</span>
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:0.25rem;padding:0.2rem 0;">
-              <span class="kpi-lbl">3 · Failure Diagnostics</span>
-              <span class="kpi-val">97% / 66% "Chair"</span>
-              <span class="kpi-sub">Frozen ViTs suffer degenerate class-collapse; humans stay calibrated.</span>
+            <div style="display:flex;flex-direction:column;gap:0.3rem;padding:0.2rem 0;">
+              <span class="kpi-lbl" style="font-size:0.86rem;">3 · Failure Diagnostics</span>
+              <span class="kpi-val" style="font-size:clamp(1.55rem, 2.2vw, 2.1rem);">97% / 66% "Chair"</span>
+              <span class="kpi-sub" style="font-size:1.02rem;">Frozen ViTs suffer degenerate class-collapse; humans stay calibrated.</span>
             </div>
           </div>
 
-          <!-- With One More Week (no outer wrapper box) -->
-          <div class="anim" data-d="3" style="flex:1 1 auto;display:flex;flex-direction:column;gap:0.85rem;min-height:0;">
-            <div class="card-title">With One More Week: Three High-Value Next Experiments</div>
+          <!-- With One More Week (enlarged cards filling the stage cleanly) -->
+          <div class="anim" data-d="3" style="flex:1 1 auto;display:flex;flex-direction:column;gap:0.9rem;min-height:0;">
+            <div class="card-title" style="font-size:1.25rem;">With One More Week: Three High-Value Next Experiments</div>
             <div class="grid-3" style="gap:1.4vw;align-items:stretch;">
-              <div class="card" style="padding:1.1rem 1.25rem;">
-                <div class="card-title" style="font-size:1.05rem;">1. 0 px vs. +7 px Ablation</div>
-                <p class="card-text">Measure the exact accuracy drop on <span class="mono">N=1000</span> between patch-aligned and half-patch offset cuts across 4, 16, and 64 tiles.</p>
-                <div class="card-meta"><span>Isolates</span><strong>Patch-seam artifact</strong></div>
+              <div class="card" style="padding:1.35rem 1.5rem;gap:0.8rem;">
+                <div class="card-title" style="font-size:1.24rem;">1. 0 px vs. +7 px Ablation</div>
+                <p class="card-text" style="font-size:1.14rem;line-height:1.54;">Measure the exact accuracy drop on <span class="mono">N=1000</span> between patch-aligned and half-patch offset cuts across 4, 16, and 64 tiles.</p>
+                <div class="card-meta" style="font-size:0.96rem;"><span>Isolates</span><strong>Patch-seam artifact</strong></div>
               </div>
-              <div class="card" style="padding:1.1rem 1.25rem;">
-                <div class="card-title" style="font-size:1.05rem;">2. ResNet-50 &amp; BagNet-33</div>
-                <p class="card-text">Benchmark CNN and local-receptive-field models on the exact 70 human UIDs to separate ViT mechanics from general deep networks.</p>
-                <div class="card-meta"><span>Isolates</span><strong>ViT vs. CNN inductive bias</strong></div>
+              <div class="card" style="padding:1.35rem 1.5rem;gap:0.8rem;">
+                <div class="card-title" style="font-size:1.24rem;">2. ResNet-50 &amp; BagNet-33</div>
+                <p class="card-text" style="font-size:1.14rem;line-height:1.54;">Benchmark CNN and local-receptive-field models on the exact 70 human UIDs to separate ViT mechanics from general deep networks.</p>
+                <div class="card-meta" style="font-size:0.96rem;"><span>Isolates</span><strong>ViT vs. CNN inductive bias</strong></div>
               </div>
-              <div class="card" style="padding:1.1rem 1.25rem;">
-                <div class="card-title" style="font-size:1.05rem;">3. Blur-Augmented Probes</div>
-                <p class="card-text">Probe intermediate ViT layers and blur-trained linear heads to test if low-frequency shape survives inside frozen ViT representations.</p>
-                <div class="card-meta"><span>Isolates</span><strong>Readout vs. feature loss</strong></div>
+              <div class="card" style="padding:1.35rem 1.5rem;gap:0.8rem;">
+                <div class="card-title" style="font-size:1.24rem;">3. Blur-Augmented Probes</div>
+                <p class="card-text" style="font-size:1.14rem;line-height:1.54;">Probe intermediate ViT layers and blur-trained linear heads to test if low-frequency shape survives inside frozen ViT representations.</p>
+                <div class="card-meta" style="font-size:0.96rem;"><span>Isolates</span><strong>Readout vs. feature loss</strong></div>
               </div>
             </div>
           </div>
